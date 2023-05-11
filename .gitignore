@@ -1,3 +1,27 @@
 .ipynb_checkpoints/
 *.whl
 *.ipynb
+
+# Common text files that may contain data #
+*.[cC][sS][vV]*
+*.[tT][xX][tT]
+
+# Excel files #
+*.[xX][lL][sS]*
+
+# Word files #
+*.[dD][oO][cC]*
+
+# SPSS formats #
+*.[sS][aA][vV]
+*.[zZ][sS][aA][vV]
+
+# R data files #
+*.[rR][dD][aA][tT][aA]
+*.[rR][dD][sS]
+
+# MacOS folder attributes files #
+.DS_Store
+
+# Log files
+*.log
