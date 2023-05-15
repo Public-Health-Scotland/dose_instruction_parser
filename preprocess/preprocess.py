@@ -20,4 +20,4 @@ for text, annotations in training_data:
         ents.append(span)
     doc.ents = ents
     db.add(doc)
-db.to_disk("./train.spacy")
+db.to_disk("./preprocess/train.spacy")
