@@ -25,3 +25,6 @@
 
 # Log files
 *.log
+
+# Spacy files
+*.spacy
