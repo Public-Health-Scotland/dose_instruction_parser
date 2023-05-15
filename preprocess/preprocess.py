@@ -1,5 +1,6 @@
 import spacy
 from spacy.tokens import DocBin
+import warnings
 
 nlp = spacy.load("en_core_med7_lg")
 training_data = [
@@ -17,7 +18,10 @@ for text, annotations in training_data:
     ents = []
     for start, end, label in annotations:
         span = doc.char_span(start, end, label=label)
-        ents.append(span)
+        if span is None:
+            warnings.warn("Entity tag set incorrectly")
+        else:
+            ents.append(span)
     doc.ents = ents
     db.add(doc)
 db.to_disk("./preprocess/train.spacy")
