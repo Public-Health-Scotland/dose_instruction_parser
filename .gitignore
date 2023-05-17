@@ -31,3 +31,6 @@
 # Jupyter
 *.ipynb
 .ipynb_checkpoints/
+
+# JSON
+*.json
