@@ -9,7 +9,7 @@ files = ['diabetes_first_806.json','diabetes_rest.json','first170.json']
 nlp = spacy.load("en_core_med7_lg")
 
 def load_data(file):
-    with open(f"preprocess/{file}", "r", encoding="utf-8") as f:
+    with open(f"preprocess/tagged/{file}", "r", encoding="utf-8") as f:
         data = json.load(f)
     return (data["annotations"])
 

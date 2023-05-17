@@ -34,3 +34,6 @@
 
 # JSON
 *.json
+
+# Prolog
+*.pl

@@ -21,7 +21,7 @@ text = 'A patient was prescribed Magnesium hydroxide 400mg/5ml suspension PO of 
 apply_model(text)
 
 # Loading test data
-test_data = pd.read_csv("parsed_unit_test_data.csv",
+test_data = pd.read_csv("preprocess/for_tagging/for_processing/parsed_unit_test_data.csv",
                         index_col = 0 )
 
 # Taking 10 random entries

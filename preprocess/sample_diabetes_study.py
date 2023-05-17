@@ -18,7 +18,7 @@ lines = [re.sub(r'^.*?\|', '', line) for line in lines]
 #lines = [line.rstrip() for line in lines]
 
 # Write to text file
-outfile = open("preprocess/sample_diabetes_study.txt", "w")
+outfile = open("preprocess/for_tagging/sample_diabetes_study.txt", "w")
 outfile.writelines(lines)
 outfile.close()
 
