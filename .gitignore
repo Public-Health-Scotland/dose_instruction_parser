@@ -37,3 +37,10 @@
 
 # Prolog
 *.pl
+
+# Models
+tok2vec_model
+vectors
+
+# Output
+output/*
