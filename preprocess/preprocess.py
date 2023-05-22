@@ -18,7 +18,7 @@ alldata = [load_data(file) for file in files]
 alldata = [item for sublist in alldata for item in sublist if item is not None]
 
 # Shuffle and split into tr/val
-train_data, valid_data = train_test_split(alldata, test_size=0.33, random_state=6)
+train_data, dev_data = train_test_split(alldata, test_size=0.33, random_state=6)
 
 # Convert json to spacy format
 def create_training(TRAIN_DATA):
@@ -40,5 +40,5 @@ def create_training(TRAIN_DATA):
 
 train_data = create_training(train_data)
 train_data.to_disk("./data/train.spacy")
-valid_data = create_training(valid_data)
-valid_data.to_disk("./data/valid.spacy")
+dev_data = create_training(dev_data)
+dev_data.to_disk("./data/dev.spacy")
