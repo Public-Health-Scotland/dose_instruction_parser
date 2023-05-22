@@ -25,3 +25,22 @@
     * Contains `train.spacy` and `valid.spacy` training and validation data produced by `preprocess.py`
 * `train_model.sh` 
     * Executable for training the model based off info in *config* and *data*
+
+## Workflow for training the med7 model
+
+1. Clone repo
+2. Run `./set_up_conda.sh` to set up the conda env **med7** (or to delete it and set it up again)
+3. In `preprocess/for_tagging` prepare data for tagging. Output must be plain text file with an entry on each line. The scripts `parse_prolog_test_data.py` and `sample_diabetes_study.py` are examples of how to do this
+4. Tag data using [NER annotator tool](https://tecoholic.github.io/ner-annotator/) 
+5. Save output in `preprocess/tagged` as .json
+6. Run `preprocess/preprocess.py` to convert tagged data to spacy format. You will need to edit the file so that the `files` variable contains a list of the json files that you want to include. Output is saved to data (train.spacy and dev.spay)
+7. Check the config file: `config/config.cfg`. This has been generated using `config/create_config.py` and then some of the paths have been edited to match the set up for this project
+8. Train model using `./train_model.sh`. Takes about 3 hours to run ~2k examples
+9. Model results are saved in `output`. There is a best fit model (model-best) and also the last model tested (model-last).
+9. Check your model results - example in `example/example.py` for how to do this
+10. Convert your model to a package by running e.g. `python -m spacy package output/model-best ./packages --name my_model --version 1.0.0`
+11. Install your model using e.g. `pip install ./packages/en_my_model-1.0.0/dist/en_my_model --.tar.gz`
+
+## Training a custom model
+
+The workflow is the same as for training med7, but instead you need to edit the call to `create_config()` in `config/create_config.py` so that your starting point is the starting model you are interested in. Then check the config file (`config/config.cfg`), paying particular attention to the paths. Then you're ready to go.
