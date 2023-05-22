@@ -31,3 +31,16 @@
 # Jupyter
 *.ipynb
 .ipynb_checkpoints/
+
+# JSON
+*.json
+
+# Prolog
+*.pl
+
+# Models
+tok2vec_model
+vectors
+
+# Output
+output/*
