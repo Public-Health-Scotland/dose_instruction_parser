@@ -17,7 +17,7 @@ current_env=${current_env[-1]}
 # If in correct environment do installs
 if [ "$current_env" = "med7" ]; then
     # Install packages
-    yes | conda install -U spacy && echo "spacy installed"
+    yes | conda install spacy && echo "spacy installed"
     yes | conda install pandas && echo "pandas installed"
     yes | conda install jupyter && echo "jupyter installed"
     yes | conda install scikit-learn && echo "scikit-learn installed"
