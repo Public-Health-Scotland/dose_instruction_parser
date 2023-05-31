@@ -1,5 +1,6 @@
 import spacy
 import pandas as pd
+import random
 
 med7 = spacy.load("en_core_med7_lg")
 model_best = spacy.load("output/model-best")
@@ -29,16 +30,23 @@ def compare_models(text):
     apply_model(text, model_last)
     return "Done"
 
+# Comparing models for a specific example
 text = 'A patient was prescribed Magnesium hydroxide 400mg/5ml suspension PO of total 30ml bid for the next 5 days.'
 compare_models(text)
 
-# Loading test data
+# Sampling from prolog data
 test_data = pd.read_csv("preprocess/for_tagging/for_processing/parsed_unit_test_data.csv",
                         index_col = 0 )
 
-# Taking 10 random entries
 test_data_short = test_data.sample(n=10)
-
 for t in test_data_short.input:
     compare_models(t)
+
+# Sampling from diabetes test data
+with open("preprocess/for_testing/sample_diabetes_study_test.txt") as f:
+    diabetes_test_data = f.readlines()
+
+for i in range(10):
+    compare_models(random.choice(diabetes_test_data))
+
 
