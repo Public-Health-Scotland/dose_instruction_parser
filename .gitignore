@@ -1,3 +1,13 @@
+# Deidentify folder #
+deidentify/*
+
+# Output #
+output/*
+
+# Models #
+tok2vec_model
+vectors
+
 # Common text files that may contain data #
 *.[cC][sS][vV]*
 *.[tT][xX][tT]
@@ -25,8 +35,9 @@
 # Wheel (needed for en_core_med7_lg install)
 *.whl
 
-# Spacy files
+# Spacy files and annotations
 *.spacy
+*.ann
 
 # Jupyter
 *.ipynb
@@ -38,9 +49,5 @@
 # Prolog
 *.pl
 
-# Models
-tok2vec_model
-vectors
-
-# Output
-output/*
+# Tarfiles
+*.tar.gz
