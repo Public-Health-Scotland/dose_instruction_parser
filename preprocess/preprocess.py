@@ -25,6 +25,24 @@ def load_data(file):
 alldata = [load_data(file) for file in files]
 alldata = [item for sublist in alldata for item in sublist if item is not None]
 
+
+def get_crosschecked_dis(data):
+    unique_dis = list(set([text for text, ann in data]))
+    crosschecked_dis = []
+    conflicting_dis = []
+    for i, di in enumerate(unique_dis):
+        matching_tags = [ann for text, ann in alldata if text == di]
+        if all(tag == matching_tags[0] for tag in matching_tags):
+            crosschecked_dis.append(unique_dis[i])
+        else:
+            conflicting_dis.append(unique_dis[i])
+    # Unique crosschecked entries go into crosschecked_data
+    crosschecked_data = [dat for i, dat in enumerate(alldata) if dat[0] in crosschecked_dis and dat not in alldata[:i]]
+    # All conflicting entries go into conflicting data
+    conflicting_data = [dat for dat in alldata if dat[0] in conflicting_dis]
+    return (crosschecked_data, conflicting_data)
+            
+
 # Shuffle and split into tr/dev
 train_data, dev_data = train_test_split(alldata, test_size=0.33, random_state=6)
 
