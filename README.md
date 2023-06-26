@@ -15,9 +15,9 @@
         * for_processing
             * Contains data that needs processed before it is ready for tagging
     * tagged
-        * Contains data that has been tagged
+        * Contains data that has been tagged (.json format)
     * `parse_prolog_test_data.py` contains code for parsing the test data from the parseRx prolog code into a format that can be used for tagging
-    * `sample_diabetes_study.py` contains code for obtaining a random 2% sample of redacted dose instructions data from the diabetes update study (2223-0181) and outputting this to a text file for tagging using the online [NER annotator tool](https://tecoholic.github.io/ner-annotator/) 
+    * `sample_diabetes_study.py` contains code for obtaining a random 2% sample of redacted dose instructions data from the diabetes update study (2223-0181) and outputting this to a text file for tagging using the desktop [NER annotator tool](https://tecoholic.github.io/ner-annotator/) 
     * `preprocess.py` contains code for reading in .json files produced by the annotator tool, amalgamating them and then creating spacy training and validation data for developing the existing model
 * config
     * Contains configuration files for running spacy
@@ -31,9 +31,9 @@
 1. Clone repo
 2. Run `./set_up_conda.sh` to set up the conda env **med7** (or to delete it and set it up again)
 3. In `preprocess/for_tagging` prepare data for tagging. Output must be plain text file with an entry on each line. The scripts `parse_prolog_test_data.py` and `sample_diabetes_study.py` are examples of how to do this
-4. Tag data using [NER annotator tool](https://tecoholic.github.io/ner-annotator/) 
-5. Save output in `preprocess/tagged` as .json
-6. Run `preprocess/preprocess.py` to convert tagged data to spacy format. You will need to edit the file so that the `files` variable contains a list of the json files that you want to include. Output is saved to data (train.spacy and dev.spay)
+4. Tag data using desktop [NER annotator tool](https://tecoholic.github.io/ner-annotator/) 
+5. Save output in `preprocess/tagged` as .json. Only put files here which you want to train the model on.
+6. Run `preprocess/preprocess.py` to convert tagged data to spacy format. Output is saved to data (train.spacy and dev.spay)
 7. Check the config file: `config/config.cfg`. This has been generated using `config/create_config.py` and then some of the paths have been edited to match the set up for this project
 8. Train model using `./train_model.sh`. Takes about 3 hours to run ~2k examples
 9. Model results are saved in `output`. There is a best fit model (model-best) and also the last model tested (model-last).
