@@ -32,6 +32,9 @@ vectors
 # Log files
 *.log
 
+# Dat files
+*.dat
+
 # Wheel (needed for en_core_med7_lg install)
 *.whl
 
