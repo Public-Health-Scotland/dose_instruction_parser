@@ -1,11 +1,18 @@
 """
 Loads .json files from preprocess/tagged/ and crosschecks each tagging instance.
+
 Outputs 2 .dat files:
     processed/crosschecked_data.dat     tagged dose instructions which don't conflict
     processed/conflicting_data.dat      tagged dose instructions which conflict
 """
 from os import listdir
 import json
+
+from colorama import init as colorama_init
+from colorama import Fore
+from colorama import Style
+
+colorama_init()
 
 # Get all .json files in filepath
 filepath = "preprocess/tagged/"
@@ -49,3 +56,10 @@ with open("preprocess/processed/crosschecked_data.dat", "w") as f:
 with open("preprocess/processed/conflicting_data.dat", "w") as f:
     for line in conflicting_data:
         f.write(line[0] + " | " + str(line[1]) +"\n")
+
+print(Fore.GREEN + "Data saved to preprocess/process" + "\n" + 
+     Fore.YELLOW + "There are " + Fore.RED + str(len(conflicting_data)) + Fore.YELLOW + 
+     " entries to check in preprocess/processed/conflicting_data.dat" + "\n" + 
+     "Copy this file to preprocess/processed/resolved_data.dat " +
+     "and remove the duplicate entries which are unwanted. " + "\n" +
+     "Then run processed/2-dat_to_spacy.py" + Style.RESET_ALL)

@@ -1,11 +1,30 @@
 """
-Converts crosschecked and resolved dose instructions to .spacy train and dev data
+Converts crosschecked and resolved dose instructions to .spacy train and dev data.
+
+Loads the following files:
+    preprocess/processed/crosschecked_data.dat
+    preprocess/processed/resolved_data.dat
+
+1. Checks that there are no duplicate dose instructions. If so throws an error.
+2. Creates duplicates of tagged dose instructions based off frequency table.
+3. Splits data into train/dev
+4. Converts to spacy format
+
+Saves out the following files:
+    data/train.spacy
+    data/dev.spacy
 """
 from spacy.tokens import DocBin
 import spacy
 import ast
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
+
+from colorama import init as colorama_init
+from colorama import Fore
+from colorama import Style
+
+colorama_init()
 
 # Get data - crosschecked_data and resolved_data
 filepath = "preprocess/processed/"
@@ -61,3 +80,6 @@ train_data = create_training(train_data)
 train_data.to_disk("./data/train.spacy")
 dev_data = create_training(dev_data)
 dev_data.to_disk("./data/dev.spacy")
+
+print(Fore.GREEN + "Spacy data saved to data folder" + "\n" +
+      Fore.YELLOW + "Check config/config.cfg then run ./train_model.sh to train the model." + Style.RESET_ALL)
