@@ -8,17 +8,19 @@ model_last = spacy.load("output/model-last")
 
 # create distinct colours for labels
 col_dict = {}
-seven_colours = ['#e6194B', '#3cb44b', '#ffe119', '#ffd8b1', '#f58231', '#f032e6', '#42d4f4']
-for label, colour in zip(med7.pipe_labels['ner'], seven_colours):
+seven_colours = ['#e6194B', '#3cb44b', '#ffe119', '#ffd8b1', '#f58231', '#f032e6', '#42d4f4', '#C5CAC8', '#8BC34A']
+for label, colour in zip(model_best.pipe_labels['ner'], seven_colours):
     col_dict[label] = colour
 
-options = {'ents': med7.pipe_labels['ner'], 'colors':col_dict}
+options = {'ents': model_best.pipe_labels['ner'], 'colors': col_dict}
 
 
 def apply_model(text, model):
     doc = model(text)
     spacy.displacy.render(doc, style='ent', jupyter=True, options=options)
-    return [(ent.text, ent.label_) for ent in doc.ents]
+    ents = [(ent.text, ent.label_) for ent in doc.ents]
+    print(ents)
+    return ents
 
 
 def compare_models(text):
