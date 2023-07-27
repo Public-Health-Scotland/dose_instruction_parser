@@ -31,7 +31,7 @@ filepath = "preprocess/processed/"
 files = ["crosschecked_data.dat", "resolved_data.dat"]
 
 def process_line(line):
-    text, ann = line.replace("\n", "").split(" | ")
+    selection, text, ann = line.replace("\n", "").split(" | ")
     ann = ast.literal_eval(ann)
     return [text, ann]
 

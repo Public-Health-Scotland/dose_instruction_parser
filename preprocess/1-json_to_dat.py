@@ -9,8 +9,7 @@ from os import listdir
 import json
 
 from colorama import init as colorama_init
-from colorama import Fore
-from colorama import Style
+from colorama import Fore, Style
 
 colorama_init()
 
@@ -49,13 +48,21 @@ def get_crosschecked_dis(data):
 crosschecked_data, conflicting_data = get_crosschecked_dis(alldata)
 
 # Save out 
-with open("preprocess/processed/crosschecked_data.dat", "w") as f:
-    for line in crosschecked_data:
-        f.write(line[0] + " | " + str(line[1]) +"\n")
+def save_out(dat, filename):
+    with open(f"preprocess/processed/{filename}", "w") as f:
+        for line in dat:
+            # Get entity text 
+            ents = line[1]["entities"]
+            selections = []
+            for ent in ents:
+                start, end, tag = ent
+                ent_text = line[0][start:end]
+                selection = [ent_text, tag]
+                selections.append(selection)
+            f.write(str(selections) + " | " + line[0] + " | " + str(line[1]) + "\n")
 
-with open("preprocess/processed/conflicting_data.dat", "w") as f:
-    for line in conflicting_data:
-        f.write(line[0] + " | " + str(line[1]) +"\n")
+save_out(crosschecked_data, "crosschecked_data.dat")
+save_out(conflicting_data, "conflicting_data.dat")
 
 print(Fore.GREEN + "Data saved to preprocess/process" + "\n" + 
      Fore.YELLOW + "There are " + Fore.RED + str(len(conflicting_data)) + Fore.YELLOW + 
