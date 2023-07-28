@@ -8,6 +8,7 @@ import pandas as pd
 
 med7 = spacy.load("en_core_med7_lg")
 model_best = spacy.load("output/model-best")
+model_last = spacy.load("output/model-last")
 
 # Get all .json files in filepath
 filepath = "preprocess/tagged/"
@@ -54,5 +55,5 @@ def compare_model_scores(models, samples):
     score_table.index = [retrieve_name(m) for m in models]
     return score_table.T
 
-scores = compare_model_scores(models = [med7, model_best], samples = alldata)
+scores = compare_model_scores(models = [med7, model_best, model_last], samples = alldata)
 print(scores)
