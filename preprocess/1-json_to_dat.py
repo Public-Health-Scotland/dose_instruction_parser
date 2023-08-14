@@ -25,6 +25,10 @@ def load_data(file, filepath=filepath):
 # Load data into one flat list
 alldata = [load_data(file) for file in files]
 alldata = sorted([item for sublist in alldata for item in sublist if item is not None], key=lambda x: x[0], reverse=True)
+# Replacing all instances of "DOSE" with "DOSAGE" 
+# Original tag is DOSAGE but some tagging was done using DOSE instead
+for item in alldata:
+    item[1]["entities"] = [[ent[0], ent[1], ent[2].replace("DOSE", "DOSAGE")] for ent in item[1]["entities"]]
 
 def get_crosschecked_dis(data):
     """ 
