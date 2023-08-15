@@ -19,6 +19,8 @@ import spacy
 import ast
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
+import pandas as pd
+
 
 from colorama import init as colorama_init
 from colorama import Fore
@@ -27,7 +29,7 @@ from colorama import Style
 colorama_init()
 
 # Get data - crosschecked_data and resolved_data
-filepath = "preprocess/processed/"
+filepath = "***REMOVED***preprocess/processed/"
 files = ["crosschecked_data.dat", "resolved_data.dat"]
 
 def process_line(line):
@@ -48,12 +50,20 @@ processed_data = sorted([item for sublist in processed_data for item in sublist 
 dis = [text for text, ann in processed_data]
 assert len(dis) == len(set(dis)), "Please review resolved_data.dat and make sure all duplicate dose instructions are resolved"
 
-####################################################################################################
-# TODO: Here is where we will create duplicates of dose instructions based off the frequency table #
-####################################################################################################
-
-# Using med7 model as a base 
+#Creating duplicate dose instructions
+freq_table = pd.read_csv("***REMOVED***dose_instructions_limit250_cntr.csv.xz")
+duplicated_data = []
+for instruction in processed_data:
+    try:      
+        count = freq_table.loc[freq_table["dose_instructions"] == instruction[0]]["cntr"].iat[0]
+    except:
+        print(instruction[0])
+    for i in range(count): 
+        duplicated_data.append(instruction)
+# Using m = []ed7 model as a base 
 nlp = spacy.load("en_core_med7_lg")
+
+freq_table
 
 # Shuffle and split into tr/dev
 train_data, dev_data = train_test_split(processed_data, test_size=0.33, random_state=6)
