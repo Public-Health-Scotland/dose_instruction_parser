@@ -61,18 +61,18 @@ assert len(dis) == len(set(dis)), "Please review resolved_data.dat and make sure
 # Creating duplicate dose instructions based off frequency table
 freq_table = pd.read_csv("***REMOVED***dose_instructions_limit250_cntr.csv.xz")
 duplicated_data = []
-for instruction in processed_data:
+for instruction, ann in processed_data:
     try:      
         count = (
-            freq_table.query(f"dose_instructions == '{instruction[0]}'")
+            freq_table.query(f"dose_instructions == '{instruction}'")
                 .loc[:, "cntr"]
                 .iat[0]
         )
         for i in range(count): 
-            duplicated_data.append(instruction)
+            duplicated_data.append([instruction, ann])
     except:
-        print(f"Instruction not in frequency table, adding 1 copy only: {instruction[0]}")
-        duplicated_data.append(instruction)
+        print(f"Instruction not in frequency table, adding 1 copy only: {instruction}")
+        duplicated_data.append([instruction, ann])
     
 
 # Using med7 model as a base 
