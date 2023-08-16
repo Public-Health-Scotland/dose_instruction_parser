@@ -21,11 +21,9 @@ from tqdm import tqdm
 from sklearn.model_selection import train_test_split
 import pandas as pd
 
-
 from colorama import init as colorama_init
 from colorama import Fore
 from colorama import Style
-
 colorama_init()
 
 # Get data - crosschecked_data and resolved_data
@@ -33,16 +31,26 @@ filepath = "***REMOVED***preprocess/processed/"
 files = ["crosschecked_data.dat", "resolved_data.dat"]
 
 def process_line(line):
+    """
+    line        A line of text from crosschecked or resolved data files
+    returns     text and annotation from that line
+    """
     selection, text, ann = line.replace("\n", "").split(" | ")
     ann = ast.literal_eval(ann)
     return [text, ann]
 
 def load_processed_dat(file, filepath=filepath):
+    """
+    file        File name to load
+    filepath    File path where file is located
+    returns     nested list of [text, annotation] for each line
+    """
     with open(f"{filepath}/{file}", "r") as f:
         lines = f.readlines()
     lines = [process_line(line) for line in lines]
     return lines
 
+# Loading data from files and flattening list
 processed_data = [load_processed_dat(file) for file in files]
 processed_data = sorted([item for sublist in processed_data for item in sublist if item is not None], key=lambda x: x[0], reverse=True)
 
@@ -66,13 +74,19 @@ for instruction in processed_data:
 # Using med7 model as a base 
 nlp = spacy.load("en_core_med7_lg")
 
-# Shuffle and split into tr/dev
-train_data, dev_data = train_test_split(processed_data, test_size=0.33, random_state=6)
+# Shuffle and split into test/tr/dev
+# N.B. can tweak the train/test/dev/split
+use_data, test_data = train_test_split(processed_data, test_size=1/10, random_state=6)
+train_data, dev_data = train_test_split(use_data, test_size=1/9, random_state=6)
 
 # Convert json to spacy format
-def create_training(TRAIN_DATA):
+def convert_to_spacy(dat):
+    """
+    dat         list of [text, annotation] pairs to be converted
+    returns     spacy DocBin() containing information from dat
+    """
     db = DocBin()
-    for text, annot in tqdm(TRAIN_DATA):
+    for text, annot in tqdm(dat):
         doc = nlp.make_doc(text)
         ents = []
         for start, end, label in annot["entities"]:
@@ -86,11 +100,9 @@ def create_training(TRAIN_DATA):
         db.add(doc)
     return (db)
 
-
-train_data = create_training(train_data)
-train_data.to_disk("./data/train.spacy")
-dev_data = create_training(dev_data)
-dev_data.to_disk("./data/dev.spacy")
+# Save out test, train and dev data
+for name in ["test", "train", "dev"]:
+    convert_to_spacy(globals()[f"{name}_data"]).to_disk(f"./data/{name}.spacy")
 
 print(Fore.GREEN + "Spacy data saved to data folder" + "\n" +
       Fore.YELLOW + "Check config/config.cfg then run ./train_model.sh to train the model." + Style.RESET_ALL)
