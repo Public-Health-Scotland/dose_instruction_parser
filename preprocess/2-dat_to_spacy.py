@@ -50,20 +50,21 @@ processed_data = sorted([item for sublist in processed_data for item in sublist 
 dis = [text for text, ann in processed_data]
 assert len(dis) == len(set(dis)), "Please review resolved_data.dat and make sure all duplicate dose instructions are resolved"
 
-#Creating duplicate dose instructions
+# Creating duplicate dose instructions based off frequency table
 freq_table = pd.read_csv("***REMOVED***dose_instructions_limit250_cntr.csv.xz")
 duplicated_data = []
 for instruction in processed_data:
     try:      
         count = freq_table.loc[freq_table["dose_instructions"] == instruction[0]]["cntr"].iat[0]
+        for i in range(count): 
+            duplicated_data.append(instruction)
     except:
-        print(instruction[0])
-    for i in range(count): 
+        print(f"Instruction not in frequency table, adding 1 copy only: {instruction[0]}")
         duplicated_data.append(instruction)
-# Using m = []ed7 model as a base 
-nlp = spacy.load("en_core_med7_lg")
+    
 
-freq_table
+# Using med7 model as a base 
+nlp = spacy.load("en_core_med7_lg")
 
 # Shuffle and split into tr/dev
 train_data, dev_data = train_test_split(processed_data, test_size=0.33, random_state=6)
