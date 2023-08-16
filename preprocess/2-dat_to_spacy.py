@@ -60,8 +60,10 @@ assert len(dis) == len(set(dis)), "Please review resolved_data.dat and make sure
 
 # Creating duplicate dose instructions based off frequency table
 freq_table = pd.read_csv("***REMOVED***dose_instructions_limit250_cntr.csv.xz")
+
+print(Fore.YELLOW + "Creating duplicate dose instructions based off frequency table" + Style.RESET_ALL)
 duplicated_data = []
-for instruction, ann in processed_data:
+for instruction, ann in tqdm(processed_data):
     try:      
         count = (
             freq_table.query(f"dose_instructions == '{instruction}'")
@@ -71,7 +73,7 @@ for instruction, ann in processed_data:
         for i in range(count): 
             duplicated_data.append([instruction, ann])
     except:
-        print(f"Instruction not in frequency table, adding 1 copy only: {instruction}")
+        print(Fore.RED + f"Instruction not in frequency table, adding 1 copy only: {instruction}" + Style.RESET_ALL)
         duplicated_data.append([instruction, ann])
     
 
