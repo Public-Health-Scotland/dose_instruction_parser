@@ -90,10 +90,10 @@ def convert_to_spacy(dat):
     returns     spacy DocBin() containing information from dat
     """
     db = DocBin()
-    for text, annot in tqdm(dat):
+    for text, ann in tqdm(dat):
         doc = nlp.make_doc(text)
         ents = []
-        for start, end, label in annot["entities"]:
+        for start, end, label in ann["entities"]:
             span = doc.char_span(start, end, label=label,
                                  alignment_mode="contract")
             if span is None:
