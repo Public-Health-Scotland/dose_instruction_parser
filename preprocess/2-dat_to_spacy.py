@@ -63,7 +63,11 @@ freq_table = pd.read_csv("***REMOVED***dose_instructions_limit250_cntr.csv.xz")
 duplicated_data = []
 for instruction in processed_data:
     try:      
-        count = freq_table.loc[freq_table["dose_instructions"] == instruction[0]]["cntr"].iat[0]
+        count = (
+            freq_table.query(f"dose_instructions == '{instruction[0]}'")
+                .loc[:, "cntr"]
+                .iat[0]
+        )
         for i in range(count): 
             duplicated_data.append(instruction)
     except:
