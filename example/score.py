@@ -2,8 +2,10 @@ import spacy
 from spacy.scorer import Scorer
 from spacy.training import Example
 from os import listdir
+from tqdm import tqdm
 import json
 import inspect
+import ast
 import pandas as pd
 
 med7 = spacy.load("en_core_med7_lg")
@@ -11,24 +13,29 @@ model_best = spacy.load("output/model-best")
 model_last = spacy.load("output/model-last")
 
 # Get all .json files in filepath
-filepath = "preprocess/tagged/"
-files = [f for f in listdir(filepath) if f.endswith(".json")]
+filepath = "preprocess/processed/"
+files = ["crosschecked_data.dat", "resolved_data.dat"]
 
-def load_data(file, filepath=filepath):
-    with open(f"{filepath}/{file}", "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return (data["annotations"])
+def process_line(line):
+    selection, text, ann = line.replace("\n", "").split(" | ")
+    ann = ast.literal_eval(ann)
+    return [text, ann]
 
-# Load data into one flat list
-alldata = [load_data(file) for file in files]
-alldata = sorted([item for sublist in alldata for item in sublist if item is not None], key=lambda x: x[0], reverse=True)
+def load_processed_dat(file, filepath=filepath):
+    with open(f"{filepath}/{file}", "r") as f:
+        lines = f.readlines()
+    lines = [process_line(line) for line in lines]
+    return lines
+
+processed_data = [load_processed_dat(file) for file in files]
+processed_data = sorted([item for sublist in processed_data for item in sublist if item is not None], key=lambda x: x[0], reverse=True)
 
 def get_scores(ner_model, samples):
     scorer = Scorer(ner_model)
     example = []
-    for sample in samples:
+    for sample in tqdm(samples):
         pred = ner_model(sample[0])
-        print(pred, sample[1]['entities'])
+        #print(pred, sample[1]['entities'])
         temp_ex = Example.from_dict(pred, {'entities': sample[1]['entities']})
         example.append(temp_ex)
     scores = scorer.score(example)
@@ -55,5 +62,5 @@ def compare_model_scores(models, samples):
     score_table.index = [retrieve_name(m) for m in models]
     return score_table.T
 
-scores = compare_model_scores(models = [med7, model_best, model_last], samples = alldata)
+scores = compare_model_scores(models = [med7, model_best, model_last], samples = processed_data)
 print(scores)
