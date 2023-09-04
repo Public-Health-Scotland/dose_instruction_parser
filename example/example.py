@@ -49,6 +49,8 @@ with open("preprocess/for_testing/sample_diabetes_study_test.txt") as f:
     diabetes_test_data = f.readlines()
 
 for i in range(10):
-    compare_models(random.choice(diabetes_test_data))
+    text = random.choice(diabetes_test_data)
+    print(text)
+    compare_models(text)
 
 
