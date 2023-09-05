@@ -7,6 +7,7 @@ Outputs 2 .dat files:
 """
 from os import listdir
 import json
+import time
 
 from colorama import init as colorama_init
 from colorama import Fore, Style
@@ -65,12 +66,15 @@ def save_out(dat, filename):
                 selections.append(selection)
             f.write(str(selections) + " | " + line[0] + " | " + str(line[1]) + "\n")
 
-save_out(crosschecked_data, "crosschecked_data.dat")
-save_out(conflicting_data, "conflicting_data.dat")
+# Appending timestamp so data are not overwritten
+time_out = time.strftime('%b-%d-%Y-%H%M', time.localtime())
+save_out(crosschecked_data, f"crosschecked_data_{time_out}.dat")
+# Backup copy
+save_out(conflicting_data, f"conflicting_data_{time_out}.dat")
+save_out(conflicting_data, f"resolved_data_{time_out}.dat")
 
-print(Fore.GREEN + "Data saved to preprocess/process" + "\n" + 
+print(Fore.GREEN + "Data saved to preprocess/processed" + "\n" + 
      Fore.YELLOW + "There are " + Fore.RED + str(len(conflicting_data)) + Fore.YELLOW + 
-     " entries to check in preprocess/processed/conflicting_data.dat" + "\n" + 
-     "Copy this file to preprocess/processed/resolved_data.dat " +
-     "and remove the duplicate entries which are unwanted. " + "\n" +
-     "Then run processed/2-dat_to_spacy.py" + Style.RESET_ALL)
+     f" entries to check in preprocess/processed/resolved_data_{time_out}.dat" + "\n" + 
+     "Remove the duplicate entries which are unwanted, " + "\n" +
+     "then run processed/2-dat_to_spacy.py" + Style.RESET_ALL)

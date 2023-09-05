@@ -17,6 +17,8 @@ Saves out the following files:
 from spacy.tokens import DocBin
 import spacy
 import ast
+import re
+import os
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
 import pandas as pd
@@ -28,7 +30,15 @@ colorama_init()
 
 # Get data - crosschecked_data and resolved_data
 filepath = "***REMOVED***preprocess/processed/"
-files = ["crosschecked_data.dat", "resolved_data.dat"]
+regex = re.compile("((resolved_data|crosschecked_data))\_\d+-\w+-\d+-\d+.dat")
+
+files = []
+for root, dirs, fs in os.walk(filepath):
+  for file in fs:
+    if regex.match(file):
+       files.append(file)
+
+print(Fore.YELLOW + "Loading the following files: " + Style.RESET_ALL + str(files))
 
 def process_line(line):
     """
