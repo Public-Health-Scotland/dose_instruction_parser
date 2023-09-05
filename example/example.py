@@ -3,8 +3,8 @@ import pandas as pd
 import random
 
 med7 = spacy.load("en_core_med7_lg")
-model_best = spacy.load("output/model-best")
-model_last = spacy.load("output/model-last")
+model_best = spacy.load("***REMOVED***output/model-best")
+model_last = spacy.load("***REMOVED***output/model-last")
 
 # create distinct colours for labels
 col_dict = {}
@@ -49,6 +49,8 @@ with open("preprocess/for_testing/sample_diabetes_study_test.txt") as f:
     diabetes_test_data = f.readlines()
 
 for i in range(10):
-    compare_models(random.choice(diabetes_test_data))
+    text = random.choice(diabetes_test_data)
+    print(text)
+    compare_models(text)
 
 
