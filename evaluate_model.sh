@@ -13,9 +13,9 @@ if [ "$1" == "-h" ]; then
   exit 0
 fi
 
-# Naming log file with today's time and date
+# Naming log file with today's time and date and model name
 today=`date '+%m_%d__%H_%M_%S'`;
-filename="logs/evaluate_$1_$today.log"
+filename="logs/evaluate_${1//\//_}_$today.log"
 touch $filename
 echo $1 >> $filename
 
