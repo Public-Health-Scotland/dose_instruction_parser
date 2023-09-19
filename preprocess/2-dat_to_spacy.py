@@ -49,12 +49,12 @@ def process_line(line):
     ann = ast.literal_eval(ann)
     return [text, ann]
 
-def process_lines(lines):
+def process_lines(lines, file=file):
     for line in lines:
         try:
             yield process_line(line)
         except:
-            print(Fore.RED + "Error in the following input line. Please fix this in resolved_data.dat" + Style.RESET_ALL)
+            print(Fore.RED + f"Error in the following input line. Please fix this in {file}" + Style.RESET_ALL)
             print(line)
 
 def load_processed_dat(file, filepath=filepath):
@@ -66,7 +66,7 @@ def load_processed_dat(file, filepath=filepath):
     with open(f"{filepath}/{file}", "r") as f:
         lines = f.readlines()
     
-    lines = process_lines(lines)
+    lines = process_lines(lines, file)
     return lines
 
 # Loading data from files and flattening list
@@ -76,7 +76,7 @@ processed_data = sorted([item for sublist in processed_data for item in sublist 
 # Check there are no duplicates i.e. all the conflicting tags have been resolved
 dis = [text for text, ann in processed_data]
 duplicates = list(set([text for text in dis if dis.count(text) > 1]))
-assert len(duplicates) == 0, Fore.RED + "Please review resolved_data.dat and remove the following duplicates" + Style.RESET_ALL + "\n" + str(duplicates)
+#assert len(duplicates) == 0, Fore.RED + "Please review resolved_data files and remove the following duplicates" + Style.RESET_ALL + "\n" + str(duplicates)
 
 # Creating duplicate dose instructions based off frequency table
 freq_table = pd.read_csv("***REMOVED***dose_instructions_limit250_cntr.csv.xz")
