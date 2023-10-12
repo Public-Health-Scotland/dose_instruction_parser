@@ -66,9 +66,9 @@ inflect_engine = inflect.engine()
 
 def _create_spell_checker():
     sc = SpellChecker()
-    drug_words_frequency = 'example/drug_names.txt'
-    sc.word_frequency.load_text_file(drug_words_frequency)
-    sc.word_frequency.remove_words(["talbot"])
+    #drug_words_frequency = 'example/drug_names.txt'
+    #sc.word_frequency.load_text_file(drug_words_frequency)
+    #sc.word_frequency.remove_words(["talbot"])
     return sc
 
 
@@ -129,9 +129,9 @@ def _pre_process(sig):
     for word in words:
         if word == 'tab':
             word = word.replace('tab', 'tablet')
-            output_words.append(word)
-        else:
-            output_words.append(word)
+        elif word == 'tabs':
+            word = word.replace('tabs', 'tablets')
+        output_words.append(word)
     sig = ' '.join(output_words)
     sig = _convert_words_to_numbers(sig)
     return _convert_fract_to_num(sig)
@@ -173,6 +173,7 @@ def _create_structured_sigs(model_output):
     return [first_sig] + other_sigs
 
 
+# Not v sophisticated - just takes e.g. "2 tabs" and gets 2nd word "tabs"
 def _get_form_from_dosage_tag(text):
     splitted = text.split(' ')
     if len(splitted) == 2:
