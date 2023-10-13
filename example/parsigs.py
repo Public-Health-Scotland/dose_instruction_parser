@@ -184,12 +184,23 @@ def _create_structured_sig(model_entities, form=None):
     for entity in model_entities:
         text = entity.text
         label = entity.label_
-        if label == 'DOSAGE' and text.split()[0].isnumeric():
-            structured_sig.singleDosageAmount = float(text.split()[0])
-            structured_sig.frequencyType = _get_frequency_type(text)
-            form_from_dosage = _get_form_from_dosage_tag(text)
-            if form_from_dosage is not None:
-                structured_sig.form = _to_singular(form_from_dosage)
+        if label == 'DOSAGE':
+            if text.split()[0].isnumeric():
+                structured_sig.singleDosageAmount = float(text.split()[0])
+                structured_sig.frequencyType = _get_frequency_type(text)
+                form_from_dosage = _get_form_from_dosage_tag(text)
+                if form_from_dosage is not None:
+                    structured_sig.form = _to_singular(form_from_dosage)
+            # Check for e.g. "mg", "ml"
+            else:
+                measures = [ele for ele in ["mg", "ml"] if(ele in text)]
+                if bool(measures):
+                    structured_sig.form = measures[0]
+                    structured_sig.singleDosageAmount = text.replace(measures[0],"")
+                # Otherwise extract first number to use as dosage
+                else:
+                    nums = re.findall('\d+', text)
+                    structured_sig.singleDosageAmount = nums[0]
         elif label == 'FORM':
             structured_sig.form = _to_singular(text)
         elif label == 'FREQUENCY':
