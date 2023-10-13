@@ -20,19 +20,27 @@ import inflect
 Represents a structured medication dosage instructions.
 Attributes:
 -----------
+form: str
+    The form of drug (e.g. "tablet", "patch", "injection")
+dosageMin: float
+    The minimum dosage 
+dosageMax: float
+    The maximum dosage 
+frequencyMin: float
+    The minimum frequency 
+frequencyMax: float
+    The maximum frequency 
 frequencyType : str
     The type of frequency for the dosage (e.g. Hour, Day, Week, Month).
-interval : int
-     The interval between dosages (e.g. every 4 hours, every 12 hours, etc.).
-singleDosageAmount : int
-    The amount of the medication in a single dosage (e.g. 1 tablet, 2 capsules, etc.).
-periodType : str
-    The type of period for the dosage (e.g. Hour, Day, Week, Month).
-periodAmount : int
-    The duration of the period for the dosage (e.g. 7 days, 2 months, etc.).
-takeAsRequired : bool
-    Some instructions contains a statement that the medication should be taken as needed by patient
-takeAsDirected: bool
+durationMin: float
+    The minimum duration of treatment 
+durationMax: float
+    The maximum duration of treatment
+durationType: str
+    The type of duration for dosage (e.g. Day, Week, Month)
+asRequired : bool
+    Whether to take as required / as needed
+asDirected: bool
     Whether to take as directed
 """
 
@@ -40,13 +48,16 @@ takeAsDirected: bool
 @dataclass
 class StructuredSig:
     form: str
+    dosageMin: float
+    dosageMax: float
+    frequencyMin: float
+    frequencyMax: float
     frequencyType: str
-    interval: int
-    singleDosageAmount: float
-    periodType: str
-    periodAmount: int
-    takeAsRequired: bool
-    takeAsDirected: bool
+    durationMin: float
+    durationMax: float
+    durationType: str
+    asRequired: bool
+    asDirected: bool
 
 
 dose_instructions = ['take', 'inhale', 'instill', 'apply', 'spray', 'swallow']
@@ -163,7 +174,9 @@ def _create_structured_sigs(model_output):
     multiple_instructions = _split_entities_for_multiple_instructions(entities)
     first_sig = _create_structured_sig(multiple_instructions[0])
     # incase multiple instructions exist, they apply to the same drug and form
-    other_sigs = [_create_structured_sig(instruction_entities, first_sig.form)
+    other_sigs = [_create_structured_sig(instruction_entities, 
+                                         first_sig.form, first_sig.as_required,
+                                         first_sig.as_directed)
                   for instruction_entities in multiple_instructions[1:]]
     return [first_sig] + other_sigs
 
@@ -179,14 +192,17 @@ def _to_singular(text):
     singular = inflect_engine.singular_noun(text)
     return singular if singular else text
 
-def _create_structured_sig(model_entities, form=None):
-    structured_sig = StructuredSig(form, None, None, None, None, None, False, False)
+def _create_structured_sig(model_entities, form=None, asRequired=False, asDirected=False):
+    structured_sig = StructuredSig(form, None, None, None, None, None, None, None, None, asRequired, asDirected)
     for entity in model_entities:
         text = entity.text
         label = entity.label_
         if label == 'DOSAGE':
             if text.split()[0].isnumeric():
-                structured_sig.singleDosageAmount = float(text.split()[0])
+                # TODO: min and max here
+                dosage = float(text.split()[0])
+                structured_sig.dosageMin = dosage
+                structured_sig.dosageMax = dosage
                 structured_sig.frequencyType = _get_frequency_type(text)
                 form_from_dosage = _get_form_from_dosage_tag(text)
                 if form_from_dosage is not None:
@@ -196,22 +212,35 @@ def _create_structured_sig(model_entities, form=None):
                 measures = [ele for ele in ["mg", "ml"] if(ele in text)]
                 if bool(measures):
                     structured_sig.form = measures[0]
-                    structured_sig.singleDosageAmount = text.replace(measures[0],"")
+                    dosage = text.replace(measures[0],"")
+                    # TODO: min and max
+                    structured_sig.dosageMin = dosage
+                    structured_sig.dosageMax = dosage
                 # Otherwise extract first number to use as dosage
                 else:
                     nums = re.findall('\d+', text)
-                    structured_sig.singleDosageAmount = nums[0]
+                    # TODO: min and max
+                    dosage = nums[0]
+                    structured_sig.dosageMin = dosage
+                    structured_sig.dosageMax = dosage
         elif label == 'FORM':
             structured_sig.form = _to_singular(text)
         elif label == 'FREQUENCY':
             structured_sig.frequencyType = _get_frequency_type(text)
-            structured_sig.interval = _get_interval(text)
+            # TODO: min and max
+            freq = _get_interval(text)
+            structured_sig.frequencyMin = freq
+            structured_sig.frequencyMax = freq
             # Default added only if there is a frequency tag in the sig, handles cases such as "Every TIME_UNIT"
-            if structured_sig.interval is None:
-                structured_sig.interval = 1
+            if structured_sig.frequencyMin is None:
+                structured_sig.frequencyMin = 1
+                structured_sig.frequencyMax = 1
         elif label == 'DURATION':
-            structured_sig.periodType = _get_frequency_type(text)
-            structured_sig.periodAmount = _get_interval(text)
+            structured_sig.durationType = _get_frequency_type(text)
+            # TODO: min and max
+            duration = _get_interval(text)
+            structured_sig.durationMin = duration
+            structured_sig.durationMax = duration
         elif label == "AS_REQUIRED":
             structured_sig.takeAsRequired = True
         elif label == "AS_DIRECTED":
