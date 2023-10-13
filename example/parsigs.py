@@ -58,8 +58,9 @@ inflect_engine = inflect.engine()
 
 def _create_spell_checker():
     sc = SpellChecker()
+    keep_words_frequency ="example/keep_words.txt"
     #drug_words_frequency = 'example/drug_names.txt'
-    #sc.word_frequency.load_text_file(drug_words_frequency)
+    sc.word_frequency.load_text_file(keep_words_frequency)
     #sc.word_frequency.remove_words(["talbot"])
     return sc
 
