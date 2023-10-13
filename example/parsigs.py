@@ -20,12 +20,6 @@ import inflect
 Represents a structured medication dosage instructions.
 Attributes:
 -----------
-drug : str
-    The name of the medication drug.
-form : str
-     The form of the medication (e.g. tablet, capsule, injection).
-strength : str
-    The strength of the medication (e.g. 10mg, 20mg).
 frequencyType : str
     The type of frequency for the dosage (e.g. Hour, Day, Week, Month).
 interval : int
@@ -45,9 +39,7 @@ takeAsDirected: bool
 
 @dataclass
 class StructuredSig:
-    drug: str
     form: str
-    strength: str
     frequencyType: str
     interval: int
     singleDosageAmount: float
@@ -147,13 +139,15 @@ def _add_space_around_parentheses(s):
 Converts the preprocessed sig using static rules and the model outputs
 """
 
-
 def _split_entities_for_multiple_instructions(model_entities):
     result = []
     seen_labels = set()
     current_sublist = []
     for entity in model_entities:
-        if entity.label_ in seen_labels:
+        # Ignore DRUG and STRENGTH
+        if entity.label_ in ["DRUG", "STRENGTH"]:
+            continue
+        elif entity.label_ in seen_labels:
             result.append(current_sublist)
             current_sublist = []
             seen_labels.clear()
@@ -168,7 +162,7 @@ def _create_structured_sigs(model_output):
     multiple_instructions = _split_entities_for_multiple_instructions(entities)
     first_sig = _create_structured_sig(multiple_instructions[0])
     # incase multiple instructions exist, they apply to the same drug and form
-    other_sigs = [_create_structured_sig(instruction_entities, first_sig.drug, first_sig.form)
+    other_sigs = [_create_structured_sig(instruction_entities, first_sig.form)
                   for instruction_entities in multiple_instructions[1:]]
     return [first_sig] + other_sigs
 
@@ -184,8 +178,8 @@ def _to_singular(text):
     singular = inflect_engine.singular_noun(text)
     return singular if singular else text
 
-def _create_structured_sig(model_entities, drug=None, form=None):
-    structured_sig = StructuredSig(drug, form, None, None, None, None, None, None, False, False)
+def _create_structured_sig(model_entities, form=None):
+    structured_sig = StructuredSig(form, None, None, None, None, None, False, False)
     for entity in model_entities:
         text = entity.text
         label = entity.label_
@@ -195,8 +189,6 @@ def _create_structured_sig(model_entities, drug=None, form=None):
             form_from_dosage = _get_form_from_dosage_tag(text)
             if form_from_dosage is not None:
                 structured_sig.form = _to_singular(form_from_dosage)
-        elif label == 'DRUG':
-            structured_sig.drug = text
         elif label == 'FORM':
             structured_sig.form = _to_singular(text)
         elif label == 'FREQUENCY':
@@ -212,6 +204,8 @@ def _create_structured_sig(model_entities, drug=None, form=None):
             structured_sig.takeAsRequired = True
         elif label == "AS_DIRECTED":
             structured_sig.takeAsDirected = True
+        else:
+            continue
     return structured_sig
 
 
