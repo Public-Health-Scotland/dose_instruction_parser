@@ -3,6 +3,7 @@ from spellchecker import SpellChecker
 from itertools import chain
 from word2number import w2n
 
+import postprocess.ppfuncs.frequency as ppfrequency
 def _create_spell_checker():
     """
     Wrapper function to create a spellchecker.SpellChecker()

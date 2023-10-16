@@ -117,48 +117,11 @@ def _create_structured_di(model_entities, form=None, asRequired=False, asDirecte
         text = entity.text
         label = entity.label_
         if label == 'DOSAGE':
-            print("DOSAGE: " + text)
-            if "max" in text:
-                structured_di.dosageMin = 0
-                nums = re.findall('\d+', text)
-                if len(nums) != 1:
-                    warnings.warn("More than one number found for max dosage")
-                structured_di.dosageMax = nums[0]   
-            elif any(x in text for x in ("to", "-")):
-                substrs = re.split("to|-", text)
-                if len(substrs) == 2:
-                    if "up" in substrs[0]:
-                        structured_di.dosageMin = 0
-                    else:
-                        structured_di.dosageMin = float(substrs[0])
-                    structured_di.dosageMax = float(substrs[1])
-                else:
-                    structured_di.dosageMin = float(substrs[0])
-                    structured_di.dosageMax = float(substrs[0])
-            elif text.split()[0].replace('.','',1).isdigit():
-                dosage = float(text.split()[0])
-                structured_di.dosageMin = dosage
-                structured_di.dosageMax = dosage
-                structured_di.frequencyType = ppfrequency._get_frequency_type(text)
-                form_from_dosage = ppdosage._get_form_from_dosage_tag(text)
-                if form_from_dosage is not None:
-                    structured_di.form = ppdosage._to_singular(form_from_dosage)
-            # Check for e.g. "mg", "ml"
-            else:
-                measures = [ele for ele in ["mg", "ml"] if(ele in text)]
-                if bool(measures):
-                    structured_di.form = measures[0]
-                    dosage = text.replace(measures[0],"")
-                    # TODO: min and max
-                    structured_di.dosageMin = dosage
-                    structured_di.dosageMax = dosage
-                # Otherwise extract first number to use as dosage
-                else:
-                    nums = re.findall('\d+', text)
-                    # TODO: min and max
-                    dosage = nums[0]
-                    structured_di.dosageMin = dosage
-                    structured_di.dosageMax = dosage
+            min, max, form, freqtype = ppdosage._get_dosage_min_max(text)
+            structured_di.dosageMin = min
+            structured_di.dosageMax = max
+            structured_di.form = form
+            structured_di.frequencyType = freqtype
         elif label == 'FORM':
             structured_di.form = ppdosage._to_singular(text)
         elif label == 'FREQUENCY':
