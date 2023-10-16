@@ -35,7 +35,9 @@ def _autocorrect(di):
     di = ' '.join(corrected_words)
     return di
 
+
 def _convert_words_to_numbers(sentence):
+    frac_dict = {"half": 0.5, "third": 0.3, "quarter": 0.25, "fifth": 0.2}
     words = sentence.split()
     output_words = []
     for word in words:
@@ -46,13 +48,16 @@ def _convert_words_to_numbers(sentence):
     return ' '.join(output_words)
 
 def _convert_fract_to_num(sentence):
+    frac_dict = {"half": 0.5, "third": 0.3, "quarter": 0.25, "fifth": 0.2}
     def is_frac(_word):
         nums = _word.split('/')
         return len(nums) == 2 and '/' in _word and nums[0].isdigit() and nums[1].isdigit()
     words = sentence.split()
     output_words = []
     for word in words:
-        if is_frac(word):
+        if word in frac_dict.keys():
+            output_words.append(str(frac_dict[word]))
+        elif is_frac(word):
             num, denom = word.split('/')
             output_words.append(str(int(num) / int(denom)))
         else:
@@ -74,8 +79,8 @@ def _pre_process(di):
             word = word.replace('tabs', 'tablets')
         output_words.append(word)
     di = ' '.join(output_words)
-    di = _convert_words_to_numbers(di)
-    return _convert_fract_to_num(di)
+    di = _convert_words_to_numbers(_convert_fract_to_num(di))
+    return di
 
 
 def _add_space_around_parentheses(s):
