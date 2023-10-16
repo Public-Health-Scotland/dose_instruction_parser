@@ -1,5 +1,7 @@
 import inflect
 import re
+import warnings
+from functools import reduce
 
 import postprocess.ppfuncs.frequency as ppfrequency
 
@@ -26,10 +28,7 @@ def _to_singular(text):
     singular = inflect_engine.singular_noun(text)
     return singular if singular else text
 
-def _get_dosage_info(text):
-    print("DOSAGE: " + text)
-    form = None
-    freqtype = None
+def _get_range(text):
     if "max" in text:
         min = 0
         nums = re.findall('\d+', text)
@@ -49,29 +48,56 @@ def _get_dosage_info(text):
         else:
             min = float(substrs[0])
             max = float(substrs[0])
-    elif text.split()[0].replace('.','',1).isdigit():
-        dosage = float(text.split()[0])
-        min = dosage
-        max = dosage
-        freqtype = ppfrequency._get_frequency_type(text)
-        form_from_dosage = _get_form_from_dosage_tag(text)
-        if form_from_dosage is not None:
-            form = _to_singular(form_from_dosage)
-    # Check for e.g. "mg", "ml"
     else:
-        measures = [ele for ele in ["mg", "ml"] if(ele in text)]
-        if bool(measures):
-            form = measures[0]
-            dosage = text.replace(measures[0],"")
-            # TODO: min and max
+        min = text
+        max = text
+    return min, max
+
+def _get_continuous_dose(text):
+    measures = [ele for ele in ["mg", "ml"] if(ele in text)]
+    if bool(measures):
+        if len(measures) > 1:
+            warnings.warn("More than one type of dosage continuous measure: " + str(measures) + 
+            ". Using " + str(measures[0]) + ".")
+        form = measures[0]
+        dose_nums = re.findall('\d+', text.replace(measures[0],""))
+        print(dose_nums)
+        if len(dose_nums) > 1:
+            # e.g. 2 5ml spoonfuls becomes 10 ml
+            dose = str(reduce(lambda x, y: x*y, [float(num) for num in dose_nums]))
+        else:
+            dose = dose_nums[0]
+        min, max = _get_range(dose)
+    else:
+        min = None
+        max = None
+        form = None
+    return min, max, form
+
+def _get_dosage_info(text):
+    print("DOSAGE: " + text)
+    form = None
+    freqtype = None
+    # Check for e.g. "mg", "ml"
+    min, max, form = _get_continuous_dose(text)
+    if min is None:
+        min, max = _get_range(text)
+    # Where there is no dose range min and max are the same
+    if min is None:
+        # If first part of tag is a number this is the dosage
+        if text.split()[0].replace('.','',1).isdigit():
+            dosage = float(text.split()[0])
             min = dosage
             max = dosage
-        # Otherwise extract first number to use as dosage
+            freqtype = ppfrequency._get_frequency_type(text)
+            form_from_dosage = _get_form_from_dosage_tag(text)
+            if form_from_dosage is not None:
+                form = _to_singular(form_from_dosage)
+            # Otherwise extract first number to use as dosage
         else:
             nums = re.findall('\d+', text)
             # TODO: min and max
             dosage = nums[0]
             min = dosage
             max = dosage
-
     return min, max, form, freqtype
