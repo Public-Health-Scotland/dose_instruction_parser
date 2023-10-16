@@ -8,10 +8,10 @@ def _get_form_from_dosage_tag(text):
     if len(splitted) == 2:
         return splitted[1]
 
-def _get_single_dose(sig):
+def _get_single_dose(di):
     def is_followed_by_number(word):
         return word in dose_instructions
-    words = sig.split()
+    words = di.split()
     if is_followed_by_number(words[0]) and len(words) > 1 and _is_str_float(words[1]):
         return float(words[1])
     return None

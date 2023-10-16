@@ -16,7 +16,7 @@ import postprocess.ppfuncs.frequency as ppfrequency
 import postprocess.ppfuncs.duration as ppduration
 
 @dataclass
-class StructuredSig:
+class StructuredDI:
     """
     Represents a structured medication dosage instructions.
     Attributes:
@@ -60,23 +60,29 @@ class StructuredSig:
 default_model_name = "en_parsigs"
 
 def _get_model_entities(model_output):
+    """
+    Retrieve the entities from model output.
+    Create model output by:
+        model = spacy.load_model("my_model")
+        model_output = model("my dose instruction")
+    """
     entities = model_output.ents
     return entities
 
-def _parse_sig(sig: str, model: Language):
+def _parse_di(di: str, model: Language):
     """
-    Converts the preprocessed sig using static rules and the model outputs
+    Converts the preprocessed di using static rules and the model outputs
     """
-    sig_preprocessed = ppprepare._pre_process(sig)
-    model_output = model(sig_preprocessed)
-    return _create_structured_sigs(model_output)
+    di_preprocessed = ppprepare._pre_process(di)
+    model_output = model(di_preprocessed)
+    return _create_structured_dis(model_output)
 
-def _parse_sigs(sig_lst, model: Language):
+def _parse_dis(di_lst, model: Language):
     """
-    Converts a medication dosage instructions string to a StructuredSig object.
-    The input string is pre processed, and than combining static rules and NER model outputs, a StructuredSig object is created.
+    Converts a medication dosage instructions string to a StructuredDI object.
+    The input string is pre processed, and than combining static rules and NER model outputs, a StructuredDI object is created.
     """
-    return ppprepare._flatmap(lambda sig: _parse_sig(sig, model), sig_lst)
+    return ppprepare._flatmap(lambda di: _parse_di(di, model), di_lst)
 
 def _split_entities_for_multiple_instructions(model_entities):
     result = []
@@ -96,8 +102,8 @@ def _split_entities_for_multiple_instructions(model_entities):
     return result
 
 
-def _create_structured_sig(model_entities, form=None, asRequired=False, asDirected=False):
-    structured_sig = StructuredSig(form, None, None, None, None, 
+def _create_structured_di(model_entities, form=None, asRequired=False, asDirected=False):
+    structured_di = StructuredDI(form, None, None, None, None, 
                                     None, None, None, None, asRequired, asDirected)
     for entity in model_entities:
         text = entity.text
@@ -105,95 +111,95 @@ def _create_structured_sig(model_entities, form=None, asRequired=False, asDirect
         if label == 'DOSAGE':
             print("DOSAGE: " + text)
             if "max" in text:
-                structured_sig.dosageMin = 0
+                structured_di.dosageMin = 0
                 nums = re.findall('\d+', text)
                 if len(nums) != 1:
                     warnings.warn("More than one number found for max dosage")
-                structured_sig.dosageMax = nums[0]   
+                structured_di.dosageMax = nums[0]   
             elif any(x in text for x in ("to", "-")):
                 substrs = re.split("to|-", text)
                 if len(substrs) == 2:
                     if "up" in substrs[0]:
-                        structured_sig.dosageMin = 0
+                        structured_di.dosageMin = 0
                     else:
-                        structured_sig.dosageMin = float(substrs[0])
-                    structured_sig.dosageMax = float(substrs[1])
+                        structured_di.dosageMin = float(substrs[0])
+                    structured_di.dosageMax = float(substrs[1])
                 else:
-                    structured_sig.dosageMin = float(substrs[0])
-                    structured_sig.dosageMax = float(substrs[0])
+                    structured_di.dosageMin = float(substrs[0])
+                    structured_di.dosageMax = float(substrs[0])
             elif text.split()[0].isnumeric():
                 dosage = float(text.split()[0])
-                structured_sig.dosageMin = dosage
-                structured_sig.dosageMax = dosage
-                structured_sig.frequencyType = ppfrequency._get_frequency_type(text)
+                structured_di.dosageMin = dosage
+                structured_di.dosageMax = dosage
+                structured_di.frequencyType = ppfrequency._get_frequency_type(text)
                 form_from_dosage = ppdosage._get_form_from_dosage_tag(text)
                 if form_from_dosage is not None:
-                    structured_sig.form = ppdosage._to_singular(form_from_dosage)
+                    structured_di.form = ppdosage._to_singular(form_from_dosage)
             # Check for e.g. "mg", "ml"
             else:
                 measures = [ele for ele in ["mg", "ml"] if(ele in text)]
                 if bool(measures):
-                    structured_sig.form = measures[0]
+                    structured_di.form = measures[0]
                     dosage = text.replace(measures[0],"")
                     # TODO: min and max
-                    structured_sig.dosageMin = dosage
-                    structured_sig.dosageMax = dosage
+                    structured_di.dosageMin = dosage
+                    structured_di.dosageMax = dosage
                 # Otherwise extract first number to use as dosage
                 else:
                     nums = re.findall('\d+', text)
                     # TODO: min and max
                     dosage = nums[0]
-                    structured_sig.dosageMin = dosage
-                    structured_sig.dosageMax = dosage
+                    structured_di.dosageMin = dosage
+                    structured_di.dosageMax = dosage
         elif label == 'FORM':
-            structured_sig.form = ppdosage._to_singular(text)
+            structured_di.form = ppdosage._to_singular(text)
         elif label == 'FREQUENCY':
-            structured_sig.frequencyType = ppfrequency._get_frequency_type(text)
+            structured_di.frequencyType = ppfrequency._get_frequency_type(text)
             # TODO: min and max
             freq = ppfrequency._get_interval(text)
-            structured_sig.frequencyMin = freq
-            structured_sig.frequencyMax = freq
-            # Default added only if there is a frequency tag in the sig
+            structured_di.frequencyMin = freq
+            structured_di.frequencyMax = freq
+            # Default added only if there is a frequency tag in the di
             # handles cases such as "Every TIME_UNIT"
-            if structured_sig.frequencyMin is None:
-                structured_sig.frequencyMin = 1
-                structured_sig.frequencyMax = 1
+            if structured_di.frequencyMin is None:
+                structured_di.frequencyMin = 1
+                structured_di.frequencyMax = 1
         elif label == 'DURATION':
-            structured_sig.durationType = ppfrequency._get_frequency_type(text)
+            structured_di.durationType = ppfrequency._get_frequency_type(text)
             # TODO: min and max
             duration = ppfrequency._get_interval(text)
-            structured_sig.durationMin = duration
-            structured_sig.durationMax = duration
+            structured_di.durationMin = duration
+            structured_di.durationMax = duration
         elif label == "AS_REQUIRED":
-            structured_sig.takeAsRequired = True
+            structured_di.takeAsRequired = True
         elif label == "AS_DIRECTED":
-            structured_sig.takeAsDirected = True
+            structured_di.takeAsDirected = True
         else:
             continue
-    return structured_sig
+    return structured_di
 
-def _create_structured_sigs(model_output):
+def _create_structured_dis(model_output):
     entities = _get_model_entities(model_output)
     multiple_instructions = _split_entities_for_multiple_instructions(entities)
-    first_sig = _create_structured_sig(multiple_instructions[0])
+    first_di = _create_structured_di(multiple_instructions[0])
     # incase multiple instructions exist, they apply to the same drug and form
-    other_sigs = [_create_structured_sig(instruction_entities, 
-                                         first_sig.form, first_sig.asRequired,
-                                         first_sig.asDirected)
+    other_dis = [_create_structured_di(instruction_entities, 
+                                         first_di.form, first_di.asRequired,
+                                         first_di.asDirected)
                   for instruction_entities in multiple_instructions[1:]]
-    return [first_sig] + other_sigs
+    return [first_di] + other_dis
 
 
-class SigParser:
+class DIParser:
     def __init__(self, model_name="en_parsigs"):
         self.__language = spacy.load(model_name)
-    def parse(self, sig: str):
-        return _parse_sig(sig, self.__language)
-    def parse_many(self, sigs: list):
-        return _parse_sigs(sigs, self.__language)
+    def parse(self, di: str):
+        return _parse_di(di, self.__language)
+    def parse_many(self, dis: list):
+        return _parse_dis(dis, self.__language)
 
-sig_parser = SigParser(model_name="output/model-best")
+di_parser = DIParser(model_name="output/model-best")
 
-sig = "use two puffs into each nostril twice daily for 3 weeks"
-parsed_sig = sig_parser.parse(sig)
+di = "use two puffs into each nostril twice daily for 3 weeks"
+parsed_di = di_parser.parse(di)
 
