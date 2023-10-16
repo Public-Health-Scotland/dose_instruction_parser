@@ -3,14 +3,11 @@ from spellchecker import SpellChecker
 from itertools import chain
 from word2number import w2n
 
-
-number_words = ["one", "two", "three", "four", "five", 
-                "six", "seven", "eight", "nine", "ten"]
-
-def _is_number_word(word):
-    return word in number_words
-
 def _create_spell_checker():
+    """
+    Wrapper function to create a spellchecker.SpellChecker()
+    Words in the keep_words.txt file will not be spellchecked
+    """
     sc = SpellChecker()
     keep_words_frequency ="postprocess/keep_words.txt"
     sc.word_frequency.load_text_file(keep_words_frequency)
@@ -22,6 +19,10 @@ def _flatmap(func, iterable):
     return list(chain.from_iterable(map(func, iterable)))
 
 def _autocorrect(di):
+    """
+    Function to autocorrect a dose instruction before sending it
+    to the NER model for tagging. 
+    """
     di = di.lower().strip()
     corrected_words = []
     for word in di.split():
@@ -38,9 +39,9 @@ def _convert_words_to_numbers(sentence):
     words = sentence.split()
     output_words = []
     for word in words:
-        if _is_number_word(word):
+        try:
             output_words.append(str(w2n.word_to_num(word)))
-        else:
+        except:
             output_words.append(word)
     return ' '.join(output_words)
 
