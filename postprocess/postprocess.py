@@ -135,7 +135,7 @@ def _create_structured_di(model_entities, form=None, asRequired=False, asDirecte
                 else:
                     structured_di.dosageMin = float(substrs[0])
                     structured_di.dosageMax = float(substrs[0])
-            elif text.split()[0].isnumeric():
+            elif text.split()[0].replace('.','',1).isdigit():
                 dosage = float(text.split()[0])
                 structured_di.dosageMin = dosage
                 structured_di.dosageMax = dosage
