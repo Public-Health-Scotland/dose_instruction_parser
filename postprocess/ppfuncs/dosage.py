@@ -26,7 +26,7 @@ def _to_singular(text):
     singular = inflect_engine.singular_noun(text)
     return singular if singular else text
 
-def _get_dosage_min_max(text):
+def _get_dosage_info(text):
     print("DOSAGE: " + text)
     form = None
     freqtype = None

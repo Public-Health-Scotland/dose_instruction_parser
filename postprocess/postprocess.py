@@ -117,7 +117,7 @@ def _create_structured_di(model_entities, form=None, asRequired=False, asDirecte
         text = entity.text
         label = entity.label_
         if label == 'DOSAGE':
-            min, max, form, freqtype = ppdosage._get_dosage_min_max(text)
+            min, max, form, freqtype = ppdosage._get_dosage_info(text)
             structured_di.dosageMin = min
             structured_di.dosageMax = max
             structured_di.form = form
@@ -125,26 +125,20 @@ def _create_structured_di(model_entities, form=None, asRequired=False, asDirecte
         elif label == 'FORM':
             structured_di.form = ppdosage._to_singular(text)
         elif label == 'FREQUENCY':
-            structured_di.frequencyType = ppfrequency._get_frequency_type(text)
-            # TODO: min and max
-            freq = ppfrequency._get_interval(text)
-            structured_di.frequencyMin = freq
-            structured_di.frequencyMax = freq
-            # Default added only if there is a frequency tag in the di
-            # handles cases such as "Every TIME_UNIT"
-            if structured_di.frequencyMin is None:
-                structured_di.frequencyMin = 1
-                structured_di.frequencyMax = 1
+            min, max, freqtype = ppfrequency._get_frequency_info(text)
+            structured_di.frequencyMin = min
+            structured_di.frequencyMax = max
+            if freqtype is not None:
+                structured_di.frequencyType = freqtype
         elif label == 'DURATION':
-            structured_di.durationType = ppfrequency._get_frequency_type(text)
-            # TODO: min and max
-            duration = ppfrequency._get_interval(text)
-            structured_di.durationMin = duration
-            structured_di.durationMax = duration
+            min, max, durtype = ppduration._get_duration_info(text)
+            structured_di.durationMin = min
+            structured_di.durationMax = max
+            structured_di.durationType = durtype
         elif label == "AS_REQUIRED":
-            structured_di.takeAsRequired = True
+            structured_di.asRequired = True
         elif label == "AS_DIRECTED":
-            structured_di.takeAsDirected = True
+            structured_di.asDirected = True
         else:
             continue
     return structured_di
