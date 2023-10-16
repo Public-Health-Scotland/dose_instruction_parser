@@ -175,8 +175,8 @@ def _create_structured_sigs(model_output):
     first_sig = _create_structured_sig(multiple_instructions[0])
     # incase multiple instructions exist, they apply to the same drug and form
     other_sigs = [_create_structured_sig(instruction_entities, 
-                                         first_sig.form, first_sig.as_required,
-                                         first_sig.as_directed)
+                                         first_sig.form, first_sig.asRequired,
+                                         first_sig.asDirected)
                   for instruction_entities in multiple_instructions[1:]]
     return [first_sig] + other_sigs
 
@@ -193,7 +193,8 @@ def _to_singular(text):
     return singular if singular else text
 
 def _create_structured_sig(model_entities, form=None, asRequired=False, asDirected=False):
-    structured_sig = StructuredSig(form, None, None, None, None, None, None, None, None, asRequired, asDirected)
+    structured_sig = StructuredSig(form, None, None, None, None, 
+                                    None, None, None, None, asRequired, asDirected)
     for entity in model_entities:
         text = entity.text
         label = entity.label_
@@ -231,7 +232,8 @@ def _create_structured_sig(model_entities, form=None, asRequired=False, asDirect
             freq = _get_interval(text)
             structured_sig.frequencyMin = freq
             structured_sig.frequencyMax = freq
-            # Default added only if there is a frequency tag in the sig, handles cases such as "Every TIME_UNIT"
+            # Default added only if there is a frequency tag in the sig
+            # handles cases such as "Every TIME_UNIT"
             if structured_sig.frequencyMin is None:
                 structured_sig.frequencyMin = 1
                 structured_sig.frequencyMax = 1
