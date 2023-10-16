@@ -18,7 +18,7 @@ import postprocess.ppfuncs.duration as ppduration
 @dataclass
 class StructuredDI:
     """
-    Represents a structured medication dosage instructions.
+    Represents a structured dose instruction
     Attributes:
     -----------
     form: str
@@ -71,7 +71,9 @@ def _get_model_entities(model_output):
 
 def _parse_di(di: str, model: Language):
     """
-    Converts the preprocessed di using static rules and the model outputs
+    1. Preprocesses dose instruction
+    2. Applies model to retrieve entities
+    3. Creates structured dose instruction from entities using static rules
     """
     di_preprocessed = ppprepare._pre_process(di)
     model_output = model(di_preprocessed)
@@ -79,12 +81,15 @@ def _parse_di(di: str, model: Language):
 
 def _parse_dis(di_lst, model: Language):
     """
-    Converts a medication dosage instructions string to a StructuredDI object.
-    The input string is pre processed, and than combining static rules and NER model outputs, a StructuredDI object is created.
+    Parses multiple dose instructions at once
     """
     return ppprepare._flatmap(lambda di: _parse_di(di, model), di_lst)
 
 def _split_entities_for_multiple_instructions(model_entities):
+    """
+    Automatically determines if multiple dose instructions are included
+    within one input dose instruction. If so, splits up the dose instruction.
+    """
     result = []
     seen_labels = set()
     current_sublist = []
@@ -103,6 +108,9 @@ def _split_entities_for_multiple_instructions(model_entities):
 
 
 def _create_structured_di(model_entities, form=None, asRequired=False, asDirected=False):
+    """
+    Creates a StructuredDI from model entities.
+    """
     structured_di = StructuredDI(form, None, None, None, None, 
                                     None, None, None, None, asRequired, asDirected)
     for entity in model_entities:
@@ -179,6 +187,12 @@ def _create_structured_di(model_entities, form=None, asRequired=False, asDirecte
     return structured_di
 
 def _create_structured_dis(model_output):
+    """
+    Creates StructuredDIs from a model output.
+    1. Gets entities
+    2. Determines whether multiple instructions present 
+    3. Creates a StructuredDI for each instruction
+    """
     entities = _get_model_entities(model_output)
     multiple_instructions = _split_entities_for_multiple_instructions(entities)
     first_di = _create_structured_di(multiple_instructions[0])
@@ -191,6 +205,9 @@ def _create_structured_dis(model_output):
 
 
 class DIParser:
+    """
+    Dose instruction parser class 
+    """
     def __init__(self, model_name="en_parsigs"):
         self.__language = spacy.load(model_name)
     def parse(self, di: str):
@@ -198,6 +215,8 @@ class DIParser:
     def parse_many(self, dis: list):
         return _parse_dis(dis, self.__language)
 
+
+# Example
 di_parser = DIParser(model_name="output/model-best")
 
 di = "use two puffs into each nostril twice daily for 3 weeks"
