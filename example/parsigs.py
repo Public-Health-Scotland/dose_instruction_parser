@@ -10,6 +10,7 @@ from itertools import chain
 import copy
 import os
 from spellchecker import SpellChecker
+import warnings
 
 
 import inflect
@@ -199,7 +200,25 @@ def _create_structured_sig(model_entities, form=None, asRequired=False, asDirect
         text = entity.text
         label = entity.label_
         if label == 'DOSAGE':
-            if text.split()[0].isnumeric():
+            print(text)
+            if "max" in text:
+                structured_sig.dosageMin = 0
+                nums = re.findall('\d+', text)
+                if len(nums) != 1:
+                    warnings.warn("More than one number found for max dosage")
+                structured_sig.dosageMax = nums[0]   
+            elif any(x in text for x in ("to", "-")):
+                substrs = re.split("to|-", text)
+                if len(substrs) == 2:
+                    if "up" in substrs[0]:
+                        structured_sig.dosageMin = 0
+                    else:
+                        structured_sig.dosageMin = float(substrs[0])
+                    structured_sig.dosageMax = float(substrs[1])
+                else:
+                    structured_sig.dosageMin = float(substrs[0])
+                    structured_sig.dosageMax = float(substrs[0])
+            elif text.split()[0].isnumeric():
                 # TODO: min and max here
                 dosage = float(text.split()[0])
                 structured_sig.dosageMin = dosage

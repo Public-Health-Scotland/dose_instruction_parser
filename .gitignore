@@ -8,6 +8,8 @@ output/*
 tok2vec_model
 vectors
 
+*.pyc
+
 # Common text files that may contain data #
 *.[cC][sS][vV]*
 *.[tT][xX][tT]
