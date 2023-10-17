@@ -7,11 +7,21 @@ import postprocess.ppfuncs.frequency as ppfrequency
 
 dose_instructions = ['take', 'inhale', 'instill', 'apply', 'spray', 'swallow']
 
+def _is_str_float(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
 # Not v sophisticated - just takes e.g. "2 tabs" and gets 2nd word "tabs"
 def _get_form_from_dosage_tag(text):
     splitted = text.split(' ')
     if len(splitted) == 2:
-        return splitted[1]
+        if _is_str_float(splitted[1]):
+            return None
+        else:
+            return splitted[1]
 
 def _get_single_dose(di):
     def is_followed_by_number(word):
@@ -37,7 +47,7 @@ def _get_continuous_dose(text):
         form = measures[0]
         min, max = ppfrequency._get_range(text.replace(measures[0], ""))
         if min is None:
-            dose_nums = re.findall("\d*\.?\d+", re.sub(",", "", text))
+            dose_nums = re.findall(ppfrequency.re_digit, re.sub(",", "", text))
             print(dose_nums)
             if len(dose_nums) > 1:
                 # e.g. 2 5ml spoonfuls becomes 10 ml
@@ -74,9 +84,12 @@ def _get_dosage_info(text):
                 form = _to_singular(form_from_dosage)
             # Otherwise extract first number to use as dosage
         else:
-            nums = re.findall("\d*\.?\d+", re.sub(",", "", text))
-            # TODO: min and max
-            dosage = nums[0]
-            min = dosage
-            max = dosage
+            nums = re.findall(ppfrequency.re_digit, re.sub(",", "", text))
+            if len(nums) > 0:
+                dosage = nums[0]
+                min = dosage
+                max = dosage
+            else:
+                min = None
+                max = None
     return min, max, form, freqtype

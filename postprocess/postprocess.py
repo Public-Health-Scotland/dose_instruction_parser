@@ -25,7 +25,7 @@ class StructuredDI:
         The form of drug (e.g. "tablet", "patch", "injection")
     dosageMin: float
         The minimum dosage 
-    dosageMax: float
+    dosageMax: floata
         The maximum dosage 
     frequencyMin: float
         The minimum frequency 
@@ -117,7 +117,8 @@ def _create_structured_di(model_entities, form=None, asRequired=False, asDirecte
         text = entity.text
         label = entity.label_
         if label == 'FORM':
-            structured_di.form = ppdosage._to_singular(text)
+            if structured_di.form is None:
+                structured_di.form = ppdosage._to_singular(text)
         elif label == 'DOSAGE':
             min, max, form, freqtype = ppdosage._get_dosage_info(text)
             structured_di.dosageMin = min

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import re
 
 re_digit = "\d*\.?\d+"
 
@@ -65,7 +66,6 @@ def _get_range(text):
             max = nums[0]   
     elif any(x in text for x in (" to ", "-", " or ")):
         substrs = re.split("to|-|or", text)
-        print(substrs)
         if len(substrs) == 2:
             if "up" in substrs[0]:
                 min = 0

@@ -89,10 +89,4 @@ def _add_space_around_parentheses(s):
     s = re.sub(r'\)(?!\s)', r') ', s)
     return s
 
-def _is_str_float(s):
-    try:
-        float(s)
-        return True
-    except ValueError:
-        return False
 
