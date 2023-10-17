@@ -48,13 +48,45 @@ def _get_latin_frequency(frequency):
         if latin_freq in frequency:
             return latin_frequency_types[latin_freq]
 
+
+def _get_range(text):
+    if "max" in text:
+        min = 0
+        nums = re.findall("\d*\.?\d+", re.sub(",", "", text))
+        if len(nums) != 1:
+            warnings.warn("More than one number found for max")
+            max = nums[-1]
+        else:
+            max = nums[0]   
+    elif any(x in text for x in (" to ", "-", " or ")):
+        substrs = re.split("to|-|or", text)
+        if len(substrs) == 2:
+            if "up" in substrs[0]:
+                min = 0
+            else:
+                min = float(substrs[0])
+            max = float(substrs[1])
+        else:
+            min = float(substrs[0])
+            max = float(substrs[0])
+    elif "and" in text:
+        substrs = re.split("and|,", text)
+        num = len(substrs)
+        min = num
+        max = num
+    else:
+        min = None
+        max = None
+    return min, max
+
 def _get_frequency_info(text):
     print("FREQUENCY: " + text)
     freqtype = _get_frequency_type(text)
-    # TODO: min and max
-    freq = _get_number_of_times(text)
-    min = freq
-    max = freq
+    min, max = _get_range(text)
+    if min is None:
+        freq = _get_number_of_times(text)
+        min = freq
+        max = freq
     # Default added only if there is a frequency tag in the di
     # handles cases such as "Every TIME_UNIT"
     if min is None:

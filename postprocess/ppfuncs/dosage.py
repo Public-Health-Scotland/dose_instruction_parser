@@ -28,31 +28,6 @@ def _to_singular(text):
     singular = inflect_engine.singular_noun(text)
     return singular if singular else text
 
-def _get_range(text):
-    if "max" in text:
-        min = 0
-        nums = re.findall("\d*\.?\d+", re.sub(",", "", text))
-        if len(nums) != 1:
-            warnings.warn("More than one number found for max dosage")
-            max = nums[-1]
-        else:
-            max = nums[0]   
-    elif any(x in text for x in ("to", "-", "or")):
-        substrs = re.split("to|-|or", text)
-        if len(substrs) == 2:
-            if "up" in substrs[0]:
-                min = 0
-            else:
-                min = float(substrs[0])
-            max = float(substrs[1])
-        else:
-            min = float(substrs[0])
-            max = float(substrs[0])
-    else:
-        min = None
-        max = None
-    return min, max
-
 def _get_continuous_dose(text):
     measures = [ele for ele in ["mg", "ml"] if(ele in text)]
     if bool(measures):
@@ -60,7 +35,7 @@ def _get_continuous_dose(text):
             warnings.warn("More than one type of dosage continuous measure: " + str(measures) + 
             ". Using " + str(measures[0]) + ".")
         form = measures[0]
-        min, max = _get_range(text.replace(measures[0], ""))
+        min, max = ppfrequency._get_range(text.replace(measures[0], ""))
         if min is None:
             dose_nums = re.findall("\d*\.?\d+", re.sub(",", "", text))
             print(dose_nums)
@@ -85,7 +60,7 @@ def _get_dosage_info(text):
     min, max, form = _get_continuous_dose(text)
     if min is None:
         # Check for range of doses
-        min, max = _get_range(text)   
+        min, max = ppfrequency._get_range(text)   
     # Where there is no dose range min and max are the same
     if min is None:
         # If first part of tag is a number this is the dosage
