@@ -37,8 +37,8 @@ def _get_range(text):
             max = nums[-1]
         else:
             max = nums[0]   
-    elif any(x in text for x in ("to", "-")):
-        substrs = re.split("to|-", text)
+    elif any(x in text for x in ("to", "-", "or")):
+        substrs = re.split("to|-|or", text)
         if len(substrs) == 2:
             if "up" in substrs[0]:
                 min = 0
@@ -61,7 +61,6 @@ def _get_continuous_dose(text):
             ". Using " + str(measures[0]) + ".")
         form = measures[0]
         dose_nums = re.findall('\d+', text.replace(measures[0],""))
-        print(dose_nums)
         if len(dose_nums) > 1:
             # e.g. 2 5ml spoonfuls becomes 10 ml
             dose = str(reduce(lambda x, y: x*y, [float(num) for num in dose_nums]))

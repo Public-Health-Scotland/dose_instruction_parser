@@ -116,14 +116,14 @@ def _create_structured_di(model_entities, form=None, asRequired=False, asDirecte
     for entity in model_entities:
         text = entity.text
         label = entity.label_
-        if label == 'DOSAGE':
+        if label == 'FORM':
+            structured_di.form = ppdosage._to_singular(text)
+        elif label == 'DOSAGE':
             min, max, form, freqtype = ppdosage._get_dosage_info(text)
             structured_di.dosageMin = min
             structured_di.dosageMax = max
             structured_di.form = form
             structured_di.frequencyType = freqtype
-        elif label == 'FORM':
-            structured_di.form = ppdosage._to_singular(text)
         elif label == 'FREQUENCY':
             min, max, freqtype = ppfrequency._get_frequency_info(text)
             structured_di.frequencyMin = min
