@@ -31,7 +31,7 @@ def _to_singular(text):
 def _get_range(text):
     if "max" in text:
         min = 0
-        nums = re.findall('\d+', text)
+        nums = re.findall("\d*\.?\d+", re.sub(",", "", text))
         if len(nums) != 1:
             warnings.warn("More than one number found for max dosage")
             max = nums[-1]
@@ -49,8 +49,8 @@ def _get_range(text):
             min = float(substrs[0])
             max = float(substrs[0])
     else:
-        min = text
-        max = text
+        min = None
+        max = None
     return min, max
 
 def _get_continuous_dose(text):
@@ -60,13 +60,17 @@ def _get_continuous_dose(text):
             warnings.warn("More than one type of dosage continuous measure: " + str(measures) + 
             ". Using " + str(measures[0]) + ".")
         form = measures[0]
-        dose_nums = re.findall('\d+', text.replace(measures[0],""))
-        if len(dose_nums) > 1:
-            # e.g. 2 5ml spoonfuls becomes 10 ml
-            dose = str(reduce(lambda x, y: x*y, [float(num) for num in dose_nums]))
-        else:
-            dose = dose_nums[0]
-        min, max = _get_range(dose)
+        min, max = _get_range(text.replace(measures[0], ""))
+        if min is None:
+            dose_nums = re.findall("\d*\.?\d+", re.sub(",", "", text))
+            print(dose_nums)
+            if len(dose_nums) > 1:
+                # e.g. 2 5ml spoonfuls becomes 10 ml
+                dose = str(reduce(lambda x, y: x*y, [float(num) for num in dose_nums]))
+            else:
+                dose = dose_nums[0]
+            min = dose
+            max = dose
     else:
         min = None
         max = None
@@ -80,7 +84,8 @@ def _get_dosage_info(text):
     # Check for e.g. "mg", "ml"
     min, max, form = _get_continuous_dose(text)
     if min is None:
-        min, max = _get_range(text)
+        # Check for range of doses
+        min, max = _get_range(text)   
     # Where there is no dose range min and max are the same
     if min is None:
         # If first part of tag is a number this is the dosage
@@ -94,7 +99,7 @@ def _get_dosage_info(text):
                 form = _to_singular(form_from_dosage)
             # Otherwise extract first number to use as dosage
         else:
-            nums = re.findall('\d+', text)
+            nums = re.findall("\d*\.?\d+", re.sub(",", "", text))
             # TODO: min and max
             dosage = nums[0]
             min = dosage
