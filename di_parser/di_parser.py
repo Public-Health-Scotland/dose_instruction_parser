@@ -165,7 +165,7 @@ class DIParser:
     -------
     >>> di_parser = DIParser(model_name="output/model-best")
 
-    >>> di = "use two puffs into each nostril twice daily for 3 weeks"
+    >>> di = "take 2 3ml spoonfuls with meals for 5-6 weeks as discussed"
     >>> parsed_di = di_parser.parse(di)
     >>> parsed_di
     [StructuredDI(form='ml', dosageMin=6.0, dosageMax=6.0, 
