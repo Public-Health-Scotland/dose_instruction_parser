@@ -120,7 +120,7 @@ def _get_continuous_dose(text):
                 # e.g. 2 5ml spoonfuls becomes 10 ml
                 dose = str(reduce(lambda x, y: x*y, [float(num) for num in dose_nums]))
             else:
-                dose = dose_nums[0]
+                dose = float(dose_nums[0])
             min = dose
             max = dose
     else:
@@ -169,7 +169,7 @@ def _get_dosage_info(text):
         else:
             nums = re.findall(pfrequency.re_digit, re.sub(",", "", text))
             if len(nums) > 0:
-                dosage = nums[0]
+                dosage = float(nums[0])
                 min = dosage
                 max = dosage
             else:

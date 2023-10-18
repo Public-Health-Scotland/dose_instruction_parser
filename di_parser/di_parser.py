@@ -160,6 +160,18 @@ def _create_structured_dis(model_output):
 class DIParser:
     """
     Dose instruction parser class 
+
+    Example
+    -------
+    >>> di_parser = DIParser(model_name="output/model-best")
+
+    >>> di = "use two puffs into each nostril twice daily for 3 weeks"
+    >>> parsed_di = di_parser.parse(di)
+    >>> parsed_di
+    [StructuredDI(form='ml', dosageMin=6.0, dosageMax=6.0, 
+        frequencyMin=3.0, frequencyMax=3.0, frequencyType='Day',
+         durationMin=5.0, durationMax=6.0, durationType='Week', 
+         asRequired=False, asDirected=True)]
     """
     def __init__(self, model_name):
         self.__language = spacy.load(model_name)
@@ -169,9 +181,5 @@ class DIParser:
         return _parse_dis(dis, self.__language)
 
 
-# Example
-di_parser = DIParser(model_name="output/model-best")
 
-di = "use two puffs into each nostril twice daily for 3 weeks"
-parsed_di = di_parser.parse(di)
 
