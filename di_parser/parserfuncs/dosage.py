@@ -115,7 +115,6 @@ def _get_continuous_dose(text):
         min, max = pfrequency._get_range(text.replace(measures[0], ""))
         if min is None:
             dose_nums = re.findall(pfrequency.re_digit, re.sub(",", "", text))
-            print(dose_nums)
             if len(dose_nums) > 1:
                 # e.g. 2 5ml spoonfuls becomes 10 ml
                 dose = str(reduce(lambda x, y: x*y, [float(num) for num in dose_nums]))
