@@ -1,24 +1,22 @@
 import sys
-from pathlib import Path
 import spacy
 from dataclasses import dataclass
 import re
 from spacy import Language
-from itertools import chain
 import copy
 import os
 import warnings
 
 # Local import of postprocess functions
-import postprocess.ppfuncs.prepare as ppprepare
-import postprocess.ppfuncs.dosage as ppdosage
-import postprocess.ppfuncs.frequency as ppfrequency
-import postprocess.ppfuncs.duration as ppduration
+import di_parser.parserfuncs.prepare as pprepare
+import di_parser.parserfuncs.dosage as pdosage
+import di_parser.parserfuncs.frequency as pfrequency
+import di_parser.parserfuncs.duration as pduration
 
 @dataclass
 class StructuredDI:
     """
-    Represents a structured dose instruction
+    A structured dose instruction
     Attributes:
     -----------
     form: str
@@ -56,9 +54,6 @@ class StructuredDI:
     asRequired: bool
     asDirected: bool
 
-
-default_model_name = "en_parsigs"
-
 def _get_model_entities(model_output):
     """
     Retrieve the entities from model output.
@@ -75,7 +70,7 @@ def _parse_di(di: str, model: Language):
     2. Applies model to retrieve entities
     3. Creates structured dose instruction from entities using static rules
     """
-    di_preprocessed = ppprepare._pre_process(di)
+    di_preprocessed = pprepare._pre_process(di)
     model_output = model(di_preprocessed)
     return _create_structured_dis(model_output)
 
@@ -83,8 +78,9 @@ def _parse_dis(di_lst, model: Language):
     """
     Parses multiple dose instructions at once
     """
-    return ppprepare._flatmap(lambda di: _parse_di(di, model), di_lst)
+    return pprepare._flatmap(lambda di: _parse_di(di, model), di_lst)
 
+#TODO: Improve splitting
 def _split_entities_for_multiple_instructions(model_entities):
     """
     Automatically determines if multiple dose instructions are included
@@ -94,8 +90,8 @@ def _split_entities_for_multiple_instructions(model_entities):
     seen_labels = set()
     current_sublist = []
     for entity in model_entities:
-        # Ignore DRUG and STRENGTH
-        if entity.label_ in ["DRUG", "STRENGTH"]:
+        # Ignore some entities 
+        if entity.label_ in ["DRUG", "STRENGTH", "ROUTE", "FORM"]:
             continue
         elif entity.label_ in seen_labels:
             result.append(current_sublist)
@@ -118,21 +114,20 @@ def _create_structured_di(model_entities, form=None, asRequired=False, asDirecte
         label = entity.label_
         if label == 'FORM':
             if structured_di.form is None:
-                structured_di.form = ppdosage._to_singular(text)
+                structured_di.form = pdosage._to_singular(text)
         elif label == 'DOSAGE':
-            min, max, form, freqtype = ppdosage._get_dosage_info(text)
+            min, max, form, = pdosage._get_dosage_info(text)
             structured_di.dosageMin = min
             structured_di.dosageMax = max
             structured_di.form = form
-            structured_di.frequencyType = freqtype
         elif label == 'FREQUENCY':
-            min, max, freqtype = ppfrequency._get_frequency_info(text)
+            min, max, freqtype = pfrequency._get_frequency_info(text)
             structured_di.frequencyMin = min
             structured_di.frequencyMax = max
             if freqtype is not None:
                 structured_di.frequencyType = freqtype
         elif label == 'DURATION':
-            min, max, durtype = ppduration._get_duration_info(text)
+            min, max, durtype = pduration._get_duration_info(text)
             structured_di.durationMin = min
             structured_di.durationMax = max
             structured_di.durationType = durtype
@@ -166,7 +161,7 @@ class DIParser:
     """
     Dose instruction parser class 
     """
-    def __init__(self, model_name="en_parsigs"):
+    def __init__(self, model_name):
         self.__language = spacy.load(model_name)
     def parse(self, di: str):
         return _parse_di(di, self.__language)
