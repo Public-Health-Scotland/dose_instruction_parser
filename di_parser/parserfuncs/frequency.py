@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import re
+import warnings
 
 # Regex expression to search for numbers in text
 re_digit = "\d*\.?\d+"
@@ -18,9 +19,9 @@ class _Frequency:
     frequencyType: str
     frequency: int
 
-latin_frequency_types = {"qd": _Frequency("Day", 1), "bid": _Frequency("Day", 2), 
-                        "bd": _Frequency("Day", 2), "tid": _Frequency("Day", 3), 
-                        "qid": _Frequency("Day", 4)}
+latin_frequency_types = {"qd": _Frequency("Day", 1.0), "bid": _Frequency("Day", 2.0), 
+                        "bd": _Frequency("Day", 2.0), "tid": _Frequency("Day", 3.0), 
+                        "qid": _Frequency("Day", 4.0)}
 
 def _get_latin_frequency(frequency):
     """
@@ -119,7 +120,7 @@ def _get_range(text):
     if any(x in text for x in ("max", "upto", "up to", "at least")):
         min = 0.0
         nums = re.findall(re_digit, re.sub(",", "", text))
-        if len(nums) >= 1:
+        if len(nums) > 1:
             warnings.warn("More than one number found for max")
             print(nums)
             max = float(nums[-1])

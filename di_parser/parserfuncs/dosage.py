@@ -117,7 +117,7 @@ def _get_continuous_dose(text):
             dose_nums = re.findall(pfrequency.re_digit, re.sub(",", "", text))
             if len(dose_nums) > 1:
                 # e.g. 2 5ml spoonfuls becomes 10 ml
-                dose = reduce(lambda x, y: x*y, [float(num) for num in dose_nums])
+                dose = float(reduce(lambda x, y: x*y, [float(num) for num in dose_nums]))
             else:
                 dose = float(dose_nums[0])
             min = dose
