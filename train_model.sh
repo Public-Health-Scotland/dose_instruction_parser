@@ -21,5 +21,9 @@ touch $filename
 cat ./config/config.cfg >> $filename
 echo $"\r\n" >> $filename
 
+# Set output loc
+model_loc="***REMOVED***models/$today"
+mkdir "$model_loc"
+
 # Write out training output to log
-python -m spacy train ./config/config.cfg --output ./output --paths.train ./data/train.spacy --paths.dev ./data/dev.spacy >> $filename
+python -m spacy train ./config/config.cfg --output "$model_loc" --paths.train ./data/train.spacy --paths.dev ./data/dev.spacy >> "$filename"
