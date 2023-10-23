@@ -1,0 +1,6 @@
+bid
+qid 
+bd 
+qd 
+tid 
+td
