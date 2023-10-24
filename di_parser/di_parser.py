@@ -113,27 +113,33 @@ def _create_structured_di(model_entities, form=None, asRequired=False, asDirecte
         text = entity.text
         label = entity.label_
         if label == 'FORM':
+            print("FORM: " + text)
             if structured_di.form is None:
                 structured_di.form = pdosage._to_singular(text)
         elif label == 'DOSAGE':
+            print("DOSAGE: " + text)
             min, max, form, = pdosage._get_dosage_info(text)
             structured_di.dosageMin = min
             structured_di.dosageMax = max
             structured_di.form = form
         elif label == 'FREQUENCY':
+            print("FREQUENCY: " + text)
             min, max, freqtype = pfrequency._get_frequency_info(text)
             structured_di.frequencyMin = min
             structured_di.frequencyMax = max
             if freqtype is not None:
                 structured_di.frequencyType = freqtype
         elif label == 'DURATION':
+            print("DURATION: " + text)
             min, max, durtype = pduration._get_duration_info(text)
             structured_di.durationMin = min
             structured_di.durationMax = max
             structured_di.durationType = durtype
         elif label == "AS_REQUIRED":
+            print("AS_REQUIRED: " + text)
             structured_di.asRequired = True
         elif label == "AS_DIRECTED":
+            print("AS_DIRECTED: " + text)
             structured_di.asDirected = True
         else:
             continue
@@ -182,5 +188,5 @@ class DIParser:
         return _parse_dis(dis, self.__language)
 
 
-
-
+model_path = "***REMOVED***models/"
+di_parser = DIParser(model_name=f"{model_path}/original/model-best")

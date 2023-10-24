@@ -201,7 +201,6 @@ def _get_frequency_info(text):
             e.g. "Day", "Day", "Week"
 
     """
-    print("FREQUENCY: " + text)
     freqtype = _get_frequency_type(text)
     _min, _max = _get_range(text)
     if _min is None:

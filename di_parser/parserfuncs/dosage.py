@@ -147,7 +147,6 @@ def _get_dosage_info(text):
             The form of dosage if present
             e.g. "ml", None, None
     """
-    print("DOSAGE: " + text)
     form = None
     # Check for e.g. "mg", "ml"
     _min, _max, form = _get_continuous_dose(text)
