@@ -123,7 +123,7 @@ def _get_bounding_num(nums, bound_type):
         raise ValueError("bound_type must be one of: ('min', 'max')")
     else:
         if len(nums) > 1:
-            warnings.warn("More than one number found for bounding dose")
+            warnings.warn("More than one number found for bounding number")
             print(nums)
         if bound_type == "min":
             bound = min(nums)
@@ -155,21 +155,21 @@ def _get_range(text):
     nums = [float(item) for item in nums]
     if any(x in text for x in ("max", "upto", "up to")):
         _min, _max = _get_bounding_num(nums, "max")
-    elif any(x in text for x in ("at least")):
+    elif any(x in text for x in ("at least", "min")):
         if len(nums) == 0:
             if " a " in text:
-                bound = 1.0
+                _min = 1.0
             else:
-                bound = None
+                _max = None
         else:
             _min, _max = _get_bounding_num(nums, "min")
     elif any(x in text for x in (" to ", "-", " or ")):
-        if len(nums) != 0:
-            _min = min(nums)
-            _max = max(nums)
-        else:
+        if len(nums) == 0:
             _min = None
             _max = None
+        else:
+            _min = min(nums)
+            _max = max(nums)
     elif "and" in text:
         substrs = re.split("and|,", text)
         nums = [float(_get_number_of_times(s)) for s in substrs]
