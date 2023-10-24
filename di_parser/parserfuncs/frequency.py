@@ -98,6 +98,40 @@ def _get_number_of_times(frequency):
             "noon", "breakfast","tea", "lunch", "dinner", "mane", "nocte")):
             return 1.0
 
+def _get_bounding_num(nums, bound_type):
+    """
+    Gets the min or max from a list of numbers. Fills in the other
+    bound accordingly; if you're trying to get the minimum then the max
+    will be None e.g. "at least 2 tablets" the max is unknown. If you're
+    trying to get the maximum then the min will be zero e.g. "up to 3 puffs"
+    the min is 0 here.
+
+    Input:
+        nums: list(str)
+            List of strings of numbers extracted from text
+            e.g. ["2", "3", "0.5"]
+        bound_type: str; ("min", "max")
+            Whether to extract the min or max number
+
+    Output:
+        _min: float
+            The value for minimum dose or frequency
+        _max: float
+            The value for maximum dose or frequency
+    """
+    if bound_type not in ("min", "max"):
+        raise ValueError("bound_type must be one of: ('min', 'max')")
+    else:
+        if len(nums) > 1:
+            warnings.warn("More than one number found for bounding dose")
+            print(nums)
+        if bound_type == "min":
+            bound = min(nums)
+            return float(bound), None
+        elif bound_type == "max":
+            bound = max(nums)
+            return 0.0, float(bound)
+
 # TODO: standardise output types
 def _get_range(text):
     """
@@ -110,64 +144,42 @@ def _get_range(text):
     Output:
         If there is no range (1 value only) returns None
 
-        min: float or None
+        _min: float or None
             The minimum number of times
             e.g. None, 3.0, 0.0
-        max: float or None
+        _max: float or None
             The maximum number of times
             e.g. None 5.0, 6.0
     """
-    if any(x in text for x in ("max", "upto", "up to", "at least")):
-        min = 0.0
-        nums = re.findall(re_digit, re.sub(",", "", text))
-        if len(nums) > 1:
-            warnings.warn("More than one number found for max")
-            print(nums)
-            max = float(nums[-1])
-        elif len(nums) == 0:
+    nums = re.findall(re_digit, text)
+    nums = [float(item) for item in nums]
+    if any(x in text for x in ("max", "upto", "up to")):
+        _min, _max = _get_bounding_num(nums, "max")
+    elif any(x in text for x in ("at least")):
+        if len(nums) == 0:
             if " a " in text:
-                max = 1.0
+                bound = 1.0
             else:
-                max = None
+                bound = None
         else:
-            max = float(nums[0])   
+            _min, _max = _get_bounding_num(nums, "min")
     elif any(x in text for x in (" to ", "-", " or ")):
-        substrs = re.split(" to |-| or  ", text)
-        if len(substrs) == 2:
-            if "up" in substrs[0]:
-                min = 0
-            else:
-                try:
-                    min = float(re.findall(re_digit, substrs[0])[0])
-                except: 
-                    try:    
-                        min = float(re.findall(re_digit, substrs[1])[0])
-                    except:
-                        min = None
-            try:
-                max = float(re.findall(re_digit,substrs[1])[0])
-            except: 
-                try:
-                    max = float(re.findall(re_digit,substrs[0])[0])
-                except:
-                    max = None
+        if len(nums) != 0:
+            _min = min(nums)
+            _max = max(nums)
         else:
-            try:
-                min = float(re.findall(re_digit,substrs[0])[0])
-                max = float(re.findall(re_digit,substrs[0])[0])
-            except:
-                min = None
-                max = None
+            _min = None
+            _max = None
     elif "and" in text:
         substrs = re.split("and|,", text)
         nums = [float(_get_number_of_times(s)) for s in substrs]
         num = sum([num for num in nums if num is not None])
-        min = num
-        max = num
+        _min = num
+        _max = num
     else:
-        min = None
-        max = None
-    return min, max
+        _min = None
+        _max = None
+    return _min, _max
 
 def _get_frequency_info(text):
     """ 
@@ -178,10 +190,10 @@ def _get_frequency_info(text):
             A frequency entity text 
             e.g. "daily", "with meals and at bedtime", "2 to 5 times a week"
     Output:
-        min: float
+        _min: float
             The minimum number of times per freqtype
             e.g. 1.0, 4.0, 2.0 
-        max: float
+        _max: float
             The maximum number of times per freqtype
             e.g. 1.0, 4.0, 5.0
         freqtype: str
@@ -191,26 +203,26 @@ def _get_frequency_info(text):
     """
     print("FREQUENCY: " + text)
     freqtype = _get_frequency_type(text)
-    min, max = _get_range(text)
-    if min is None:
+    _min, _max = _get_range(text)
+    if _min is None:
         freq = _get_number_of_times(text)
-        min = freq
-        max = freq
-    if min is None:
+        _min = freq
+        _max = freq
+    if _min is None:
         nums = re.findall(re_digit, re.sub(",", "", text))
         if len(nums) == 1:
-            min = float(nums[0])
-            max = float(nums[0])
+            _min = float(nums[0])
+            _max = float(nums[0])
         elif len(nums) == 2:
-            min = float(nums[0])
-            max = float(nums[1])
+            _min = float(nums[0])
+            _max = float(nums[1])
         else:
-            min = None
-            max = None
+            _min = None
+            _max = None
     # Default added only if there is a frequency tag in the di
     # handles cases such as "Every TIME_UNIT"
-    if min is None:
-        min = 1.0
-        max = 1.0
-    return min, max, freqtype
+    if _min is None:
+        _min = 1.0
+        _max = 1.0
+    return _min, _max, freqtype
 
