@@ -21,7 +21,6 @@ def _get_duration_info(text):
             The duration type
             e.g. "Week", "Year", "Month"
     """
-    print("DURATION: " + text)
     durtype = pfrequency._get_frequency_type(text)
     _min, _max = pfrequency._get_range(text)
     if _min is None:
