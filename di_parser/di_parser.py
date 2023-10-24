@@ -91,7 +91,7 @@ def _split_entities_for_multiple_instructions(model_entities):
     current_sublist = []
     for entity in model_entities:
         # Ignore some entities 
-        if entity.label_ in ["DRUG", "STRENGTH", "ROUTE", "FORM"]:
+        if entity.label_ in ["DRUG", "STRENGTH", "ROUTE"]:
             continue
         elif entity.label_ in seen_labels:
             result.append(current_sublist)
@@ -115,13 +115,16 @@ def _create_structured_di(model_entities, form=None, asRequired=False, asDirecte
         if label == 'FORM':
             print("FORM: " + text)
             if structured_di.form is None:
-                structured_di.form = pdosage._to_singular(text)
+                form = pdosage._to_singular(text)
+                if form is not None:
+                    structured_di.form = form
         elif label == 'DOSAGE':
             print("DOSAGE: " + text)
             min, max, form, = pdosage._get_dosage_info(text)
             structured_di.dosageMin = min
             structured_di.dosageMax = max
-            structured_di.form = form
+            if form is not None:
+                structured_di.form = form
         elif label == 'FREQUENCY':
             print("FREQUENCY: " + text)
             min, max, freqtype = pfrequency._get_frequency_info(text)
