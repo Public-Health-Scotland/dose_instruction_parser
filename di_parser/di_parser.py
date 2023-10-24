@@ -163,7 +163,8 @@ class DIParser:
 
     Example
     -------
-    >>> di_parser = DIParser(model_name="output/model-best")
+    >>> model_path = "***REMOVED***models/"
+    >>> di_parser = DIParser(model_name=f"{model_path}/original/model-best")
 
     >>> di = "take 2 3ml spoonfuls with meals for 5-6 weeks as discussed"
     >>> parsed_di = di_parser.parse(di)
