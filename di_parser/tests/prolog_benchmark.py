@@ -14,16 +14,18 @@ import di_parser.di_parser as dip
 
 with open("di_parser/tests/prolog_test.pl", "r") as lex:
     lines = lex.readlines()
+
 # Keeping only the test lines
 lines = [line for line in lines if line.startswith("test(")]
 
+def check_nonetype(inp):
+    if (inp is None) or (inp == "None") or (inp == ""):
+            return None
+    else:
+        return inp
+
 def check_nonetypes(inplist):
-    outlist = []
-    for inp in inplist:
-        if (inp is None) or (inp == "None") or (inp == ""):
-            outlist.append(None)
-        else:
-            outlist.append(inp)
+    outlist = [check_nonetype(inp) for inp in inplist]
     return outlist
 
 def convert_to_float(inp):
@@ -54,8 +56,7 @@ parsed_lines = [parse_lex_line(line) for line in lines]
 parsed_lines_df = pd.DataFrame(parsed_lines, columns = ["input", "desired_output"])
 
 ## Step 2: Run di_parser on all the examples
-model_path = "/conf/linkages/Technical/Dose_Instructions/\
-    Dose instructions replacement/models/"
+model_path = "***REMOVED***models/"
 di_parser = dip.DIParser(model_name=f"{model_path}/original/model-best")
 
 def apply_di_parser(x):
@@ -67,11 +68,36 @@ def apply_di_parser(x):
 parsed_lines_df["di_parser_output"] = parsed_lines_df["input"]\
     .transform(apply_di_parser)
 
+def compare_numbers(left, right):
+    if (left is None) and (right is None):
+        return True
+    elif (left is None) or (right is None):
+        return False
+    try:
+        return (float(left) == float(right))
+    except ValueError:
+        return  (left == right)
+
 # Step 3: Calculate test score
 def compare_dataclass_attrs(di_1, di_2, attr):
     attr_1 = getattr(di_1, attr)
     attr_2 = getattr(di_2, attr)
-    if attr_1 != attr_2:
+    if attr == "form":
+        return 0
+    elif attr in ("frequencyType", "durationType"):
+        if str(attr_1).lower() == str(attr_2).lower():
+            match = True
+        else:
+            match = False
+    elif attr in ("asRequired", "asDirected"):
+        if bool(attr_1) == bool(attr_2):
+            match = True
+        else:
+            match = False
+    else:
+        match = compare_numbers(attr_1, attr_2)
+    # Now check whether match detected    
+    if not match:
         warnings.warn(f"Mismatch in {attr}: want {attr_1}, got {attr_2}.")
         return 1
     else:
@@ -91,15 +117,10 @@ def compare_structured_dis(input, di_1, di_2):
     for attr in attrs:
         attr_mismatch = compare_dataclass_attrs(di_1, di_2, attr) 
         if attr_mismatch is not None:
-            print(attr_mismatch)
             mismatch = mismatch + attr_mismatch
         else:
             mismatch = mismatch
     return mismatch
-
-# for i, row in parsed_lines_df.iloc[0:10,:].iterrows():
-#     print(i)
-#     compare_structured_dis(row)
 
 parsed_lines_df["mismatch"] = parsed_lines_df.apply( 
     lambda x: compare_structured_dis(input = x["input"], 
