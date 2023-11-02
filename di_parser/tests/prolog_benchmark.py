@@ -2,14 +2,15 @@
 Benchmarking against the prolog test examples
 
 Step 1: Read in prolog test examples and reformat for di_parser
-Step 2: Run di_parser on all the examples and check against desired output
+Step 2: Run di_parser on all the examples 
 Step 3: Calculate test score
 """
 import pandas as pd
 import re
+import warnings
 import di_parser.di_parser as dip
 
-## Step 1
+## Step 1: Read in prolog test examples and reformat for di_parser
 
 with open("di_parser/tests/prolog_test.pl", "r") as lex:
     lines = lex.readlines()
@@ -52,6 +53,56 @@ def parse_lex_line(line):
 parsed_lines = [parse_lex_line(line) for line in lines]
 parsed_lines_df = pd.DataFrame(parsed_lines, columns = ["input", "desired_output"])
 
-## Step 2
+## Step 2: Run di_parser on all the examples
+model_path = "/conf/linkages/Technical/Dose_Instructions/\
+    Dose instructions replacement/models/"
+di_parser = dip.DIParser(model_name=f"{model_path}/original/model-best")
 
+def apply_di_parser(x):
+    try:
+        return di_parser.parse(x)
+    except:
+        return None
+    
+parsed_lines_df["di_parser_output"] = parsed_lines_df["input"]\
+    .transform(apply_di_parser)
 
+# Step 3: Calculate test score
+def compare_dataclass_attrs(di_1, di_2, attr):
+    attr_1 = getattr(di_1, attr)
+    attr_2 = getattr(di_2, attr)
+    if attr_1 != attr_2:
+        warnings.warn(f"Mismatch in {attr}: want {attr_1}, got {attr_2}.")
+        return 1
+    else:
+        return 0
+    
+def compare_structured_dis(input, di_1, di_2):
+    if (di_1 is None) or (di_2 is None):
+        warnings.warn("Some inputs are None")
+        return 0
+    if len(di_2) != 1:
+        warnings.warn(f"Multiple dose instructions detected for di: {input}. Using first instance")
+    # Output from di_parser is stored in a list
+    di_2 = di_2[0]
+    # Form
+    attrs = di_1.__annotations__.keys()
+    mismatch = 0
+    for attr in attrs:
+        attr_mismatch = compare_dataclass_attrs(di_1, di_2, attr) 
+        if attr_mismatch is not None:
+            print(attr_mismatch)
+            mismatch = mismatch + attr_mismatch
+        else:
+            mismatch = mismatch
+    return mismatch
+
+# for i, row in parsed_lines_df.iloc[0:10,:].iterrows():
+#     print(i)
+#     compare_structured_dis(row)
+
+parsed_lines_df["mismatch"] = parsed_lines_df.apply( 
+    lambda x: compare_structured_dis(input = x["input"], 
+                                    di_1 = x["desired_output"],
+                                    di_2 = x["di_parser_output"]), axis=1
+                                    )
