@@ -12,7 +12,7 @@ import di_parser.di_parser as dip
 
 ## Step 1: Read in prolog test examples and reformat for di_parser
 
-with open("di_parser/tests/prolog_test.pl", "r") as lex:
+with open("di_parser/benchmark/new_test.pl", "r") as lex:
     lines = lex.readlines()
 
 # Keeping only the test lines
@@ -144,4 +144,5 @@ print("Prolog test match: 96%")
 for index, row in parsed_lines_df[parsed_lines_df["mismatch"]!=0].iterrows():
     print(row["input"])
     print(row["desired_output"])
+    print(row["di_parser_output"])
     print("\n")
