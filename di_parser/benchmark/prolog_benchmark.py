@@ -112,7 +112,8 @@ def compare_structured_dis(input, di_1, di_2):
         warnings.warn("Some inputs are None")
         return 0
     if len(di_2) != 1:
-        warnings.warn(f"Multiple dose instructions detected for di: {input}. Using first instance")
+        warnings.warn(f"Multiple dose instructions detected for di: {input}. Skipping instance.")
+        return 0
     # Output from di_parser is stored in a list
     di_2 = di_2[0]
     # Form
@@ -126,7 +127,7 @@ def compare_structured_dis(input, di_1, di_2):
             mismatch = mismatch
     return mismatch
 
-parsed_lines_df = parsed_lines_df.query('desired_output != None')
+#parsed_lines_df = parsed_lines_df.query('desired_output != None')
 
 parsed_lines_df["mismatch"] = parsed_lines_df.apply( 
     lambda x: compare_structured_dis(input = x["input"], 
@@ -139,3 +140,8 @@ percentage_match = 100*parsed_lines_df["mismatch"].value_counts()[0]/\
 
 print(f"Percentage match: {round(percentage_match)}%")
 print("Prolog test match: 96%")
+
+for index, row in parsed_lines_df[parsed_lines_df["mismatch"]!=0].iterrows():
+    print(row["input"])
+    print(row["desired_output"])
+    print("\n")
