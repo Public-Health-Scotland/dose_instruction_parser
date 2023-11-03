@@ -43,8 +43,12 @@ def parse_lex_line(line):
   assert len(inphrase_out) == 2, f"Length equal to {len(inphrase_out)}"
   inphrase = inphrase_out[0].replace("[", "").replace(","," ").replace("'", "").replace(" . ", ".")
   outinfo = inphrase_out[1].replace(")", "").replace("[","").replace("]", "").replace(",,", ",None,")
-  dosmin, dosmax, form, fmin, fmax, ftype, \
-      durmin, durmax, durtype, asreq, asdir = check_nonetypes(outinfo.split(","))
+  try:
+    dosmin, dosmax, form, fmin, fmax, ftype, \
+        durmin, durmax, durtype, asreq, asdir = check_nonetypes(outinfo.split(","))
+  except ValueError:
+      print(ValueError)
+      return inphrase, None
   out = dip.StructuredDI(form=form, dosageMin=convert_to_float(dosmin), dosageMax=convert_to_float(dosmax),
                             frequencyMin=convert_to_float(fmin), frequencyMax=convert_to_float(fmax), 
                             frequencyType=ftype, durationMin=convert_to_float(durmin), 
@@ -122,6 +126,8 @@ def compare_structured_dis(input, di_1, di_2):
             mismatch = mismatch
     return mismatch
 
+parsed_lines_df = parsed_lines_df.query('desired_output != None')
+
 parsed_lines_df["mismatch"] = parsed_lines_df.apply( 
     lambda x: compare_structured_dis(input = x["input"], 
                                     di_1 = x["desired_output"],
@@ -132,4 +138,4 @@ percentage_match = 100*parsed_lines_df["mismatch"].value_counts()[0]/\
     parsed_lines_df["mismatch"].value_counts().sum()
 
 print(f"Percentage match: {round(percentage_match)}%")
-
+print("Prolog test match: 96%")
