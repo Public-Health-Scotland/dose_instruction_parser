@@ -42,7 +42,7 @@ def parse_lex_line(line):
   inphrase_out = line.split("],", 1)
   assert len(inphrase_out) == 2, f"Length equal to {len(inphrase_out)}"
   inphrase = inphrase_out[0].replace("[", "").replace(","," ").replace("'", "").replace(" . ", ".")
-  outinfo = inphrase_out[1].replace(")", "").replace("[","").replace("]", "").replace(".","").replace(",,", ",None,")
+  outinfo = inphrase_out[1].replace(")", "").replace("[","").replace("]", "").replace(",,", ",None,")
   dosmin, dosmax, form, fmin, fmax, ftype, \
       durmin, durmax, durtype, asreq, asdir = check_nonetypes(outinfo.split(","))
   out = dip.StructuredDI(form=form, dosageMin=convert_to_float(dosmin), dosageMax=convert_to_float(dosmax),
@@ -127,3 +127,9 @@ parsed_lines_df["mismatch"] = parsed_lines_df.apply(
                                     di_1 = x["desired_output"],
                                     di_2 = x["di_parser_output"]), axis=1
                                     )
+
+percentage_match = 100*parsed_lines_df["mismatch"].value_counts()[0]/\
+    parsed_lines_df["mismatch"].value_counts().sum()
+
+print(f"Percentage match: {round(percentage_match)}%")
+
