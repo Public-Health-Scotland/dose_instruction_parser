@@ -12,14 +12,23 @@ if [ "$1" == "-h" ]; then
   exit 0
 fi
 
-# Naming log file with today's time and date
+# Get today's time and date
 today=`date '+%m_%d__%H_%M_%S'`;
-filename="logs/train_$today.log"
+
+# Set output location and logfile
+read -p "Name for model output folder ['$today']: " outputname
+outputname=${outputname:-'$today'}
+modelloc="***REMOVED***models/$outputname"
+if [ -d "$modelloc" ]; then
+  echo "Model output folder already exists. Please pick a different name."
+  exit 0
+fi
+mkdir "$modelloc"
+filename="logs/train_$outputname.log"
 
 # Write out config file to log
-touch $filename
-cat ./config/config.cfg >> $filename
-echo $"\r\n" >> $filename
+touch "$filename"
+cat ./config/config.cfg >> "$filename"
 
 # Write out training output to log
-python -m spacy train ./config/config.cfg --output ./output --paths.train ./data/train.spacy --paths.dev ./data/dev.spacy >> $filename
+python -m spacy train ./config/config.cfg --output "$modelloc" --paths.train ./data/train.spacy --paths.dev ./data/dev.spacy >> "$filename"
