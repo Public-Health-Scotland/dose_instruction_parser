@@ -3,6 +3,7 @@ deidentify/*
 
 # Output #
 output/*
+output_bert/*
 
 # Models #
 tok2vec_model

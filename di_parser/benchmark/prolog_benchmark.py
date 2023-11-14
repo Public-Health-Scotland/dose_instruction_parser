@@ -32,8 +32,11 @@ def convert_to_float(inp):
     inp = check_nonetype(inp)
     if inp is None:
         return inp
+    elif inp.strip() == '':
+        return None 
     else:
         return float(inp)
+
 
 def parse_lex_line(line):
   # Strip beginning and end
@@ -139,7 +142,7 @@ percentage_match = 100*parsed_lines_df["mismatch"].value_counts()[0]/\
     parsed_lines_df["mismatch"].value_counts().sum()
 
 print(f"Percentage match: {round(percentage_match)}%")
-print("Prolog test match: 96%")
+print("Prolog test match: 68%")
 
 for index, row in parsed_lines_df[parsed_lines_df["mismatch"]!=0].iterrows():
     print(row["input"])
