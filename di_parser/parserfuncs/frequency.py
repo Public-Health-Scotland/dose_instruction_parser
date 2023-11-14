@@ -19,7 +19,8 @@ class _Frequency:
     frequencyType: str
     frequency: int
 
-latin_frequency_types = {"qd": _Frequency("Day", 1.0), "bid": _Frequency("Day", 2.0), 
+latin_frequency_types = {"qd": _Frequency("Day", 4.0), "qds": _Frequency("Day", 4.0),
+                        "bid": _Frequency("Day", 2.0), 
                         "bd": _Frequency("Day", 2.0), "tid": _Frequency("Day", 3.0), 
                         "qid": _Frequency("Day", 4.0)}
 
@@ -121,6 +122,8 @@ def _get_bounding_num(nums, bound_type):
     """
     if bound_type not in ("min", "max"):
         raise ValueError("bound_type must be one of: ('min', 'max')")
+    elif len(nums) == 0:
+        return None, None
     else:
         if len(nums) > 1:
             warnings.warn("More than one number found for bounding number")
@@ -152,6 +155,10 @@ def _get_range(text):
             e.g. None 5.0, 6.0
     """
     nums = re.findall(re_digit, text)
+    # Check for latin frequencies
+    for word in text.split():
+        if word in latin_frequency_types.keys():
+            nums.append(latin_frequency_types[word].frequency)
     nums = [float(item) for item in nums]
     if any(x in text for x in ("max", "upto", "up to")):
         _min, _max = _get_bounding_num(nums, "max")
