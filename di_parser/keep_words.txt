@@ -1,0 +1,8 @@
+bid
+qid 
+bd 
+qd 
+tid 
+td
+qds
+nocte
