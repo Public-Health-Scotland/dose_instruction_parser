@@ -22,7 +22,7 @@ class _Frequency:
 latin_frequency_types = {"qd": _Frequency("Day", 4.0), "qds": _Frequency("Day", 4.0),
                         "bid": _Frequency("Day", 2.0), 
                         "bd": _Frequency("Day", 2.0), "tid": _Frequency("Day", 3.0), 
-                        "qid": _Frequency("Day", 4.0)}
+                        "qid": _Frequency("Day", 4.0), "tds": _Frequency("Day", 3.0)}
 
 def _get_latin_frequency(frequency):
     """
@@ -40,6 +40,9 @@ def _get_latin_frequency(frequency):
         if latin_freq in frequency:
             return latin_frequency_types[latin_freq]
 
+frequency_numbers = {"second" : 2, "third" : 3, "fourth" : 4, "fifth": 5,
+                    "sixth" : 6, "seventh" : 7, "eighth": 8, "ninth": 9}
+
 def _get_frequency_type(frequency):
     """
     Gets the frequency type from a frequency string
@@ -55,20 +58,35 @@ def _get_frequency_type(frequency):
     """
     if frequency is not None:
         if any(x in frequency for x in ("hour", "hr")) | (re.search("\d?h$", frequency) is not None):
-            return "Hour"
-        if any(x in frequency for x in ("week", "wk")):
-            return "Week"
-        if any(x in frequency for x in ("month", "mnth", "mon ")):
-            return "Month"
-        if any(x in frequency for x in ("year", "yr")):
-            return "Year"
-        if any(daily_instruction in frequency for daily_instruction in
+            freq_type = "Hour"
+        elif any(x in frequency for x in ("week", "wk")):
+            freq_type = "Week"
+        elif any(x in frequency for x in ("month", "mnth", "mon ")):
+            freq_type = "Month"
+        elif any(x in frequency for x in ("year", "yr")):
+            freq_type = "Year"
+        elif any(daily_instruction in frequency for daily_instruction in
                ("day", "daily", "night", "morning", "evening", "noon", "bedtime", "bed",
                "breakfast", "tea", "lunch", "dinner", "meal", "nocte", "mane", "feed")):
-            return "Day"
+            freq_type = "Day"
         latin_freq = _get_latin_frequency(frequency)
         if latin_freq:
-            return latin_freq.frequencyType
+            freq_type = latin_freq.frequencyType
+        # Check for multiple units of frequency type e.g. every 2 days
+        if any(x in frequency for x in ("alternate", "every other")):
+            freq_type = "2 " + freq_type 
+        if "every" in frequency:
+            nums = re.findall(re_digit, frequency)
+            # Deal with words like third, fifth etc.
+            for word in frequency.split():
+                if word in frequency_numbers.keys():
+                    nums.append(str(frequency_numbers[word]))
+            if len(nums) == 0:
+                return freq_type
+            if len(nums) != 1:
+                warnings.warn("More than one number for every x time unit")
+            freq_type = nums[0] + " " + freq_type
+        return freq_type
 
 def _get_number_of_times(frequency):
     """
