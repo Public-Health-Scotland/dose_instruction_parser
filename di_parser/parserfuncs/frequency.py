@@ -40,8 +40,8 @@ def _get_latin_frequency(frequency):
         if latin_freq in frequency:
             return latin_frequency_types[latin_freq]
 
-frequency_numbers = {"second" : 2, "third" : 3, "fourth" : 4, "fifth": 5,
-                    "sixth" : 6, "seventh" : 7, "eighth": 8, "ninth": 9}
+frequency_numbers = {"second": 2, "third": 3, "fourth": 4, "fifth": 5,
+                    "sixth": 6, "seventh": 7, "eighth": 8, "ninth": 9}
 
 freqtype_conversion = {"7 Day": "Week", "24 Hour": "Day", "48 Hour": "2 Day",
                         "14 Day": "2 Week", "4 Week" : "Month"}
@@ -59,43 +59,45 @@ def _get_frequency_type(frequency):
             The type of frequency associated with the dose instruction
             e.g. "Day"
     """
-    if frequency is not None:
-        if any(x in frequency for x in ("hour", "hr")) | (re.search("\d?h$", frequency) is not None):
-            freq_type = "Hour"
-        elif any(x in frequency for x in ("week", "wk")):
-            freq_type = "Week"
-        elif any(x in frequency for x in ("fortnight")):
-            freq_type = "2 Week"
-        elif any(x in frequency for x in ("month", "mnth", "mon ")):
-            freq_type = "Month"
-        elif any(x in frequency for x in ("year", "yr")):
-            freq_type = "Year"
-        elif any(daily_instruction in frequency for daily_instruction in
-               ("day", "daily", "b/d", "bd", "night", "morning", "evening", "noon", "bedtime", "bed",
-               "breakfast", "tea", "lunch", "dinner", "meal", "nocte", "mane", "feed",
-               "tds", "qds")):
-            freq_type = "Day"
-        latin_freq = _get_latin_frequency(frequency)
-        if latin_freq:
-            freq_type = latin_freq.frequencyType
-        # Check for multiple units of frequency type e.g. every 2 days
-        if any(x in frequency for x in ("alternate", "every other")):
-            freq_type = "2 " + freq_type 
-        if "every" in frequency:
-            nums = re.findall(re_digit, frequency)
-            # Deal with words like third, fifth etc.
-            for word in frequency.split():
-                if word in frequency_numbers.keys():
-                    nums.append(str(frequency_numbers[word]))
-            if len(nums) == 0:
-                return freq_type
-            if len(nums) != 1:
-                warnings.warn("More than one number for every x time unit")
-            freq_type = nums[0] + " " + freq_type
-            # Convert e.g. "24 Hour" -> "Day"
-            if freq_type in freqtype_conversion.keys():
-                freq_type = freqtype_conversion[freq_type]
-        return freq_type
+    if frequency is None:
+        return None
+    if any(x in frequency for x in ("hour", "hr")) | \
+        (re.search("\d?h$", frequency) is not None):
+        freq_type = "Hour"
+    elif any(x in frequency for x in ("week", "wk")):
+        freq_type = "Week"
+    elif frequency == "fortnight":
+        freq_type = "2 Week"
+    elif any(x in frequency for x in ("month", "mnth", "mon ")):
+        freq_type = "Month"
+    elif any(x in frequency for x in ("year", "yr")):
+        freq_type = "Year"
+    elif any(x in frequency for x in
+            ("day", "daily", "b/d", "bd", "night", "morning", "evening", "noon", "bedtime", "bed",
+            "breakfast", "tea", "lunch", "dinner", "meal", "nocte", "mane", "feed",
+            "tds", "qds")):
+        freq_type = "Day"
+    latin_freq = _get_latin_frequency(frequency)
+    if latin_freq:
+        freq_type = latin_freq.frequencyType
+    # Check for multiple units of frequency type e.g. every 2 days
+    if any(x in frequency for x in ("alternate", "every other")):
+        freq_type = "2 " + freq_type 
+    if "every" in frequency:
+        nums = re.findall(re_digit, frequency)
+        # Deal with words like third, fifth etc.
+        for word in frequency.split():
+            if word in frequency_numbers.keys():
+                nums.append(str(frequency_numbers[word]))
+        if len(nums) == 0:
+            return freq_type
+        if len(nums) != 1:
+            warnings.warn("More than one number for every x time unit")
+        freq_type = nums[0] + " " + freq_type
+    # Convert e.g. "24 Hour" -> "Day"
+    if freq_type in freqtype_conversion.keys():
+        freq_type = freqtype_conversion[freq_type]
+    return freq_type
 
 def _get_number_of_times(frequency):
     """
