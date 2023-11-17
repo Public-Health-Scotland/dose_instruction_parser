@@ -20,7 +20,7 @@ class _Frequency:
     frequency: int
 
 latin_frequency_types = {"qd": _Frequency("Day", 4.0), "qds": _Frequency("Day", 4.0),
-                        "bid": _Frequency("Day", 2.0), 
+                        "bid": _Frequency("Day", 2.0), "b/d": _Frequency("Day", 2.0),
                         "bd": _Frequency("Day", 2.0), "tid": _Frequency("Day", 3.0), 
                         "qid": _Frequency("Day", 4.0), "tds": _Frequency("Day", 3.0)}
 
@@ -43,6 +43,9 @@ def _get_latin_frequency(frequency):
 frequency_numbers = {"second" : 2, "third" : 3, "fourth" : 4, "fifth": 5,
                     "sixth" : 6, "seventh" : 7, "eighth": 8, "ninth": 9}
 
+freqtype_conversion = {"7 Day": "Week", "24 Hour": "Day", "48 Hour": "2 Day",
+                        "14 Day": "2 Week", "4 Week" : "Month"}
+
 def _get_frequency_type(frequency):
     """
     Gets the frequency type from a frequency string
@@ -61,13 +64,16 @@ def _get_frequency_type(frequency):
             freq_type = "Hour"
         elif any(x in frequency for x in ("week", "wk")):
             freq_type = "Week"
+        elif any(x in frequency for x in ("fortnight")):
+            freq_type = "2 Week"
         elif any(x in frequency for x in ("month", "mnth", "mon ")):
             freq_type = "Month"
         elif any(x in frequency for x in ("year", "yr")):
             freq_type = "Year"
         elif any(daily_instruction in frequency for daily_instruction in
-               ("day", "daily", "night", "morning", "evening", "noon", "bedtime", "bed",
-               "breakfast", "tea", "lunch", "dinner", "meal", "nocte", "mane", "feed")):
+               ("day", "daily", "b/d", "bd", "night", "morning", "evening", "noon", "bedtime", "bed",
+               "breakfast", "tea", "lunch", "dinner", "meal", "nocte", "mane", "feed",
+               "tds", "qds")):
             freq_type = "Day"
         latin_freq = _get_latin_frequency(frequency)
         if latin_freq:
@@ -86,6 +92,9 @@ def _get_frequency_type(frequency):
             if len(nums) != 1:
                 warnings.warn("More than one number for every x time unit")
             freq_type = nums[0] + " " + freq_type
+            # Convert e.g. "24 Hour" -> "Day"
+            if freq_type in freqtype_conversion.keys():
+                freq_type = freqtype_conversion[freq_type]
         return freq_type
 
 def _get_number_of_times(frequency):
@@ -111,6 +120,7 @@ def _get_number_of_times(frequency):
         latin_freq = _get_latin_frequency(frequency)
         if latin_freq:
             return latin_freq.frequency
+        
         if any(x in frequency for x in ("meals", "feed", "food")):
             return 3.0
         if any(x in frequency for x in ("bed", "morning", "daily", "night", 
@@ -174,7 +184,7 @@ def _get_range(text):
     """
     nums = re.findall(re_digit, text)
     # Check for latin frequencies
-    for word in text.split():
+    for word in re.split(r"[ :;\-,]", text):
         if word in latin_frequency_types.keys():
             nums.append(latin_frequency_types[word].frequency)
     nums = [float(item) for item in nums]
@@ -189,12 +199,8 @@ def _get_range(text):
         else:
             _min, _max = _get_bounding_num(nums, "min")
     elif any(x in text for x in (" to ", "-", " or ")):
-        if len(nums) == 0:
-            _min = None
-            _max = None
-        else:
-            _min = min(nums)
-            _max = max(nums)
+        _min = min(nums, default=None)
+        _max = max(nums, default=None)
     elif "and" in text:
         substrs = re.split("and|,", text)
         nums = [float(_get_number_of_times(s)) for s in substrs]
@@ -226,8 +232,21 @@ def _get_frequency_info(text):
             e.g. "Day", "Day", "Week"
 
     """
-    freqtype = _get_frequency_type(text)
-    _min, _max = _get_range(text)
+    # Consider "2-5 times every 4 weeks"
+    # The part before "every" is used to determine frequency e.g. min 2, max 5
+    # The part after is used to determine freq type e.g. "month"
+    if "every" in text:
+        # Split on every
+        before, after = text.split("every")
+        # Get all numbers
+        freqtype = _get_frequency_type("every" + after)
+        _min, _max = _get_range(before)
+        # Replacing "text" with "before" as now we only want to 
+        # consider 1st half of expression
+        text = before
+    else:
+        freqtype = _get_frequency_type(text)
+        _min, _max = _get_range(text)
     if _min is None:
         freq = _get_number_of_times(text)
         _min = freq
@@ -243,8 +262,6 @@ def _get_frequency_info(text):
         else:
             _min = None
             _max = None
-    # Default added only if there is a frequency tag in the di
-    # handles cases such as "Every TIME_UNIT"
     if _min is None:
         _min = 1.0
         _max = 1.0
