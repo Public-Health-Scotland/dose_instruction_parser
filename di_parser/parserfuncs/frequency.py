@@ -43,6 +43,9 @@ def _get_latin_frequency(frequency):
 frequency_numbers = {"second" : 2, "third" : 3, "fourth" : 4, "fifth": 5,
                     "sixth" : 6, "seventh" : 7, "eighth": 8, "ninth": 9}
 
+freqtype_conversion = {"7 Day": "Week", "24 Hour": "Day", "48 Hour": "2 Day",
+                        "14 Day": "2 Week", "4 Week" : "Month"}
+
 def _get_frequency_type(frequency):
     """
     Gets the frequency type from a frequency string
@@ -86,6 +89,9 @@ def _get_frequency_type(frequency):
             if len(nums) != 1:
                 warnings.warn("More than one number for every x time unit")
             freq_type = nums[0] + " " + freq_type
+            # Convert e.g. "24 Hour" -> "Day"
+            if freq_type in freqtype_conversion.keys():
+                freq_type = freqtype_conversion[freq_type]
         return freq_type
 
 def _get_number_of_times(frequency):
