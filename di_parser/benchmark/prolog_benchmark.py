@@ -10,6 +10,17 @@ import re
 import warnings
 import di_parser.di_parser as dip
 
+from contextlib import contextmanager
+from timeit import default_timer
+
+@contextmanager
+def elapsed_timer():
+    start = default_timer()
+    elapser = lambda: default_timer() - start
+    yield lambda: elapser()
+    end = default_timer()
+    elapser = lambda: end-start
+
 ## Step 1: Read in prolog test examples and reformat for di_parser
 
 with open("di_parser/benchmark/new_test.pl", "r") as lex:
@@ -71,9 +82,10 @@ def apply_di_parser(x):
         return di_parser.parse(x)
     except:
         return None
-    
-parsed_lines_df["di_parser_output"] = parsed_lines_df["input"]\
-    .transform(apply_di_parser)
+
+with elapsed_timer() as elapsed:    
+    parsed_lines_df["di_parser_output"] = parsed_lines_df["input"]\
+        .transform(apply_di_parser)
 
 def compare_numbers(left, right):
     if (left is None) and (right is None):
@@ -138,11 +150,24 @@ parsed_lines_df["mismatch"] = parsed_lines_df.apply(
                                     di_2 = x["di_parser_output"]), axis=1
                                     )
 
-percentage_match = 100*parsed_lines_df["mismatch"].value_counts()[0]/\
+mismatch_counts = parsed_lines_df["mismatch"].value_counts()
+
+percentage_total_match = 100*mismatch_counts[0]/\
     parsed_lines_df["mismatch"].value_counts().sum()
 
-print(f"Percentage match: {round(percentage_match)}%")
-print("Prolog test match: 68%")
+mismatch_df = pd.DataFrame({
+    "mismatch" : mismatch_counts.index,
+    "count" : mismatch_counts
+})
+
+mismatch_df["penalty"] = mismatch_df["mismatch"] * mismatch_df["count"]
+total_penalty = mismatch_df["penalty"].sum()
+total_possible_penalty = parsed_lines_df.shape[0] * 11
+percentage_match = 100*(1-total_penalty/total_possible_penalty)
+
+print(f"Percentage match: {round(percentage_total_match)}% with time {round(elapsed(), 2)}s")
+print(f"Partial match: {round(percentage_match)}%")
+print("Prolog test match: 66% with time 18s")
 
 for index, row in parsed_lines_df[parsed_lines_df["mismatch"]!=0].iterrows():
     print(row["input"])
