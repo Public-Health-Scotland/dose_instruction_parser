@@ -59,6 +59,7 @@ def _get_frequency_type(frequency):
             The type of frequency associated with the dose instruction
             e.g. "Day"
     """
+    freq_type = None
     if frequency is None:
         return None
     if any(x in frequency for x in ("hour", "hr")) | \
