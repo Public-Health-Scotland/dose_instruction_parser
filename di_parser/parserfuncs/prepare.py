@@ -1,4 +1,5 @@
 import re
+import csv
 from spellchecker import SpellChecker
 from itertools import chain
 from word2number import w2n
@@ -138,17 +139,21 @@ def _pre_process(di):
             e.g. "take 2 tablets morning and night"
     """
     di = _autocorrect(di)
-    di = di.replace('twice', '2 times').replace("once", '1 time').replace("nightly", "every night")
     di = _add_space_around_parentheses(di)
     # remove extra spaces between words
     di = re.sub(r'\s+', ' ', di)
     output_words = []
     words = di.split()
+    # get words to replace
+    replace_words = {}
+    with open('di_parser/replace_words.csv', newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            replace_words[row["Before"]] = row["After"]
+    # replace words        
     for word in words:
-        if word == 'tab':
-            word = word.replace('tab', 'tablet')
-        elif word == 'tabs':
-            word = word.replace('tabs', 'tablets')
+        if word in replace_words.keys():
+            word = word.replace(word,replace_words[word])
         output_words.append(word)
     di = ' '.join(output_words)
     di = _convert_words_to_numbers(di)
