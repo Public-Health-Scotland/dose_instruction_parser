@@ -58,7 +58,7 @@ def _get_model_entities(model_output):
     """
     Retrieve the entities from model output.
     Create model output by:
-        model = spacy.load_model("my_model")
+        model = spacy.load("my_model")
         model_output = model("my dose instruction")
     """
     entities = model_output.ents
@@ -89,7 +89,41 @@ def _parse_dis(di_lst, model: Language):
     """
     return pprepare._flatmap(lambda di: _parse_di(di, model), di_lst)
 
+def _keep_entity(entity, seen_labels):
+    """
+    Determine whether to pay attention to an entity when splitting labels
+    up into multiple dose instructions
+
+    Input:
+        entity: spacy model entity
+            entity to determine whether to ignore
+        seen_labels: list of spacy model entity labels
+            list of labels already seen by parser, e.g. which entities
+            the parser has already seen
+    Output:
+        bool
+            Whether to keep the entity or not
+    """
+    # Don't pay attention to any of these entities
+    if entity.label_ in ["DRUG", "STRENGTH", "ROUTE"]:
+            return False
+    elif entity.label_ in seen_labels:
+        if entity.label_ == "DOSAGE":
+            if any(x in entity.text.split() for x in ("max", "maximum")):
+                return False
+        elif entity.label_ == "FREQUENCY":
+            if any(x in entity.text.split() for x in ("24", "maximum")):
+                return False
+        else:
+            return True
+        # If we've not already seen it we pay attention
+    else:
+        return True
+    
+
 #TODO: Improve splitting
+# Get rid of tags with redundant information (clarification e.g. "new daily dose = 100mg")
+# Combine tags which go together e.g. "2 in the morning" + "2 in the evening" = "2 in the morning and 2 in the evening"
 def _split_entities_for_multiple_instructions(model_entities):
     """
     Automatically determines if multiple dose instructions are included
@@ -100,7 +134,8 @@ def _split_entities_for_multiple_instructions(model_entities):
     current_sublist = []
     for entity in model_entities:
         # Ignore some entities 
-        if entity.label_ in ["DRUG", "STRENGTH", "ROUTE"]:
+        keep_entity = _keep_entity(entity, seen_labels)
+        if not keep_entity:
             continue
         elif entity.label_ in seen_labels:
             result.append(current_sublist)
