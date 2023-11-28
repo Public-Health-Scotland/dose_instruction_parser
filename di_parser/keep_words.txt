@@ -6,3 +6,12 @@ tid
 td
 qds
 nocte
+mane
+tds
+nasule
+nebule
+sprays
+hourly
+mdi
+hrly
+prn
