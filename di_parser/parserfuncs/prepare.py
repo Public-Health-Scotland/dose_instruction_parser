@@ -58,21 +58,21 @@ def _autocorrect(di):
     di = ' '.join(corrected_words)
     return di
 
-def _add_space_around_parentheses(s):
+def _remove_parentheses(s):
     """
-    Adds space around parantheses
+    Removes parentheses
 
     Input:
         s: str
-            String to add space in
+            String to remove parentheses
             e.g. "tablet(s)"
     Output:
         str
-            String with added space
-            e.g. "tablet (s) "
+            String with parentheses removed
+            e.g. "tablet s "
     """
-    s = re.sub(r'(?<!\s)\(', r' (', s)
-    s = re.sub(r'\)(?!\s)', r') ', s)
+    s = re.sub(r'\(', r' ', s) 
+    s = re.sub(r'\)', r' ', s) 
     return s
 
 def _convert_words_to_numbers(sentence):
@@ -139,7 +139,7 @@ def _pre_process(di):
             e.g. "take 2 tablets morning and night"
     """
     di = _autocorrect(di)
-    di = _add_space_around_parentheses(di)
+    di = _remove_parentheses(di)
     # remove extra spaces between words
     di = re.sub(r'\s+', ' ', di)
     output_words = []
