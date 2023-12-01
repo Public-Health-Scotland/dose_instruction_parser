@@ -111,9 +111,13 @@ def _keep_entity(entity, seen_labels):
         if entity.label_ == "DOSAGE":
             if any(x in entity.text.split() for x in ("max", "maximum")):
                 return False
+            else:
+                return True    
         elif entity.label_ == "FREQUENCY":
             if any(x in entity.text.split() for x in ("24", "maximum")):
                 return False
+            else:
+                return True    
         else:
             return True
         # If we've not already seen it we pay attention
