@@ -123,12 +123,13 @@ def _get_number_of_times(frequency):
         latin_freq = _get_latin_frequency(frequency)
         if latin_freq:
             return latin_freq.frequency
-        
         if any(x in frequency for x in ("meals", "feed", "food")):
             return 3.0
-        if any(x in frequency for x in ("bed", "morning", "daily", "night", 
+        if any(x in frequency for x in ("bed", "morning", "daily", "night", "evening",
             "noon", "breakfast","tea", "lunch", "dinner", "mane", "nocte")):
             return 1.0
+        else:
+            return 0.0
 
 def _get_bounding_num(nums, bound_type):
     """

@@ -158,7 +158,8 @@ def _split_entities_for_multiple_instructions(model_entities):
         if result[i]["DOSAGE"] == result[i+1]["DOSAGE"]:
             if add_index == None:
                 add_index = i
-            result[add_index]["FREQUENCY"] = result[add_index]["FREQUENCY"] + " and " + result[i+1]["FREQUENCY"]
+            if result[i+1]["FREQUENCY"] is not None:
+                result[add_index]["FREQUENCY"] = result[add_index]["FREQUENCY"] + " and " + result[i+1]["FREQUENCY"]
             keep_mask[i+1] = False
         else:
             add_index = None
