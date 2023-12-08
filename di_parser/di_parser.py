@@ -1,6 +1,7 @@
 import sys
 import spacy
 from dataclasses import dataclass
+from itertools import compress
 import re
 from spacy import Language
 import copy
@@ -135,19 +136,33 @@ def _split_entities_for_multiple_instructions(model_entities):
     """
     result = []
     seen_labels = set()
-    current_sublist = []
+    current_info = {"DOSAGE": None, "FREQUENCY": None, "FORM": None, 
+                        "AS_REQUIRED": None, "AS_DIRECTED": None}
     for entity in model_entities:
         # Ignore some entities 
         keep_entity = _keep_entity(entity, seen_labels)
         if not keep_entity:
             continue
         elif entity.label_ in seen_labels:
-            result.append(current_sublist)
-            current_sublist = []
+            result.append(current_info)
+            current_info = {"DOSAGE": None, "FREQUENCY": None, "FORM": None, 
+                        "AS_REQUIRED": None, "AS_DIRECTED": None}
             seen_labels.clear()
-        current_sublist.append(entity)
+        current_info[entity.label_] = entity.text
         seen_labels.add(entity.label_)
-    result.append(current_sublist)
+    result.append(current_info)
+    # Combine the split dose instructions if necessary
+    keep_mask = [True]*len(result)
+    add_index = None
+    for i in range(len(result[:-1])):
+        if result[i]["DOSAGE"] == result[i+1]["DOSAGE"]:
+            if add_index == None:
+                add_index = i
+            result[add_index]["FREQUENCY"] = result[add_index]["FREQUENCY"] + " and " + result[i+1]["FREQUENCY"]
+            keep_mask[i+1] = False
+        else:
+            add_index = None
+    result = list(compress(result, keep_mask))
     return result
 
 
@@ -157,10 +172,10 @@ def _create_structured_di(model_entities, form=None, asRequired=False, asDirecte
     """
     structured_di = StructuredDI(form, None, None, None, None, 
                                     None, None, None, None, asRequired, asDirected)
-    for entity in model_entities:
-        text = entity.text
-        label = entity.label_
-        if label == 'FORM':
+    for label, text in model_entities.items(): 
+        if text is None:
+            continue
+        elif label == 'FORM':
             if structured_di.form is None:
                 form = pdosage._to_singular(text)
                 if form is not None:
