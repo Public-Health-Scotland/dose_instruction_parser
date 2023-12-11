@@ -127,7 +127,7 @@ def _keep_entity(entity, seen_labels):
         # If we've not already seen it we pay attention
     else:
         return True
-        
+
 def _combine_split_dis(result):
     """
     Checks split dose instructions and re-combines into single dose instructions
@@ -166,7 +166,7 @@ def _combine_split_dis(result):
             if result[i+1]["DOSAGE"] is not None:
                 result[add_index]["DOSAGE"] = result[add_index]["DOSAGE"] + \
                     " and " + result[i+1]["DOSAGE"]
-                result[add_index]["FREQUENCY"] = freq1
+                result[add_index]["FREQUENCY"] = freq1.lower()
             keep_mask[i+1] = False
         else:
             add_index = None

@@ -126,7 +126,7 @@ def _get_number_of_times(frequency):
         if any(x in frequency for x in ("meals", "feed", "food")):
             return 3.0
         if any(x in frequency for x in ("bed", "morning", "daily", "night", "evening",
-            "noon", "breakfast","tea", "lunch", "dinner", "mane", "nocte")):
+            "noon", "breakfast","tea", "lunch", "dinner", "mane", "nocte", "day")):
             return 1.0
         else:
             return 0.0
