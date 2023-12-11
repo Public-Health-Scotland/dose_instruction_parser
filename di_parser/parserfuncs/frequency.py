@@ -129,7 +129,7 @@ def _get_number_of_times(frequency):
             "noon", "breakfast","tea", "lunch", "dinner", "mane", "nocte", "day")):
             return 1.0
         else:
-            return 0.0
+            return 1.0
 
 def _get_bounding_num(nums, bound_type):
     """

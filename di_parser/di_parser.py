@@ -90,6 +90,37 @@ def _parse_dis(di_lst, model: Language):
     """
     return pprepare._flatmap(lambda di: _parse_di(di, model), di_lst)
 
+def _split_entities_for_multiple_instructions(model_entities):
+    """
+    Automatically determines if multiple dose instructions are included
+    within one input dose instruction. If so, splits up the dose instruction.
+    """
+    result = []
+    seen_labels = set()
+    current_info = blank_di_dict.copy()
+    ignore_next_frequency = False
+    for entity in model_entities:
+        # Ignore some entities 
+        keep_entity = _keep_entity(entity, seen_labels)
+        if entity.label_ == "FREQUENCY" and ignore_next_frequency is True:
+            keep_entity = False
+            ignore_next_frequency = False
+        # If ignoring a dosage, ignore the corresponding frequency
+        ignore_next_frequency = (entity.label_ == "DOSAGE" and keep_entity is False)
+        if not keep_entity:
+            continue
+        elif entity.label_ in seen_labels:
+            result.append(current_info)
+            current_info = blank_di_dict.copy()
+            seen_labels.clear()
+        current_info[entity.label_] = entity.text
+        seen_labels.add(entity.label_)
+    result.append(current_info)
+    # Combine the split dose instructions if necessary
+    result = _combine_split_dis(result)
+    return result
+
+
 blank_di_dict = {"DOSAGE": None, "FREQUENCY": None, "FORM": None, 
                     "DURATION": None, "AS_REQUIRED": None, "AS_DIRECTED": None}
 
@@ -115,7 +146,7 @@ def _keep_entity(entity, seen_labels):
         if entity.label_ == "FORM":
             return False
         if entity.label_ == "DOSAGE":
-            if any(x in entity.text.split() for x in ("max", "maximum")):
+            if any(x in entity.text.split() for x in ("max", "maximum", "up", "upto")):
                 return False
             else:
                 return True    
@@ -175,35 +206,6 @@ def _combine_split_dis(result):
     result = list(compress(result, keep_mask))
     return result
     
-
-#TODO: Improve splitting
-# Get rid of tags with redundant information (clarification e.g. "new daily dose = 100mg")
-# Combine tags which go together e.g. "2 in the morning" + "2 in the evening" = "2 in the morning and 2 in the evening"
-def _split_entities_for_multiple_instructions(model_entities):
-    """
-    Automatically determines if multiple dose instructions are included
-    within one input dose instruction. If so, splits up the dose instruction.
-    """
-    result = []
-    seen_labels = set()
-    current_info = blank_di_dict.copy()
-    for entity in model_entities:
-        # Ignore some entities 
-        keep_entity = _keep_entity(entity, seen_labels)
-        if not keep_entity:
-            continue
-        elif entity.label_ in seen_labels:
-            result.append(current_info)
-            current_info = blank_di_dict.copy()
-            seen_labels.clear()
-        current_info[entity.label_] = entity.text
-        seen_labels.add(entity.label_)
-    result.append(current_info)
-    # Combine the split dose instructions if necessary
-    result = _combine_split_dis(result)
-    return result
-
-
 def _create_structured_di(model_entities, form=None, asRequired=False, asDirected=False):
     """
     Creates a StructuredDI from model entities.
