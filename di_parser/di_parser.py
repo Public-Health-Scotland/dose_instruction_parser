@@ -112,6 +112,8 @@ def _keep_entity(entity, seen_labels):
     if entity.label_ in ["DRUG", "STRENGTH", "ROUTE"]:
             return False
     elif entity.label_ in seen_labels:
+        if entity.label_ == "FORM":
+            return False
         if entity.label_ == "DOSAGE":
             if any(x in entity.text.split() for x in ("max", "maximum")):
                 return False

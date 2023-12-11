@@ -75,7 +75,7 @@ def _get_frequency_type(frequency):
         freq_type = "Year"
     elif any(x in frequency for x in
             ("day", "daily", "b/d", "bd", "night", "morning", "evening", "noon", "bedtime", "bed",
-            "breakfast", "tea", "lunch", "dinner", "meal", "nocte", "mane", "feed",
+            "breakfast", "tea", "lunch", "dinner", "meal", "nocte", "mane", "feed", "am", "pm",
             "tds", "qds")):
         freq_type = "Day"
     latin_freq = _get_latin_frequency(frequency)
