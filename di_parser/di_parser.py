@@ -127,7 +127,7 @@ def _keep_entity(entity, seen_labels):
         # If we've not already seen it we pay attention
     else:
         return True
-
+        
 def _combine_split_dis(result):
     """
     Checks split dose instructions and re-combines into single dose instructions
@@ -136,25 +136,41 @@ def _combine_split_dis(result):
     In particular:
         1. Dose instructions with the same dosage are combined with the 
           corresponding frequencies joined by "and"
-        2. Dose instructions with the same frequency type and null duration 
+        2. Dose instructions with the same frequency type and duration None
           are combined by adding the dosages together
     """
     # 1.
-    print(result)
     keep_mask = [True]*len(result)
     add_index = None
     for i in range(len(result[:-1])):
         if result[i]["DOSAGE"] == result[i+1]["DOSAGE"]:
-            print("hi")
             if add_index == None:
                 add_index = i
             if result[i+1]["FREQUENCY"] is not None:
-                result[add_index]["FREQUENCY"] = result[add_index]["FREQUENCY"] + " and " + result[i+1]["FREQUENCY"]
+                result[add_index]["FREQUENCY"] = result[add_index]["FREQUENCY"] + \
+                    " and " + result[i+1]["FREQUENCY"]
             keep_mask[i+1] = False
         else:
             add_index = None
     result = list(compress(result, keep_mask))
     # 2. 
+    keep_mask = [True]*len(result)
+    add_index = None
+    for i in range(len(result[:-1])):
+        freq1 = pfrequency._get_frequency_type(result[i]["FREQUENCY"])
+        freq2 = pfrequency._get_frequency_type(result[i+1]["FREQUENCY"])
+        if (freq1 == freq2) \
+            and (result[i]["DURATION"] is None) and (result[i+1]["DURATION"] is None):
+            if add_index == None:
+                add_index = i
+            if result[i+1]["DOSAGE"] is not None:
+                result[add_index]["DOSAGE"] = result[add_index]["DOSAGE"] + \
+                    " and " + result[i+1]["DOSAGE"]
+                result[add_index]["FREQUENCY"] = freq1
+            keep_mask[i+1] = False
+        else:
+            add_index = None
+    result = list(compress(result, keep_mask))
     return result
     
 
