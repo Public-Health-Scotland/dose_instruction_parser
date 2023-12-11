@@ -90,6 +90,9 @@ def _parse_dis(di_lst, model: Language):
     """
     return pprepare._flatmap(lambda di: _parse_di(di, model), di_lst)
 
+blank_di_dict = {"DOSAGE": None, "FREQUENCY": None, "FORM": None, 
+                    "DURATION": None, "AS_REQUIRED": None, "AS_DIRECTED": None}
+
 def _keep_entity(entity, seen_labels):
     """
     Determine whether to pay attention to an entity when splitting labels
@@ -124,6 +127,35 @@ def _keep_entity(entity, seen_labels):
         # If we've not already seen it we pay attention
     else:
         return True
+
+def _combine_split_dis(result):
+    """
+    Checks split dose instructions and re-combines into single dose instructions
+    where necessary.
+
+    In particular:
+        1. Dose instructions with the same dosage are combined with the 
+          corresponding frequencies joined by "and"
+        2. Dose instructions with the same frequency type and null duration 
+          are combined by adding the dosages together
+    """
+    # 1.
+    print(result)
+    keep_mask = [True]*len(result)
+    add_index = None
+    for i in range(len(result[:-1])):
+        if result[i]["DOSAGE"] == result[i+1]["DOSAGE"]:
+            print("hi")
+            if add_index == None:
+                add_index = i
+            if result[i+1]["FREQUENCY"] is not None:
+                result[add_index]["FREQUENCY"] = result[add_index]["FREQUENCY"] + " and " + result[i+1]["FREQUENCY"]
+            keep_mask[i+1] = False
+        else:
+            add_index = None
+    result = list(compress(result, keep_mask))
+    # 2. 
+    return result
     
 
 #TODO: Improve splitting
@@ -136,8 +168,7 @@ def _split_entities_for_multiple_instructions(model_entities):
     """
     result = []
     seen_labels = set()
-    current_info = {"DOSAGE": None, "FREQUENCY": None, "FORM": None, 
-                        "AS_REQUIRED": None, "AS_DIRECTED": None}
+    current_info = blank_di_dict.copy()
     for entity in model_entities:
         # Ignore some entities 
         keep_entity = _keep_entity(entity, seen_labels)
@@ -145,25 +176,13 @@ def _split_entities_for_multiple_instructions(model_entities):
             continue
         elif entity.label_ in seen_labels:
             result.append(current_info)
-            current_info = {"DOSAGE": None, "FREQUENCY": None, "FORM": None, 
-                        "AS_REQUIRED": None, "AS_DIRECTED": None}
+            current_info = blank_di_dict.copy()
             seen_labels.clear()
         current_info[entity.label_] = entity.text
         seen_labels.add(entity.label_)
     result.append(current_info)
     # Combine the split dose instructions if necessary
-    keep_mask = [True]*len(result)
-    add_index = None
-    for i in range(len(result[:-1])):
-        if result[i]["DOSAGE"] == result[i+1]["DOSAGE"]:
-            if add_index == None:
-                add_index = i
-            if result[i+1]["FREQUENCY"] is not None:
-                result[add_index]["FREQUENCY"] = result[add_index]["FREQUENCY"] + " and " + result[i+1]["FREQUENCY"]
-            keep_mask[i+1] = False
-        else:
-            add_index = None
-    result = list(compress(result, keep_mask))
+    result = _combine_split_dis(result)
     return result
 
 
