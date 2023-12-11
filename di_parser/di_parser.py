@@ -146,7 +146,7 @@ def _keep_entity(entity, seen_labels):
         if entity.label_ == "FORM":
             return False
         if entity.label_ == "DOSAGE":
-            if any(x in entity.text.split() for x in ("max", "maximum", "up", "upto")):
+            if any(x in entity.text.split() for x in ("max", "maximum", "up", "upto", "8")):
                 return False
             else:
                 return True    
@@ -180,7 +180,10 @@ def _combine_split_dis(result):
             if add_index == None:
                 add_index = i
             if result[i+1]["FREQUENCY"] is not None:
-                result[add_index]["FREQUENCY"] = result[add_index]["FREQUENCY"] + \
+                if result[add_index]["FREQUENCY"] is None:
+                    result[add_index]["FREQUENCY"] = result[i+1]["FREQUENCY"]
+                else:
+                    result[add_index]["FREQUENCY"] = result[add_index]["FREQUENCY"] + \
                     " and " + result[i+1]["FREQUENCY"]
             keep_mask[i+1] = False
         else:

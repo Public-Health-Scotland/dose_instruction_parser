@@ -75,6 +75,40 @@ def _remove_parentheses(s):
     s = re.sub(r'\)', r' ', s) 
     return s
 
+def _pad_hyphens_and_slashes(s):
+    """
+    Pads hyphens with spaces
+
+    Input:
+        s: str
+            String to pad hyphens 
+            e.g. "four-six"
+    Output:
+        str
+            String with hyphens padded
+            e.g. "four - six"
+    """
+    s = re.sub(r'\-', r' - ', s)
+    s = re.sub(r'\\', ' \ ', s)
+    s = re.sub(r'\/', ' / ', s)
+    return s
+
+def _pad_numbers(s):
+    """
+    Add spaces around numbers
+
+    Input:
+        s: str
+            String to pad numbers
+            e.g. "2x20ml or 3 tablets at 8am"
+    Output:
+        str
+            String with numbers padded
+            e.g. " 2 x 20 ml or  3  tablets at  8 am"
+    """
+    s = re.sub('(\d+(\.\d+)?)', r' \1 ', s)
+    return s
+
 def _convert_words_to_numbers(sentence):
     """
     Takes a sentence and converts any number words to numbers
@@ -140,8 +174,7 @@ def _pre_process(di):
     """
     di = _autocorrect(di)
     di = _remove_parentheses(di)
-    # remove extra spaces between words
-    di = re.sub(r'\s+', ' ', di)
+    di = _pad_hyphens_and_slashes(di)
     output_words = []
     words = di.split()
     # get words to replace
@@ -157,6 +190,9 @@ def _pre_process(di):
         output_words.append(word)
     di = ' '.join(output_words)
     di = _convert_words_to_numbers(di)
+    di = _pad_numbers(di)
+    # remove extra spaces between words
+    di = re.sub(r'\s+', ' ', di)
     return di
 
 

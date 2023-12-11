@@ -65,7 +65,10 @@ def _get_frequency_type(frequency):
     if any(x in frequency for x in ("hour", "hr")) | \
         (re.search("\d?h$", frequency) is not None):
         freq_type = "Hour"
-    elif any(x in frequency for x in ("week", "wk")):
+    elif any(x in frequency for x in ("week", "wk", "monday",
+                                        "tuesday", "wednesday", "thursday",
+                                        "friday", "saturday", "sunday", "mon",
+                                        "tue", "wed", "thu", "fri", "sat", "sun")):
         freq_type = "Week"
     elif frequency == "fortnight":
         freq_type = "2 Week"
@@ -84,7 +87,7 @@ def _get_frequency_type(frequency):
     # Check for multiple units of frequency type e.g. every 2 days
     if any(x in frequency for x in ("alternate", "every other")):
         freq_type = "2 " + freq_type 
-    if "every" in frequency:
+    if any(x in frequency for x in ("every", "hrly", "hourly")):
         nums = re.findall(re_digit, frequency)
         # Deal with words like third, fifth etc.
         for word in frequency.split():
@@ -205,12 +208,16 @@ def _get_range(text):
     elif any(x in text for x in (" to ", "-", " or ")):
         _min = min(nums, default=None)
         _max = max(nums, default=None)
-    elif "and" in text:
-        substrs = re.split("and|,", text)
+    elif any(x in text for x in ("and", " / ")):
+        substrs = re.split("and|,|\/", text)
         nums = [float(_get_number_of_times(s)) for s in substrs]
-        num = sum([num for num in nums if num is not None])
-        _min = num
-        _max = num
+        if any(x in text for x in ("am", "pm")):
+            _min = len(nums)
+            _max = len(nums)
+        else:
+            num = sum([num for num in nums if num is not None])
+            _min = num
+            _max = num
     else:
         _min = None
         _max = None
@@ -248,6 +255,18 @@ def _get_frequency_info(text):
         # Replacing "text" with "before" as now we only want to 
         # consider 1st half of expression
         text = before
+    # e.g. take 2 tablets 6 hrly
+    elif any(x in text for x in ("hrly", "hourly")):
+        match = re.findall("hourly|hrly", text)
+        if len(match) != 1:
+            warnings.warn("More than one use of hourly/hrly, taking first instance.")
+        match = match[0]
+        freqtype = _get_frequency_type(text)
+        before, after = text.split(match)
+        # Remove the number so don't double count
+        before = before.rsplit(" ", 1)[0]
+        text = before + match + after
+        _min, _max = _get_range(text)
     else:
         freqtype = _get_frequency_type(text)
         _min, _max = _get_range(text)
