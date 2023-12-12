@@ -170,7 +170,6 @@ def _get_bounding_num(nums, bound_type):
             bound = max(nums)
             return 0.0, float(bound)
 
-# TODO: standardise output types
 def _get_range(text):
     """
     Gets a range of max and min numbers given some text including numbers
@@ -212,10 +211,10 @@ def _get_range(text):
         substrs = re.split("and|,|\/", text)
         nums = [float(_get_number_of_times(s)) for s in substrs]
         if any(x in text for x in ("am", "pm")):
-            _min = len(nums)
-            _max = len(nums)
+            _min = float(len(nums))
+            _max = float(len(nums))
         else:
-            num = sum([num for num in nums if num is not None])
+            num = float(sum([num for num in nums if num is not None]))
             _min = num
             _max = num
     else:
