@@ -172,12 +172,9 @@ def _pre_process(di):
             Pre-processed dose instruction
             e.g. "take 2 tablets morning and night"
     """
-    di = _autocorrect(di)
-    di = _remove_parentheses(di)
-    di = _pad_hyphens_and_slashes(di)
+    # get words to replace
     output_words = []
     words = di.split()
-    # get words to replace
     replace_words = {}
     with open('di_parser/replace_words.csv', newline='') as csvfile:
         reader = csv.DictReader(csvfile)
@@ -189,6 +186,10 @@ def _pre_process(di):
             word = word.replace(word,replace_words[word])
         output_words.append(word)
     di = ' '.join(output_words)
+    # rest of preprocessing
+    di = _autocorrect(di)
+    di = _remove_parentheses(di)
+    di = _pad_hyphens_and_slashes(di)
     di = _convert_words_to_numbers(di)
     di = _pad_numbers(di)
     # remove extra spaces between words

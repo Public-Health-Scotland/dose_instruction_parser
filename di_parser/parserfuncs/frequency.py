@@ -103,7 +103,7 @@ def _get_frequency_type(frequency):
         freq_type = freqtype_conversion[freq_type]
     return freq_type
 
-def _get_number_of_times(frequency):
+def _get_number_of_times(frequency, default=None):
     """
     Gets the number of times a dose must be taken per frequencyType
 
@@ -124,13 +124,12 @@ def _get_number_of_times(frequency):
             # picked up as 8 times a day
             try:
                 for index in indexes:
-                    print(words[index-1])
                     del words[index-1]
             except:
                 pass
         for word in words:
             if word.isdigit():
-                return int(word)
+                return float(word)
         # every other TIME_UNIT means every 2 days, weeks etc
         if "other" in frequency:
             return 0.5
@@ -143,7 +142,7 @@ def _get_number_of_times(frequency):
             "noon", "breakfast","tea", "lunch", "dinner", "mane", "nocte", "day")):
             return 1.0
         else:
-            return 1.0
+            return default
 
 def _get_bounding_num(nums, bound_type):
     """
@@ -173,7 +172,6 @@ def _get_bounding_num(nums, bound_type):
     else:
         if len(nums) > 1:
             warnings.warn("More than one number found for bounding number")
-            print(nums)
         if bound_type == "min":
             bound = min(nums)
             return float(bound), None
@@ -222,25 +220,30 @@ def _get_range(text):
             warnings.warn("More than one instance of ('to', '-', 'or') in phrase")
         index = indexes[0]
         try:
-             _min = float(words[index-1])
-             _max = float(words[index+1])
+            _min = float(words[index-1])
+            _max = float(words[index+1])
         except:
-            _min = min(nums, default=None)
-            _max = max(nums, default=None)
-        indexes = [i for i in range(len(words)) if words[i] in ("ml", "mg")]
-        if len(indexes) != 0:
-            if len(indexes) != 1:
-                warnings.warn("More than one instance of ('ml', 'mg') in phrase")
-            index = indexes[0]
-            try:
-                multiplier = float(words[index-1])
-                _min *= multiplier
-                _max *= multiplier
-            except:
-                pass
-    elif any(x in text for x in ("and", " / ")):
-        substrs = re.split("and|,|\/", text)
-        nums = [float(_get_number_of_times(s)) for s in substrs]
+            _min = float(min(nums, default=None))
+            _max = float(max(nums, default=None))
+        # If there is a third number e.g. 2 to 4 5ml spoonfuls
+        # need to multiply 2 and 4 by 5 to get total ml
+        if len(nums) > 2:
+            indexes = [i for i in range(len(words)) if words[i] in ("ml", "mg")]
+            if len(indexes) != 0:
+                if len(indexes) != 1:
+                    warnings.warn("More than one instance of ('ml', 'mg') in phrase")
+                index = indexes[0]
+                try:
+                    multiplier = float(words[index-1])
+                    _min *= multiplier
+                    _max *= multiplier
+                except:
+                    pass
+    elif any(x in text for x in ("and", " / ", " ; ")):
+        # Remove "/ day" or "/ d"
+        text = text.replace("/ day", " ").replace("/ d", " ")
+        substrs = re.split("and|,|\/|;", text)
+        nums = [float(_get_number_of_times(s, default=0.0)) for s in substrs]
         if any(x in text for x in ("am", "pm")):
             _min = float(len(nums))
             _max = float(len(nums))
