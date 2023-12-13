@@ -112,7 +112,7 @@ def _get_continuous_dose(text):
             warnings.warn("More than one type of dosage continuous measure: " + str(measures) + 
             ". Using " + str(measures[0]) + ".")
         form = measures[0]
-        _min, _max = pfrequency._get_range(text.replace(measures[0], ""))
+        _min, _max = pfrequency._get_range(text) 
         if _min is None:
             dose_nums = re.findall(pfrequency.re_digit, re.sub(",", "", text))
             if len(dose_nums) > 1:

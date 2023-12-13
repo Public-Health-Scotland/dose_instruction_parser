@@ -117,7 +117,18 @@ def _get_number_of_times(frequency):
             e.g. 1.0
     """
     if frequency is not None:
-        for word in frequency.split():
+        words = frequency.split()
+        if any(x in frequency for x in ("am", "pm")):
+            indexes = [i for i in range(len(words)) if words[i] in ("am", "pm")]
+            # Removing the time e.g. for "8 am" -> "am" so the 8 doesn't get
+            # picked up as 8 times a day
+            try:
+                for index in indexes:
+                    print(words[index-1])
+                    del words[index-1]
+            except:
+                pass
+        for word in words:
             if word.isdigit():
                 return int(word)
         # every other TIME_UNIT means every 2 days, weeks etc
@@ -205,8 +216,28 @@ def _get_range(text):
         else:
             _min, _max = _get_bounding_num(nums, "min")
     elif any(x in text for x in (" to ", "-", " or ")):
-        _min = min(nums, default=None)
-        _max = max(nums, default=None)
+        words = text.split()
+        indexes = [i for i in range(len(words)) if words[i] in ("to", "-", "or")]
+        if len(indexes) != 1:
+            warnings.warn("More than one instance of ('to', '-', 'or') in phrase")
+        index = indexes[0]
+        try:
+             _min = float(words[index-1])
+             _max = float(words[index+1])
+        except:
+            _min = min(nums, default=None)
+            _max = max(nums, default=None)
+        indexes = [i for i in range(len(words)) if words[i] in ("ml", "mg")]
+        if len(indexes) != 0:
+            if len(indexes) != 1:
+                warnings.warn("More than one instance of ('ml', 'mg') in phrase")
+            index = indexes[0]
+            try:
+                multiplier = float(words[index-1])
+                _min *= multiplier
+                _max *= multiplier
+            except:
+                pass
     elif any(x in text for x in ("and", " / ")):
         substrs = re.split("and|,|\/", text)
         nums = [float(_get_number_of_times(s)) for s in substrs]
