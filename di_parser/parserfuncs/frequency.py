@@ -47,7 +47,7 @@ frequency_numbers = {"second": 2, "third": 3, "fourth": 4, "fifth": 5,
 freqtype_conversion = {"7 Day": "Week", "24 Hour": "Day", "48 Hour": "2 Day",
                         "14 Day": "2 Week", "4 Week" : "Month"}
 
-def _get_frequency_type(frequency):
+def get_frequency_type(frequency):
     """
     Gets the frequency type from a frequency string
     
@@ -257,7 +257,7 @@ def _get_range(text, default=None):
         _max = default
     return _min, _max
 
-def _get_frequency_info(text):
+def get_frequency_info(text):
     """ 
     Get information about frequency given a frequency entity text
 
@@ -284,7 +284,7 @@ def _get_frequency_info(text):
         # Split on every
         before, after = text.split("every")
         # Get all numbers
-        freqtype = _get_frequency_type("every" + after)
+        freqtype = get_frequency_type("every" + after)
         _min, _max = _get_range(before)
         # Replacing "text" with "before" as now we only want to 
         # consider 1st half of expression
@@ -295,7 +295,7 @@ def _get_frequency_info(text):
         if len(match) != 1:
             warnings.warn("More than one use of hourly/hrly, taking first instance.")
         match = match[0]
-        freqtype = _get_frequency_type(text)
+        freqtype = get_frequency_type(text)
         words = text.split()
         number_words = [word.replace(".","").isnumeric() for word in words]
         # Find number words immediately preceeding "hourly/hrly" and remove
@@ -308,7 +308,7 @@ def _get_frequency_info(text):
         words = list(compress(words, remove))
         _min, _max = _get_range(" ".join(words), default=1.0)
     else:
-        freqtype = _get_frequency_type(text)
+        freqtype = get_frequency_type(text)
         _min, _max = _get_range(text)
     if _min is None:
         freq = _get_number_of_times(text)

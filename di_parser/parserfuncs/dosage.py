@@ -128,7 +128,7 @@ def _get_continuous_dose(text):
         form = None
     return _min, _max, form
 
-def _get_dosage_info(text):
+def get_dosage_info(text):
     """ 
     Get information about dosage given a dosage entity text
 

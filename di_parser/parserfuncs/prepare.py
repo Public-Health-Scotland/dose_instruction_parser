@@ -144,9 +144,7 @@ def _convert_fract_to_num(word):
             Converted word
             e.g. "0.5"
     """
-    frac_dict = {"half": "0.5",  "quarter": "0.25", 
-                    #"third": "0.3","fifth": "0.2"
-    }
+    frac_dict = {"half": "0.5",  "quarter": "0.25"}
     def is_frac(_word):
         nums = _word.split('/')
         return len(nums) == 2 and '/' in _word and nums[0].isdigit() and nums[1].isdigit()
@@ -159,7 +157,7 @@ def _convert_fract_to_num(word):
         out = word
     return out
 
-def _pre_process(di):
+def pre_process(di):
     """
     Pre-processes a dose instruction before it is sent to the model 
 
