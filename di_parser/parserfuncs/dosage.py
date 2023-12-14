@@ -109,8 +109,9 @@ def _get_continuous_dose(text):
     measures = [ele for ele in ["mg", "ml"] if(ele in text)]
     if bool(measures):
         if len(measures) > 1:
-            warnings.warn("More than one type of dosage continuous measure: " + str(measures) + 
-            ". Using " + str(measures[0]) + ".")
+            warnings.warn("More than one type of dosage continuous measure: " + \
+                str(measures) + \
+                    ". Using " + str(measures[0]) + ".")
         form = measures[0]
         _min, _max = pfrequency._get_range(text) 
         if _min is None:
