@@ -373,6 +373,49 @@ def _get_range(text, default=None):
         _max = default
     return _min, _max
 
+def _get_hourly_adjusted_frequency(text):
+    """
+    Gets frequency min, max and type where instruction specifies
+    "x hourly" or "x hrly".
+
+    Adjusts min and max to avoid double counting e.g. "six hourly"
+    - > 1.0, 1.0, '6 Hour' rather than 6.0, 6.0, '6 Hour'.
+
+    Input:
+    ------
+        text (str)
+            NER frequency tag to extract information from
+            e.g. "6 hourly"
+    Output:
+    -------
+        _min: float
+            The minimum number of times per freqtype
+            e.g. 1.0
+        _max: float
+            The maximum number of times per freqtype
+            e.g. 1.0
+        freqtype: str
+            The frequency type
+            e.g. '6 Hour'
+    """
+    match = re.findall("hourly|hrly", text)
+    if len(match) != 1:
+        warnings.warn("More than one use of hourly/hrly, taking first instance.")
+    match = match[0]
+    freqtype = get_frequency_type(text)
+    words = text.split()
+    number_words = [word.replace(".","").isnumeric() for word in words]
+    # Find number words immediately preceeding "hourly/hrly" and remove
+    remove = [1]*len(words)
+    for i in range(words.index(match), -1, -1):
+        if number_words[i] or (words[i] in ("/","-","\\",";", "times", match)):
+            remove[i] = 0
+        else:
+            break
+    words = list(compress(words, remove))
+    _min, _max = _get_range(" ".join(words), default=1.0)
+    return _min, _max, freqtype
+
 def get_frequency_info(text):
     """ 
     Get information about frequency given a frequency entity text
@@ -407,22 +450,7 @@ def get_frequency_info(text):
         text = before
     # e.g. take 2 tablets 6 hrly
     elif any(x in text for x in ("hrly", "hourly")):
-        match = re.findall("hourly|hrly", text)
-        if len(match) != 1:
-            warnings.warn("More than one use of hourly/hrly, taking first instance.")
-        match = match[0]
-        freqtype = get_frequency_type(text)
-        words = text.split()
-        number_words = [word.replace(".","").isnumeric() for word in words]
-        # Find number words immediately preceeding "hourly/hrly" and remove
-        remove = [1]*len(words)
-        for i in range(words.index(match), -1, -1):
-            if number_words[i] or (words[i] in ("/","-","\\",";", match)):
-                remove[i] = 0
-            else:
-                break
-        words = list(compress(words, remove))
-        _min, _max = _get_range(" ".join(words), default=1.0)
+        _min, _max, freqtype = _get_hourly_adjusted_frequency(text)
     else:
         freqtype = get_frequency_type(text)
         _min, _max = _get_range(text)
