@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from itertools import compress
 import re
 import warnings
 
@@ -96,8 +97,8 @@ def _get_frequency_type(frequency):
         if len(nums) == 0:
             return freq_type
         if len(nums) != 1:
-            warnings.warn("More than one number for every x time unit")
-        freq_type = nums[0] + " " + freq_type
+            warnings.warn("More than one number for every x time unit. Using lowest unit.")
+        freq_type = min(nums) + " " + freq_type
     # Convert e.g. "24 Hour" -> "Day"
     if freq_type in freqtype_conversion.keys():
         freq_type = freqtype_conversion[freq_type]
@@ -179,7 +180,7 @@ def _get_bounding_num(nums, bound_type):
             bound = max(nums)
             return 0.0, float(bound)
 
-def _get_range(text):
+def _get_range(text, default=None):
     """
     Gets a range of max and min numbers given some text including numbers
 
@@ -252,8 +253,8 @@ def _get_range(text):
             _min = num
             _max = num
     else:
-        _min = None
-        _max = None
+        _min = default
+        _max = default
     return _min, _max
 
 def _get_frequency_info(text):
@@ -295,11 +296,17 @@ def _get_frequency_info(text):
             warnings.warn("More than one use of hourly/hrly, taking first instance.")
         match = match[0]
         freqtype = _get_frequency_type(text)
-        before, after = text.split(match)
-        # Remove the number so don't double count
-        before = before.rsplit(" ", 1)[0]
-        text = before + match + after
-        _min, _max = _get_range(text)
+        words = text.split()
+        number_words = [word.replace(".","").isnumeric() for word in words]
+        # Find number words immediately preceeding "hourly/hrly" and remove
+        remove = [1]*len(words)
+        for i in range(words.index(match), -1, -1):
+            if number_words[i] or (words[i] in ("/","-","\\",";", match)):
+                remove[i] = 0
+            else:
+                break
+        words = list(compress(words, remove))
+        _min, _max = _get_range(" ".join(words), default=1.0)
     else:
         freqtype = _get_frequency_type(text)
         _min, _max = _get_range(text)
