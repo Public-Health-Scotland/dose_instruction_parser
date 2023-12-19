@@ -8,12 +8,6 @@ import copy
 import os
 import warnings
 
-# Local import of helper functions
-import di_prepare 
-import di_dosage
-import di_frequency
-import di_duration
-
 @dataclass
 class StructuredDI:
     """
