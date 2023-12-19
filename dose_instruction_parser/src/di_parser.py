@@ -8,6 +8,11 @@ import copy
 import os
 import warnings
 
+import di_prepare
+import di_frequency
+import di_dosage
+import di_duration
+
 @dataclass
 class StructuredDI:
     """
