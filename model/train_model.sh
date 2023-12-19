@@ -28,7 +28,7 @@ filename="$modelloc/logs/train_$outputname.log"
 
 # Write out config file to log
 touch "$filename"
-cat ./config/config.cfg >> "$filename"
+cat ./model/config/config.cfg >> "$filename"
 
 # Write out training output to log
-python -m spacy train ./config/config.cfg --output "$modelloc" --paths.train ./data/train.spacy --paths.dev ./data/dev.spacy >> "$filename"
+python -m spacy train ./model/config/config.cfg --output "$modelloc" --paths.train ./data/train.spacy --paths.dev ./data/dev.spacy >> "$filename"
