@@ -1,6 +1,9 @@
 # Egg info #
 dose_instruction_parser/src/dose_instruction_parser.egg-info/*
 
+# Backup #
+model/preprocess/backup/*
+
 *.pyc
 
 # Common text files that may contain data #
