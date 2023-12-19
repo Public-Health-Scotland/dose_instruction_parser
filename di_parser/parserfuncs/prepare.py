@@ -75,6 +75,40 @@ def _remove_parentheses(s):
     s = re.sub(r'\)', r' ', s) 
     return s
 
+def _pad_hyphens_and_slashes(s):
+    """
+    Pads hyphens with spaces
+
+    Input:
+        s: str
+            String to pad hyphens 
+            e.g. "four-six"
+    Output:
+        str
+            String with hyphens padded
+            e.g. "four - six"
+    """
+    s = re.sub(r'\-', r' - ', s)
+    s = re.sub(r'\\', ' \ ', s)
+    s = re.sub(r'\/', ' / ', s)
+    return s
+
+def _pad_numbers(s):
+    """
+    Add spaces around numbers
+
+    Input:
+        s: str
+            String to pad numbers
+            e.g. "2x20ml or 3 tablets at 8am"
+    Output:
+        str
+            String with numbers padded
+            e.g. " 2 x 20 ml or  3  tablets at  8 am"
+    """
+    s = re.sub('(\d+(\.\d+)?)', r' \1 ', s)
+    return s
+
 def _convert_words_to_numbers(sentence):
     """
     Takes a sentence and converts any number words to numbers
@@ -110,9 +144,7 @@ def _convert_fract_to_num(word):
             Converted word
             e.g. "0.5"
     """
-    frac_dict = {"half": "0.5",  "quarter": "0.25", 
-                    #"third": "0.3","fifth": "0.2"
-    }
+    frac_dict = {"half": "0.5",  "quarter": "0.25"}
     def is_frac(_word):
         nums = _word.split('/')
         return len(nums) == 2 and '/' in _word and nums[0].isdigit() and nums[1].isdigit()
@@ -125,7 +157,7 @@ def _convert_fract_to_num(word):
         out = word
     return out
 
-def _pre_process(di):
+def pre_process(di):
     """
     Pre-processes a dose instruction before it is sent to the model 
 
@@ -138,13 +170,9 @@ def _pre_process(di):
             Pre-processed dose instruction
             e.g. "take 2 tablets morning and night"
     """
-    di = _autocorrect(di)
-    di = _remove_parentheses(di)
-    # remove extra spaces between words
-    di = re.sub(r'\s+', ' ', di)
+    # get words to replace
     output_words = []
     words = di.split()
-    # get words to replace
     replace_words = {}
     with open('di_parser/replace_words.csv', newline='') as csvfile:
         reader = csv.DictReader(csvfile)
@@ -156,7 +184,14 @@ def _pre_process(di):
             word = word.replace(word,replace_words[word])
         output_words.append(word)
     di = ' '.join(output_words)
+    # rest of preprocessing
+    di = _autocorrect(di)
+    di = _remove_parentheses(di)
+    di = _pad_hyphens_and_slashes(di)
     di = _convert_words_to_numbers(di)
+    di = _pad_numbers(di)
+    # remove extra spaces between words
+    di = re.sub(r'\s+', ' ', di)
     return di
 
 

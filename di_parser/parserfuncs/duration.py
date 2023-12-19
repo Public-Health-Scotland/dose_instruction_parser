@@ -1,8 +1,7 @@
 import re
 import di_parser.parserfuncs.frequency as pfrequency
 
-
-def _get_duration_info(text):
+def get_duration_info(text):
     """ 
     Get information about duration given a duration entity text
 

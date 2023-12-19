@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from itertools import compress
 import re
 import warnings
 
@@ -46,7 +47,7 @@ frequency_numbers = {"second": 2, "third": 3, "fourth": 4, "fifth": 5,
 freqtype_conversion = {"7 Day": "Week", "24 Hour": "Day", "48 Hour": "2 Day",
                         "14 Day": "2 Week", "4 Week" : "Month"}
 
-def _get_frequency_type(frequency):
+def get_frequency_type(frequency):
     """
     Gets the frequency type from a frequency string
     
@@ -65,7 +66,10 @@ def _get_frequency_type(frequency):
     if any(x in frequency for x in ("hour", "hr")) | \
         (re.search("\d?h$", frequency) is not None):
         freq_type = "Hour"
-    elif any(x in frequency for x in ("week", "wk")):
+    elif any(x in frequency for x in ("week", "wk", "monday",
+                                        "tuesday", "wednesday", "thursday",
+                                        "friday", "saturday", "sunday", "mon",
+                                        "tue", "wed", "thu", "fri", "sat", "sun")):
         freq_type = "Week"
     elif frequency == "fortnight":
         freq_type = "2 Week"
@@ -75,16 +79,39 @@ def _get_frequency_type(frequency):
         freq_type = "Year"
     elif any(x in frequency for x in
             ("day", "daily", "b/d", "bd", "night", "morning", "evening", "noon", "bedtime", "bed",
-            "breakfast", "tea", "lunch", "dinner", "meal", "nocte", "mane", "feed",
+            "breakfast", "tea", "lunch", "dinner", "meal", "nocte", "mane", "feed", "am", "pm",
             "tds", "qds")):
         freq_type = "Day"
     latin_freq = _get_latin_frequency(frequency)
     if latin_freq:
         freq_type = latin_freq.frequencyType
     # Check for multiple units of frequency type e.g. every 2 days
+    freq_type = _add_frequency_multiple_units(frequency, freq_type)
+    # Convert e.g. "24 Hour" -> "Day"
+    if freq_type in freqtype_conversion.keys():
+        freq_type = freqtype_conversion[freq_type]
+    return freq_type
+
+def _add_frequency_multiple_units(frequency, freq_type):
+    """
+    Checks if frequency type is for multiples of frequency unit
+    e.g. "every 2 hours" or "alternate days"
+
+    Inputs:
+    -------
+        frequency: str
+            Frequency NER text
+            e.g. "every 6 hours", "alternate days"
+        freq_type: str (None)
+            Current frequency type identified
+            e.g. "Hour", "Day"
+    Outputs:
+        freq_type with multiples added
+        e.g. "6 Hour", "2 Day"
+    """
     if any(x in frequency for x in ("alternate", "every other")):
         freq_type = "2 " + freq_type 
-    if "every" in frequency:
+    if any(x in frequency for x in ("every", "hrly", "hourly")):
         nums = re.findall(re_digit, frequency)
         # Deal with words like third, fifth etc.
         for word in frequency.split():
@@ -93,16 +120,14 @@ def _get_frequency_type(frequency):
         if len(nums) == 0:
             return freq_type
         if len(nums) != 1:
-            warnings.warn("More than one number for every x time unit")
-        freq_type = nums[0] + " " + freq_type
-    # Convert e.g. "24 Hour" -> "Day"
-    if freq_type in freqtype_conversion.keys():
-        freq_type = freqtype_conversion[freq_type]
+            warnings.warn("More than one number for every x time unit. Using lowest unit.")
+        freq_type = min(nums) + " " + freq_type
     return freq_type
 
-def _get_number_of_times(frequency):
+def _get_number_of_times(frequency, default=None):
     """
     Gets the number of times a dose must be taken per frequencyType
+    Only use if no range of times is present
 
     Inputs:
         frequency: str
@@ -114,21 +139,29 @@ def _get_number_of_times(frequency):
             e.g. 1.0
     """
     if frequency is not None:
-        for word in frequency.split():
+        words = frequency.split()
+        if any(x in frequency for x in ("am", "pm")):
+            indexes = [i for i in range(len(words)) if words[i] in ("am", "pm")]
+            # Removing the time e.g. for "8 am" -> "am" so the 8 doesn't get
+            # picked up as 8 times a day
+            try:
+                for index in indexes:
+                    del words[index-1]
+            except:
+                pass
+        for word in words:
             if word.isdigit():
-                return int(word)
-        # every other TIME_UNIT means every 2 days, weeks etc
-        if "other" in frequency:
-            return 0.5
+                return float(word)
         latin_freq = _get_latin_frequency(frequency)
         if latin_freq:
             return latin_freq.frequency
-        
         if any(x in frequency for x in ("meals", "feed", "food")):
             return 3.0
-        if any(x in frequency for x in ("bed", "morning", "daily", "night", 
-            "noon", "breakfast","tea", "lunch", "dinner", "mane", "nocte")):
+        if any(x in frequency for x in ("bed", "morning", "daily", "night", "evening",
+            "noon", "breakfast","tea", "lunch", "dinner", "mane", "nocte", "day")):
             return 1.0
+        else:
+            return default
 
 def _get_bounding_num(nums, bound_type):
     """
@@ -158,7 +191,6 @@ def _get_bounding_num(nums, bound_type):
     else:
         if len(nums) > 1:
             warnings.warn("More than one number found for bounding number")
-            print(nums)
         if bound_type == "min":
             bound = min(nums)
             return float(bound), None
@@ -166,8 +198,144 @@ def _get_bounding_num(nums, bound_type):
             bound = max(nums)
             return 0.0, float(bound)
 
-# TODO: standardise output types
-def _get_range(text):
+def _check_min_max_amount(text, nums):
+    """
+    Checks whether can find a range of values using the pattern
+    of "at least x" or "up to x" etc.
+
+    Input:
+    ------
+        text: str
+            text to look for pattern in 
+            e.g. "max 4"
+        nums: list of floats
+            numbers identified from text
+    Output:
+    -------
+        _min: float (None)
+            minimum of range
+        _max: float (None)
+            maximum of range
+        range_found: bool
+            whether range successfully found
+    """
+    if any(x in text for x in ("max", "upto", "up to", "Maximum")):
+        _min, _max = _get_bounding_num(nums, "max")
+        range_found = True
+    elif any(x in text for x in ("at least", "min")):
+        if len(nums) == 0:
+            range_found = True
+            if " a " in text:
+                _min = 1.0
+            else:
+                _max = None
+        else:
+            _min, _max = _get_bounding_num(nums, "min")
+            range_found = True
+    else:
+        _min = None
+        _max = None
+        range_found = False
+    return _min, _max, range_found
+
+def _check_explicit_range(text, nums):
+    """
+    Checks whether a range of numbers can be found by looking
+    for an explicitly stated range using "to", "-" or "or",
+    e.g. "3-4 tablets", "1 to 2 days"
+
+    Input:
+    ------
+        text: str
+            text to look for pattern in 
+            e.g. "2 to 4"
+        nums: list of floats
+            numbers identified from text
+    Output:
+    -------
+        _min: float (None)
+            minimum of range
+        _max: float (None)
+            maximum of range
+        range_found: bool
+            whether range successfully found
+    """
+    if any(x in text for x in (" to ", "-", " or ")):
+        words = text.split()
+        indexes = [i for i in range(len(words)) if words[i] in ("to", "-", "or")]
+        if len(indexes) != 1:
+            warnings.warn("More than one instance of ('to', '-', 'or') in phrase")
+        index = indexes[0]
+        try:
+            _min = float(words[index-1])
+            _max = float(words[index+1])
+            range_found = True
+        except:
+            _min = float(min(nums, default=None))
+            _max = float(max(nums, default=None))
+            range_found = True
+        # If there is a third number e.g. 2 to 4 5ml spoonfuls
+        # need to multiply 2 and 4 by 5 to get total ml
+        if len(nums) > 2:
+            indexes = [i for i in range(len(words)) if words[i] in ("ml", "mg")]
+            if len(indexes) != 0:
+                if len(indexes) != 1:
+                    warnings.warn("More than one instance of ('ml', 'mg') in phrase")
+                index = indexes[0]
+                try:
+                    multiplier = float(words[index-1])
+                    _min *= multiplier
+                    _max *= multiplier
+                    range_found = True
+                except:
+                    pass
+    else:
+        _min = None
+        _max = None
+        range_found = False
+    return _min, _max, range_found
+
+def _check_range_from_list(text):
+    """
+    Checks whether a range of numbers can be found by looking
+    for a list of times
+    e.g. "8am and 6pm"
+
+    Input:
+    ------
+        text: str
+            text to look for pattern in 
+            e.g. "8 am and 6pm"
+    Output:
+    -------
+        _min: float (None)
+            minimum of range
+        _max: float (None)
+            maximum of range
+        range_found: bool
+            whether range successfully found
+    """
+    if any(x in text for x in ("and", " / ", " ; ")):
+        # Remove "/ day" or "/ d"
+        text = text.replace("/ day", " ").replace("/ d", " ")
+        substrs = re.split("and|,|\/|;", text)
+        nums = [float(_get_number_of_times(s, default=0.0)) for s in substrs]
+        if any(x in text for x in ("am", "pm")):
+            _min = float(len(nums))
+            _max = float(len(nums))
+            range_found = True
+        else:
+            num = float(sum([num for num in nums if num is not None]))
+            _min = num
+            _max = num
+            range_found = True
+    else:
+        _min = None
+        _max = None
+        range_found = False
+    return _min, _max, range_found
+
+def _get_range(text, default=None):
     """
     Gets a range of max and min numbers given some text including numbers
 
@@ -191,31 +359,64 @@ def _get_range(text):
         if word in latin_frequency_types.keys():
             nums.append(latin_frequency_types[word].frequency)
     nums = [float(item) for item in nums]
-    if any(x in text for x in ("max", "upto", "up to")):
-        _min, _max = _get_bounding_num(nums, "max")
-    elif any(x in text for x in ("at least", "min")):
-        if len(nums) == 0:
-            if " a " in text:
-                _min = 1.0
-            else:
-                _max = None
-        else:
-            _min, _max = _get_bounding_num(nums, "min")
-    elif any(x in text for x in (" to ", "-", " or ")):
-        _min = min(nums, default=None)
-        _max = max(nums, default=None)
-    elif "and" in text:
-        substrs = re.split("and|,", text)
-        nums = [float(_get_number_of_times(s)) for s in substrs]
-        num = sum([num for num in nums if num is not None])
-        _min = num
-        _max = num
-    else:
-        _min = None
-        _max = None
+    # Initially we have not found a range to return
+    # Searching for valid range using multiple rules
+    range_found = False
+    _min, _max, range_found = _check_min_max_amount(text, nums)
+    if not range_found:
+        _min, _max, range_found = _check_explicit_range(text, nums)
+    if not range_found:
+        _min, _max, range_found = _check_range_from_list(text)
+    # Found no range
+    if not range_found:
+        _min = default
+        _max = default
     return _min, _max
 
-def _get_frequency_info(text):
+def _get_hourly_adjusted_frequency(text):
+    """
+    Gets frequency min, max and type where instruction specifies
+    "x hourly" or "x hrly".
+
+    Adjusts min and max to avoid double counting e.g. "six hourly"
+    - > 1.0, 1.0, '6 Hour' rather than 6.0, 6.0, '6 Hour'.
+
+    Input:
+    ------
+        text (str)
+            NER frequency tag to extract information from
+            e.g. "6 hourly"
+    Output:
+    -------
+        _min: float
+            The minimum number of times per freqtype
+            e.g. 1.0
+        _max: float
+            The maximum number of times per freqtype
+            e.g. 1.0
+        freqtype: str
+            The frequency type
+            e.g. '6 Hour'
+    """
+    match = re.findall("hourly|hrly", text)
+    if len(match) != 1:
+        warnings.warn("More than one use of hourly/hrly, taking first instance.")
+    match = match[0]
+    freqtype = get_frequency_type(text)
+    words = text.split()
+    number_words = [word.replace(".","").isnumeric() for word in words]
+    # Find number words immediately preceeding "hourly/hrly" and remove
+    remove = [1]*len(words)
+    for i in range(words.index(match), -1, -1):
+        if number_words[i] or (words[i] in ("/","-","\\",";", "times", match)):
+            remove[i] = 0
+        else:
+            break
+    words = list(compress(words, remove))
+    _min, _max = _get_range(" ".join(words), default=1.0)
+    return _min, _max, freqtype
+
+def get_frequency_info(text):
     """ 
     Get information about frequency given a frequency entity text
 
@@ -242,13 +443,16 @@ def _get_frequency_info(text):
         # Split on every
         before, after = text.split("every")
         # Get all numbers
-        freqtype = _get_frequency_type("every" + after)
+        freqtype = get_frequency_type("every" + after)
         _min, _max = _get_range(before)
         # Replacing "text" with "before" as now we only want to 
         # consider 1st half of expression
         text = before
+    # e.g. take 2 tablets 6 hrly
+    elif any(x in text for x in ("hrly", "hourly")):
+        _min, _max, freqtype = _get_hourly_adjusted_frequency(text)
     else:
-        freqtype = _get_frequency_type(text)
+        freqtype = get_frequency_type(text)
         _min, _max = _get_range(text)
     if _min is None:
         freq = _get_number_of_times(text)

@@ -1,6 +1,7 @@
 import sys
 import spacy
 from dataclasses import dataclass
+from itertools import compress
 import re
 from spacy import Language
 import copy
@@ -58,7 +59,7 @@ def _get_model_entities(model_output):
     """
     Retrieve the entities from model output.
     Create model output by:
-        model = spacy.load_model("my_model")
+        model = spacy.load("my_model")
         model_output = model("my dose instruction")
     """
     entities = model_output.ents
@@ -68,7 +69,7 @@ def _get_model_entities_from_text(text, model):
     """
     Retrieve the entities from text
     """
-    di_preprocessed = pprepare._pre_process(text)
+    di_preprocessed = pprepare.pre_process(text)
     model_output = model(di_preprocessed)
     entities = model_output.ents 
     return entities
@@ -79,7 +80,7 @@ def _parse_di(di: str, model: Language):
     2. Applies model to retrieve entities
     3. Creates structured dose instruction from entities using static rules
     """
-    di_preprocessed = pprepare._pre_process(di)
+    di_preprocessed = pprepare.pre_process(di)
     model_output = model(di_preprocessed)
     return _create_structured_dis(model_output)
 
@@ -89,7 +90,6 @@ def _parse_dis(di_lst, model: Language):
     """
     return pprepare._flatmap(lambda di: _parse_di(di, model), di_lst)
 
-#TODO: Improve splitting
 def _split_entities_for_multiple_instructions(model_entities):
     """
     Automatically determines if multiple dose instructions are included
@@ -97,49 +97,146 @@ def _split_entities_for_multiple_instructions(model_entities):
     """
     result = []
     seen_labels = set()
-    current_sublist = []
+    current_info = blank_di_dict.copy()
+    ignore_next_frequency = False
     for entity in model_entities:
         # Ignore some entities 
-        if entity.label_ in ["DRUG", "STRENGTH", "ROUTE"]:
+        keep_entity = _keep_entity(entity, seen_labels)
+        if entity.label_ == "FREQUENCY" and ignore_next_frequency is True:
+            keep_entity = False
+            ignore_next_frequency = False
+        # If ignoring a dosage, ignore the corresponding frequency
+        ignore_next_frequency = (entity.label_ == "DOSAGE" and keep_entity is False)
+        if not keep_entity:
             continue
         elif entity.label_ in seen_labels:
-            result.append(current_sublist)
-            current_sublist = []
+            result.append(current_info)
+            current_info = blank_di_dict.copy()
             seen_labels.clear()
-        current_sublist.append(entity)
+        current_info[entity.label_] = entity.text
         seen_labels.add(entity.label_)
-    result.append(current_sublist)
+    result.append(current_info)
+    # Combine the split dose instructions if necessary
+    result = _combine_split_dis(result)
     return result
 
 
+blank_di_dict = {"DOSAGE": None, "FREQUENCY": None, "FORM": None, 
+                    "DURATION": None, "AS_REQUIRED": None, "AS_DIRECTED": None}
+
+def _keep_entity(entity, seen_labels):
+    """
+    Determine whether to pay attention to an entity when splitting labels
+    up into multiple dose instructions
+
+    Input:
+        entity: spacy model entity
+            entity to determine whether to ignore
+        seen_labels: list of spacy model entity labels
+            list of labels already seen by parser, e.g. which entities
+            the parser has already seen
+    Output:
+        bool
+            Whether to keep the entity or not
+    """
+    # Don't pay attention to any of these entities
+    if entity.label_ in ["DRUG", "STRENGTH", "ROUTE"]:
+            return False
+    elif entity.label_ in seen_labels:
+        if entity.label_ == "FORM":
+            return False
+        if entity.label_ == "DOSAGE":
+            if any(x in entity.text.split() for x in ("max", "maximum", "up", "upto", "8")):
+                return False
+            else:
+                return True    
+        elif entity.label_ == "FREQUENCY":
+            if any(x in entity.text.split() for x in ("24", "maximum")):
+                return False
+            else:
+                return True    
+        else:
+            return True
+        # If we've not already seen it we pay attention
+    else:
+        return True
+
+def _combine_split_dis(result):
+    """
+    Checks split dose instructions and re-combines into single dose instructions
+    where necessary.
+
+    In particular:
+        1. Dose instructions with the same dosage are combined with the 
+          corresponding frequencies joined by "and"
+        2. Dose instructions with the same frequency type and duration None
+          are combined by adding the dosages together
+    """
+    # 1.
+    keep_mask = [True]*len(result)
+    add_index = None
+    for i in range(len(result[:-1])):
+        if result[i]["DOSAGE"] == result[i+1]["DOSAGE"]:
+            if add_index == None:
+                add_index = i
+            if result[i+1]["FREQUENCY"] is not None:
+                if result[add_index]["FREQUENCY"] is None:
+                    result[add_index]["FREQUENCY"] = result[i+1]["FREQUENCY"]
+                else:
+                    result[add_index]["FREQUENCY"] = result[add_index]["FREQUENCY"] + \
+                    " and " + result[i+1]["FREQUENCY"]
+            keep_mask[i+1] = False
+        else:
+            add_index = None
+    result = list(compress(result, keep_mask))
+    # 2. 
+    keep_mask = [True]*len(result)
+    add_index = None
+    for i in range(len(result[:-1])):
+        freq1 = pfrequency.get_frequency_type(result[i]["FREQUENCY"])
+        freq2 = pfrequency.get_frequency_type(result[i+1]["FREQUENCY"])
+        if (freq1 == freq2) \
+            and (result[i]["DURATION"] is None) and (result[i+1]["DURATION"] is None):
+            if add_index == None:
+                add_index = i
+            if result[i+1]["DOSAGE"] is not None:
+                result[add_index]["DOSAGE"] = result[add_index]["DOSAGE"] + \
+                    " and " + result[i+1]["DOSAGE"]
+                result[add_index]["FREQUENCY"] = freq1.lower()
+            keep_mask[i+1] = False
+        else:
+            add_index = None
+    result = list(compress(result, keep_mask))
+    return result
+    
 def _create_structured_di(model_entities, form=None, asRequired=False, asDirected=False):
     """
     Creates a StructuredDI from model entities.
     """
     structured_di = StructuredDI(form, None, None, None, None, 
                                     None, None, None, None, asRequired, asDirected)
-    for entity in model_entities:
-        text = entity.text
-        label = entity.label_
-        if label == 'FORM':
+    for label, text in model_entities.items(): 
+        if text is None:
+            continue
+        elif label == 'FORM':
             if structured_di.form is None:
                 form = pdosage._to_singular(text)
                 if form is not None:
                     structured_di.form = form
         elif label == 'DOSAGE':
-            min, max, form, = pdosage._get_dosage_info(text)
+            min, max, form, = pdosage.get_dosage_info(text)
             structured_di.dosageMin = min
             structured_di.dosageMax = max
             if form is not None:
                 structured_di.form = form
         elif label == 'FREQUENCY':
-            min, max, freqtype = pfrequency._get_frequency_info(text)
+            min, max, freqtype = pfrequency.get_frequency_info(text)
             structured_di.frequencyMin = min
             structured_di.frequencyMax = max
             if freqtype is not None:
                 structured_di.frequencyType = freqtype
         elif label == 'DURATION':
-            min, max, durtype = pduration._get_duration_info(text)
+            min, max, durtype = pduration.get_duration_info(text)
             structured_di.durationMin = min
             structured_di.durationMax = max
             structured_di.durationType = durtype

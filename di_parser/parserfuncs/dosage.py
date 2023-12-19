@@ -109,10 +109,11 @@ def _get_continuous_dose(text):
     measures = [ele for ele in ["mg", "ml"] if(ele in text)]
     if bool(measures):
         if len(measures) > 1:
-            warnings.warn("More than one type of dosage continuous measure: " + str(measures) + 
-            ". Using " + str(measures[0]) + ".")
+            warnings.warn("More than one type of dosage continuous measure: " + \
+                str(measures) + \
+                    ". Using " + str(measures[0]) + ".")
         form = measures[0]
-        _min, _max = pfrequency._get_range(text.replace(measures[0], ""))
+        _min, _max = pfrequency._get_range(text) 
         if _min is None:
             dose_nums = re.findall(pfrequency.re_digit, re.sub(",", "", text))
             if len(dose_nums) > 1:
@@ -128,7 +129,7 @@ def _get_continuous_dose(text):
         form = None
     return _min, _max, form
 
-def _get_dosage_info(text):
+def get_dosage_info(text):
     """ 
     Get information about dosage given a dosage entity text
 
