@@ -1,13 +1,5 @@
-# Deidentify folder #
-deidentify/*
-
-# Output #
-output/*
-output_bert/*
-
-# Models #
-tok2vec_model
-vectors
+# Egg info #
+dose_instruction_parser/src/dose_instruction_parser.egg-info/*
 
 *.pyc
 
