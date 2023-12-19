@@ -24,7 +24,7 @@ if [ -d "$modelloc" ]; then
   exit 0
 fi
 mkdir "$modelloc"
-filename="logs/train_$outputname.log"
+filename="$modelloc/logs/train_$outputname.log"
 
 # Write out config file to log
 touch "$filename"
