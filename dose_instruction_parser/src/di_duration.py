@@ -1,5 +1,5 @@
 import re
-import di_parser.parserfuncs.frequency as pfrequency
+import di_frequency 
 
 def get_duration_info(text):
     """ 

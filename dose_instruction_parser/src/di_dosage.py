@@ -3,7 +3,7 @@ import re
 import warnings
 from functools import reduce
 
-import di_parser.parserfuncs.frequency as pfrequency
+import di_frequency
 
 def _is_str_float(s):
     """

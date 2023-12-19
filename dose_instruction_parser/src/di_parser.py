@@ -8,11 +8,11 @@ import copy
 import os
 import warnings
 
-# Local import of postprocess functions
-import di_parser.parserfuncs.prepare as pprepare
-import di_parser.parserfuncs.dosage as pdosage
-import di_parser.parserfuncs.frequency as pfrequency
-import di_parser.parserfuncs.duration as pduration
+# Local import of helper functions
+import di_prepare 
+import di_dosage
+import di_frequency
+import di_duration
 
 @dataclass
 class StructuredDI:
@@ -69,7 +69,7 @@ def _get_model_entities_from_text(text, model):
     """
     Retrieve the entities from text
     """
-    di_preprocessed = pprepare.pre_process(text)
+    di_preprocessed = di_prepare.pre_process(text)
     model_output = model(di_preprocessed)
     entities = model_output.ents 
     return entities
@@ -80,7 +80,7 @@ def _parse_di(di: str, model: Language):
     2. Applies model to retrieve entities
     3. Creates structured dose instruction from entities using static rules
     """
-    di_preprocessed = pprepare.pre_process(di)
+    di_preprocessed = di_prepare.pre_process(di)
     model_output = model(di_preprocessed)
     return _create_structured_dis(model_output)
 
@@ -88,7 +88,7 @@ def _parse_dis(di_lst, model: Language):
     """
     Parses multiple dose instructions at once
     """
-    return pprepare._flatmap(lambda di: _parse_di(di, model), di_lst)
+    return di_prepare._flatmap(lambda di: _parse_di(di, model), di_lst)
 
 def _split_entities_for_multiple_instructions(model_entities):
     """
@@ -193,8 +193,8 @@ def _combine_split_dis(result):
     keep_mask = [True]*len(result)
     add_index = None
     for i in range(len(result[:-1])):
-        freq1 = pfrequency.get_frequency_type(result[i]["FREQUENCY"])
-        freq2 = pfrequency.get_frequency_type(result[i+1]["FREQUENCY"])
+        freq1 = di_frequency.get_frequency_type(result[i]["FREQUENCY"])
+        freq2 = di_frequency.get_frequency_type(result[i+1]["FREQUENCY"])
         if (freq1 == freq2) \
             and (result[i]["DURATION"] is None) and (result[i+1]["DURATION"] is None):
             if add_index == None:
@@ -220,23 +220,23 @@ def _create_structured_di(model_entities, form=None, asRequired=False, asDirecte
             continue
         elif label == 'FORM':
             if structured_di.form is None:
-                form = pdosage._to_singular(text)
+                form = di_dosage._to_singular(text)
                 if form is not None:
                     structured_di.form = form
         elif label == 'DOSAGE':
-            min, max, form, = pdosage.get_dosage_info(text)
+            min, max, form, = di_dosage.get_dosage_info(text)
             structured_di.dosageMin = min
             structured_di.dosageMax = max
             if form is not None:
                 structured_di.form = form
         elif label == 'FREQUENCY':
-            min, max, freqtype = pfrequency.get_frequency_info(text)
+            min, max, freqtype = di_frequency.get_frequency_info(text)
             structured_di.frequencyMin = min
             structured_di.frequencyMax = max
             if freqtype is not None:
                 structured_di.frequencyType = freqtype
         elif label == 'DURATION':
-            min, max, durtype = pduration.get_duration_info(text)
+            min, max, durtype = di_duration.get_duration_info(text)
             structured_di.durationMin = min
             structured_di.durationMax = max
             structured_di.durationType = durtype
@@ -295,4 +295,4 @@ class DIParser:
 #dip = DIParser(model_name=f"{model_path}/original/model-best")
 
 #from importlib import reload 
-#reload(pfrequency)
+#reload(frequency)
