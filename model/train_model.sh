@@ -12,13 +12,16 @@ if [ "$1" == "-h" ]; then
   exit 0
 fi
 
+# Get DI_FILEPATH from hidden secrets.env file
+source ./secrets.env
+
 # Get today's time and date
 today=`date '+%m_%d__%H_%M_%S'`;
 
 # Set output location and logfile
 read -p "Name for model output folder ['$today']: " outputname
 outputname=${outputname:-'$today'}
-modelloc="***REMOVED***models/$outputname"
+modelloc="$DI_FILEPATH/models/$outputname"
 if [ -d "$modelloc" ]; then
   echo "Model output folder already exists. Please pick a different name."
   exit 0

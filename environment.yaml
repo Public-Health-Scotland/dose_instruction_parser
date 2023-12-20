@@ -1,0 +1,9 @@
+name: di
+dependencies:
+  - spacy<3.5.0,>=3.4.2
+  - inflect
+  - python>=3.9
+  - pip
+  - pip:
+    - pyspellchecker<=0.5.5
+    - word2number

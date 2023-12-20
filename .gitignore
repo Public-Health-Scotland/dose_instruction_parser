@@ -6,6 +6,9 @@ model/preprocess/backup/*
 
 *.pyc
 
+# Environment files #
+*.[eE][nN][Vv]
+
 # Common text files that may contain data #
 *.[cC][sS][vV]*
 *.[tT][xX][tT]
