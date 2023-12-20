@@ -26,11 +26,11 @@ conda init bash > /dev/null
 source ~/.bashrc > /dev/null
 
 # Remove old environment
-#conda deactivate
-#conda remove -n "$conda_name" --all || echo "No old $conda_name environment to remove"
+conda deactivate
+conda remove -n "$conda_name" --all || echo "No old $conda_name environment to remove"
 
 # Create new environment 
-#conda env create --name "$conda_name" --file environment.yaml && echo "New $conda_name environment created"
+conda env create --name "$conda_name" --file environment.yaml && echo "New $conda_name environment created"
 conda activate "$conda_name" && echo "New $conda_name environment activated"
 
 # Get current conda environment from conda prefix
