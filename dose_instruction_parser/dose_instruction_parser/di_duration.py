@@ -1,5 +1,5 @@
 import re
-import di_frequency 
+from . import di_frequency 
 
 def get_duration_info(text):
     """ 
@@ -20,14 +20,14 @@ def get_duration_info(text):
             The duration type
             e.g. "Week", "Year", "Month"
     """
-    durtype = pfrequency._get_frequency_type(text)
-    _min, _max = pfrequency._get_range(text)
+    durtype = di_frequency.get_frequency_type(text)
+    _min, _max = di_frequency._get_range(text)
     if _min is None:
-        dur = pfrequency._get_number_of_times(text)
+        dur = di_frequency._get_number_of_times(text)
         _min = dur
         _max = dur
     if _min is None:
-        nums = re.findall(pfrequency.re_digit, re.sub(",", "", text))
+        nums = re.findall(di_frequency.re_digit, re.sub(",", "", text))
         if len(nums) == 1:
             _min = float(nums[0])
             _max = float(nums[0])

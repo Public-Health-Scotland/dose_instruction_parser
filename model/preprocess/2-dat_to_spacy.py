@@ -15,12 +15,12 @@ Saves out the following files:
     data/dev.spacy
 """
 from spacy.tokens import DocBin
-import spacy
 import ast
 import re
 import os
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
+from dotenv import load_dotenv
 import pandas as pd
 
 from colorama import init as colorama_init
@@ -29,7 +29,7 @@ from colorama import Style
 colorama_init()
 
 # Get data - crosschecked_data and resolved_data
-filepath = "***REMOVED***preprocess/processed/"
+filepath = "model/preprocess/processed/"
 regex = re.compile("((resolved_data|crosschecked_data))\_\d+-\w+-\d+-\d+.dat")
 
 files = []
@@ -79,7 +79,8 @@ duplicates = list(set([text for text in dis if dis.count(text) > 1]))
 #assert len(duplicates) == 0, Fore.RED + "Please review resolved_data files and remove the following duplicates" + Style.RESET_ALL + "\n" + str(duplicates)
 
 # Creating duplicate dose instructions based off frequency table
-freq_table = pd.read_csv("***REMOVED***dose_instructions_limit250_cntr.csv.xz")
+load_dotenv(dotenv_path="secrets.env")
+freq_table = pd.read_csv(f"{os.getenv('DI_FILEPATH')}/data/dose_instructions_limit250_cntr.csv.xz")
 
 print(Fore.YELLOW + "Creating duplicate dose instructions based off frequency table" + Style.RESET_ALL)
 duplicated_data = []
@@ -128,7 +129,8 @@ def convert_to_spacy(dat):
 
 # Save out test, train and dev data
 for name in ["test", "train", "dev"]:
-    convert_to_spacy(globals()[f"{name}_data"]).to_disk(f"./data/{name}.spacy")
+    convert_to_spacy(globals()[f"{name}_data"]).to_disk(f"./model/data/{name}.spacy")
 
 print(Fore.GREEN + "Spacy data saved to data folder" + "\n" +
-      Fore.YELLOW + "Check config/config.cfg then run ./train_model.sh to train the model." + Style.RESET_ALL)
+      Fore.YELLOW + "Check model/config/config.cfg then run" + 
+      "./train_model.sh to train the model." + Style.RESET_ALL)

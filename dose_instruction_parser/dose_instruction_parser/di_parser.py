@@ -8,10 +8,10 @@ import copy
 import os
 import warnings
 
-import di_prepare
-import di_frequency
-import di_dosage
-import di_duration
+from . import di_prepare
+from . import di_frequency
+from . import di_dosage
+from . import di_duration
 
 @dataclass
 class StructuredDI:
@@ -199,9 +199,16 @@ def _combine_split_dis(result):
             if add_index == None:
                 add_index = i
             if result[i+1]["DOSAGE"] is not None:
-                result[add_index]["DOSAGE"] = result[add_index]["DOSAGE"] + \
-                    " and " + result[i+1]["DOSAGE"]
-                result[add_index]["FREQUENCY"] = freq1.lower()
+                if result[add_index]["DOSAGE"] is not None:
+                    result[add_index]["DOSAGE"] = result[add_index]["DOSAGE"] + \
+                        " and " + result[i+1]["DOSAGE"]
+                else:
+                    result[add_index]["DOSAGE"] = result[i+1]["DOSAGE"]
+                try:
+                    freq1 = freq1.lower()
+                except:
+                    pass
+                result[add_index]["FREQUENCY"] = freq1
             keep_mask[i+1] = False
         else:
             add_index = None

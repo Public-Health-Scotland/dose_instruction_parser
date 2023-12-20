@@ -3,6 +3,7 @@ import csv
 from spellchecker import SpellChecker
 from itertools import chain
 from word2number import w2n
+from os import path
 
 def _create_spell_checker():
     """
@@ -10,7 +11,8 @@ def _create_spell_checker():
     Words in the keep_words.txt file will not be spellchecked
     """
     sc = SpellChecker()
-    keep_words_frequency ="di_parser/keep_words.txt"
+    keep_words_frequency = path.join(path.dirname(__file__), 
+                                        "../data/keep_words.txt")
     sc.word_frequency.load_text_file(keep_words_frequency)
     return sc
 
@@ -174,7 +176,9 @@ def pre_process(di):
     output_words = []
     words = di.split()
     replace_words = {}
-    with open('di_parser/replace_words.csv', newline='') as csvfile:
+    replace_words_path = path.join(path.dirname(__file__), 
+                                    "../data/replace_words.csv")
+    with open(replace_words_path, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             replace_words[row["Before"]] = row["After"]

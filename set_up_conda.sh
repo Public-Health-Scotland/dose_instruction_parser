@@ -37,14 +37,13 @@ conda activate "$conda_name" && echo "New $conda_name environment activated"
 current_env=(${CONDA_PREFIX//\// })
 current_env=${current_env[-1]}
 
-# If in correct environment do installs
+# If in correct environment get med7 model
 if [ "$current_env" = "$conda_name" ]; then
 
     printf '\e[32m%s\e[0m' "Conda environment successfully created. Activate it using 'conda activate $conda_name'."
     echo ""
 
     yes_or_no "Do you wish to install the med7 model? Y/n"
-    # Get med7 model
     python -m pip install "$DI_FILEPATH/models/med7/en_core_med7_lg-any-py3-none-any.whl" || printf '\e[31m%s\e[0m' "Failed to get med7 model   " 
 else
     printf '\e[31m%s\e[0m' "Did not successfully activate $conda_name environment"; echo ""

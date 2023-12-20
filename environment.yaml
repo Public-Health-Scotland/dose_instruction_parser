@@ -4,6 +4,11 @@ dependencies:
   - inflect
   - python>=3.9
   - pip
+  - ipython         # dev
+  - scikit-learn    # dev
+  - pandas          # dev
+  - colorama        # dev
   - pip:
     - pyspellchecker<=0.5.5
     - word2number
+    - python-dotenv # dev

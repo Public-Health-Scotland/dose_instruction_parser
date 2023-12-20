@@ -1,20 +1,25 @@
 import csv
 import spacy
 import logging
-import di_parser.di_parser as dip
+import os
+from dotenv import load_dotenv
 
-logging.basicConfig(filename="di_parser/di_check.log", level=logging.DEBUG,
+from dose_instruction_parser.dose_instruction_parser import di_parser as dip
+
+load_dotenv(dotenv_path="secrets.env")
+
+logging.basicConfig(filename="benchmark/di_check.log", level=logging.DEBUG,
     format='%(asctime)s %(levelname)s %(name)s %(message)s')
 logger=logging.getLogger(__name__)
 
-checkfile = "***REMOVED***data/for tagging/dose_instructions_3_rp.txt"
+checkfile = f"{os.getenv('DI_FILEPATH')}/data/for tagging/dose_instructions_3_rp.txt"
 checklines = [line for line in open(checkfile)]
 
-model_path = "***REMOVED***models/"
+model_path = f"{os.getenv('DI_FILEPATH')}/models/"
 di_parser = dip.DIParser(model_name=f"{model_path}/original/model-best")
 model = spacy.load(f"{model_path}/original/model-best")
 
-with open("di_parser/di_checking.txt", "w+") as outfile:
+with open("benchmark/di_checking.txt", "w+") as outfile:
     for line in checklines:
         try:
             di = di_parser.parse(line)

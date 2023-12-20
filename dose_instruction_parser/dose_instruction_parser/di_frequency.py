@@ -271,8 +271,10 @@ def _check_explicit_range(text, nums):
             _max = float(words[index+1])
             range_found = True
         except:
-            _min = float(min(nums, default=None))
-            _max = float(max(nums, default=None))
+            min_nums = min(nums, default=None)
+            max_nums = max(nums, default=None)
+            _min = float(min_nums) if min_nums is not None else min_nums
+            _max = float(max_nums) if max_nums is not None else max_nums
             range_found = True
         # If there is a third number e.g. 2 to 4 5ml spoonfuls
         # need to multiply 2 and 4 by 5 to get total ml

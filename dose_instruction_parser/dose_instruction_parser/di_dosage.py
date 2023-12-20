@@ -3,7 +3,7 @@ import re
 import warnings
 from functools import reduce
 
-import di_frequency
+from . import di_frequency
 
 def _is_str_float(s):
     """
@@ -113,9 +113,9 @@ def _get_continuous_dose(text):
                 str(measures) + \
                     ". Using " + str(measures[0]) + ".")
         form = measures[0]
-        _min, _max = pfrequency._get_range(text) 
+        _min, _max = di_frequency._get_range(text) 
         if _min is None:
-            dose_nums = re.findall(pfrequency.re_digit, re.sub(",", "", text))
+            dose_nums = re.findall(di_frequency.re_digit, re.sub(",", "", text))
             if len(dose_nums) > 1:
                 # e.g. 2 5ml spoonfuls becomes 10 ml
                 dose = float(reduce(lambda x, y: x*y, [float(num) for num in dose_nums]))
@@ -153,7 +153,7 @@ def get_dosage_info(text):
     _min, _max, form = _get_continuous_dose(text)
     if _min is None:
         # Check for range of doses
-        _min, _max = pfrequency._get_range(text)   
+        _min, _max = di_frequency._get_range(text)   
     # Where there is no dose range _min and max are the same
     if _min is None:
         # If first part of tag is a number this is the dosage
@@ -166,7 +166,7 @@ def get_dosage_info(text):
                 form = _to_singular(form_from_dosage)
             # Otherwise extract first number to use as dosage
         else:
-            nums = re.findall(pfrequency.re_digit, re.sub(",", "", text))
+            nums = re.findall(di_frequency.re_digit, re.sub(",", "", text))
             if len(nums) > 0:
                 dosage = float(nums[0])
                 _min = dosage
