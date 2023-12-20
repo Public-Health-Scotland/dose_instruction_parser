@@ -20,7 +20,7 @@ classifiers = [
 ]
 keywords = ["prescriptions", "dose instructions", "medical free text"]
 dependencies = [
-    "spacy>=3.0,<4.0",
+    "spacy<3.5.0,>=3.4.2",
     "word2number",
     "inflect",
     "pyspellchecker<= 0.5.5"
@@ -28,7 +28,7 @@ dependencies = [
 requires-python = ">=3.9"
 
 [project.optional-dependencies]
-dev = ["pandas", "scikit-learn", "colorama"]
+dev = ["pandas", "scikit-learn", "colorama", "ipython", "python-dotenv"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
