@@ -3,7 +3,6 @@ import argparse
 from dotenv import load_dotenv
 from textwrap import dedent
 
-
 # TODO: arguments for outfile, parallelise
 # Separate function for parsing 1 or many dis
 def main():
@@ -78,7 +77,6 @@ def save_out(dis, out, outfile):
             # For csv convert output to dataframe
             import pandas as pd
             df = pd.DataFrame(out)
-            df["text"] = dis
             df.to_csv(outfile)
         else:
             raise ValueError("Out file must be either .txt or .csv")

@@ -19,6 +19,8 @@ class StructuredDI:
     A structured dose instruction
     Attributes:
     -----------
+    freeText: str
+        The free text before parsing
     form: str
         The form of drug (e.g. "tablet", "patch", "injection")
     dosageMin: float
@@ -42,6 +44,7 @@ class StructuredDI:
     asDirected: bool
         Whether to take as directed
     """
+    text: str
     form: str
     dosageMin: float
     dosageMax: float
@@ -81,7 +84,7 @@ def _parse_di(di: str, model: spacy.Language):
     """
     di_preprocessed = di_prepare.pre_process(di)
     model_output = model(di_preprocessed)
-    return _create_structured_dis(model_output)
+    return _create_structured_dis(di, model_output)
 
 def _parse_dis(di_lst, model: spacy.Language):
     """
@@ -225,11 +228,11 @@ def _combine_split_dis(result):
     result = list(compress(result, keep_mask))
     return result
     
-def _create_structured_di(model_entities, form=None, asRequired=False, asDirected=False):
+def _create_structured_di(free_text, model_entities, form=None, asRequired=False, asDirected=False):
     """
     Creates a StructuredDI from model entities.
     """
-    structured_di = StructuredDI(form, None, None, None, None, 
+    structured_di = StructuredDI(free_text, form, None, None, None, None, 
                                     None, None, None, None, asRequired, asDirected)
     for label, text in model_entities.items(): 
         if text is None:
@@ -264,7 +267,7 @@ def _create_structured_di(model_entities, form=None, asRequired=False, asDirecte
             continue
     return structured_di
 
-def _create_structured_dis(model_output):
+def _create_structured_dis(free_text, model_output):
     """
     Creates StructuredDIs from a model output.
     1. Gets entities
@@ -273,9 +276,9 @@ def _create_structured_dis(model_output):
     """
     entities = _get_model_entities(model_output)
     multiple_instructions = _split_entities_for_multiple_instructions(entities)
-    first_di = _create_structured_di(multiple_instructions[0])
+    first_di = _create_structured_di(free_text, multiple_instructions[0])
     # incase multiple instructions exist, they apply to the same drug and form
-    other_dis = [_create_structured_di(instruction_entities, 
+    other_dis = [_create_structured_di(free_text, instruction_entities, 
                                          first_di.form, first_di.asRequired,
                                          first_di.asDirected)
                   for instruction_entities in multiple_instructions[1:]]
