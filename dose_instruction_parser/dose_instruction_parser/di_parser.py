@@ -1,9 +1,9 @@
 import sys
 import spacy
 from dataclasses import dataclass
-from itertools import compress
+from itertools import compress, chain
+import multiprocessing as mp
 import re
-from spacy import Language
 import copy
 import os
 import warnings
@@ -73,7 +73,7 @@ def _get_model_entities_from_text(text, model):
     entities = model_output.ents 
     return entities
 
-def _parse_di(di: str, model: Language):
+def _parse_di(di: str, model: spacy.Language):
     """
     1. Preprocesses dose instruction
     2. Applies model to retrieve entities
@@ -83,11 +83,21 @@ def _parse_di(di: str, model: Language):
     model_output = model(di_preprocessed)
     return _create_structured_dis(model_output)
 
-def _parse_dis(di_lst, model: Language):
+def _parse_dis(di_lst, model: spacy.Language):
     """
     Parses multiple dose instructions at once
     """
     return di_prepare._flatmap(lambda di: _parse_di(di, model), di_lst)
+
+def _parse_dis_mp(di_lst, model: spacy.Language):
+    """
+    Parses multiple dose instructions at once in parallel (synchronous)
+    """
+    with mp.Pool(mp.cpu_count()) as p:
+        parsed_dis = p.starmap(_parse_di, [(di, model) for di in di_lst])
+    # Flatten
+    parsed_dis = list(chain(*parsed_dis))
+    return parsed_dis
 
 def _split_entities_for_multiple_instructions(model_entities):
     """
@@ -295,6 +305,8 @@ class DIParser:
         return _parse_di(di, self.__language)
     def parse_many(self, dis: list):
         return _parse_dis(dis, self.__language)
+    def parse_many_mp(self, dis: list):
+        return _parse_dis_mp(dis, self.__language)
 
 
 #model_path = "***REMOVED***models/"

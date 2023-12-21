@@ -3,6 +3,7 @@ import argparse
 from dotenv import load_dotenv
 from textwrap import dedent
 
+
 # TODO: arguments for outfile, parallelise
 # Separate function for parsing 1 or many dis
 def main():
@@ -25,10 +26,18 @@ def main():
         epilog="Please contact the eDRIS team with any queries.",
         formatter_class=argparse.RawTextHelpFormatter
     )
-    ap.add_argument("-di", "--doseinstruction", required=True)
-    ap.add_argument("-mp", "--modelpath", required=True)
-    ap.add_argument("-o", "--outfile", required=False,
+    ap.add_argument("-di", "--doseinstruction", 
+                    required=True)
+    ap.add_argument("-mp", "--modelpath", 
+                    required=True)
+    ap.add_argument("-o", "--outfile", 
+                    required=False,
                     help=".txt or .csv file to write output to")
+    ap.add_argument("-p", "--parallel", 
+                    required=False,  
+                    choices=['True', 'False'], 
+                    default='True',
+                    help="Whether to use parallel processing")
     ap.print_help()
     args = ap.parse_args()
 
@@ -46,7 +55,10 @@ def main():
                 dis = [l.strip() for l in file.readlines()]
         except OSError:
             print(f"Could not open file: {args.doseinstruction}")
-        out = dip.parse_many(dis)
+        if args.parallel == 'True':
+            out = dip.parse_many_mp(dis)
+        else:  
+            out = dip.parse_many(dis)
         save_out(dis, out, args.outfile)
 
 def save_out(dis, out, outfile):
