@@ -1,7 +1,6 @@
-import os
 import argparse
-from dotenv import load_dotenv
 from textwrap import dedent
+from os import path
 
 # TODO: arguments for outfile, parallelise
 # Separate function for parsing 1 or many dis
@@ -16,7 +15,7 @@ def main():
 
     # Check if valid filepath provided for dis.
     # If not, treat the input as a single dose instruction string.
-    if not os.path.exists(args.doseinstruction):
+    if not path.exists(args.doseinstruction):
         parsed_di = dip.parse(args.doseinstruction)
         write_out(args.doseinstruction, parsed_di, args.outfile)
     else:
@@ -67,7 +66,7 @@ def write_out(dis, out, outfile):
         # No outfile specified so just print to terminal
         for line in out: print(line)
     else:
-        fname, fext = os.path.splitext(outfile)
+        fname, fext = path.splitext(outfile)
         if fext == ".txt":
             # For text file print structured output line by line
             try:
