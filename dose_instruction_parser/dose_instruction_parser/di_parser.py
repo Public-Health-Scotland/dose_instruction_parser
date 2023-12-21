@@ -1,12 +1,7 @@
-import sys
 import spacy
 from dataclasses import dataclass
 from itertools import compress, chain
 import multiprocessing as mp
-import re
-import copy
-import os
-import warnings
 
 from . import di_prepare
 from . import di_frequency
