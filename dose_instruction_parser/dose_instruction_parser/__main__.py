@@ -7,9 +7,31 @@ from textwrap import dedent
 # Separate function for parsing 1 or many dis
 def main():
     """Parse dose instructions"""
-    # Arguments given
-    # 1: dose instruction
-    # 2: model path 
+    # Get command line arguments
+    args = get_args()
+
+    # Set up parser
+    from dose_instruction_parser import di_parser
+    dip = di_parser.DIParser(model_name=args.modelpath)
+
+    # Check if valid filepath provided for dis.
+    # If not, treat the input as a single dose instruction string.
+    if not os.path.exists(args.doseinstruction):
+        parsed_di = dip.parse(args.doseinstruction)
+        write_out(args.doseinstruction, parsed_di, args.outfile)
+    else:
+        try:
+            with open(args.doseinstruction, "r") as file:
+                dis = [l.strip() for l in file.readlines()]
+        except OSError:
+            print(f"Could not open file: {args.doseinstruction}")
+        if args.parallel == 'True':
+            out = dip.parse_many_mp(dis)
+        else:  
+            out = dip.parse_many(dis)
+        write_out(dis, out, args.outfile)
+
+def get_args(): 
     ap = argparse.ArgumentParser(
         prog="Dose Instruction Parser",
         description=dedent('''\
@@ -38,29 +60,9 @@ def main():
                     default='True',
                     help="Whether to use parallel processing")
     ap.print_help()
-    args = ap.parse_args()
+    return ap.parse_args()
 
-    from dose_instruction_parser import di_parser
-    dip = di_parser.DIParser(model_name=args.modelpath)
-
-    # Check if valid filepath provided for dis.
-    # If not, treat the input as a single dose instruction string.
-    if not os.path.exists(args.doseinstruction):
-        parsed_di = dip.parse(args.doseinstruction)
-        save_out(args.doseinstruction, parsed_di, args.outfile)
-    else:
-        try:
-            with open(args.doseinstruction, "r") as file:
-                dis = [l.strip() for l in file.readlines()]
-        except OSError:
-            print(f"Could not open file: {args.doseinstruction}")
-        if args.parallel == 'True':
-            out = dip.parse_many_mp(dis)
-        else:  
-            out = dip.parse_many(dis)
-        save_out(dis, out, args.outfile)
-
-def save_out(dis, out, outfile):
+def write_out(dis, out, outfile):
     if outfile is None:
         # No outfile specified so just print to terminal
         for line in out: print(line)
