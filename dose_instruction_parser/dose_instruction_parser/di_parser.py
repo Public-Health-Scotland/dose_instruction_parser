@@ -23,7 +23,7 @@ class StructuredDI:
         The form of drug (e.g. "tablet", "patch", "injection")
     dosageMin: float
         The minimum dosage 
-    dosageMax: floata
+    dosageMax: float
         The maximum dosage 
     frequencyMin: float
         The minimum frequency 
