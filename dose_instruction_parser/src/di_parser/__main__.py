@@ -11,7 +11,7 @@ def main():
 
     # Set up parser
     from . import parser
-    dip = parser.DIParser(model_name=args.modelpath)
+    dip = parser.DIParser(model_name=args.model)
 
     # Check if single di provided
     if args.doseinstruction is not None:
@@ -48,7 +48,10 @@ def get_args():
     group = ap.add_mutually_exclusive_group(required=True)
     group.add_argument("-di", "--doseinstruction")
     group.add_argument("-f", "--infile")
-    ap.add_argument("-mp", "--modelpath", required=True)
+    ap.add_argument("-mod", "--model", 
+                    required=False, 
+                    default="en_edris9",
+                    help="Name of installed model or path to model")
     ap.add_argument("-o", "--outfile", 
                     help=".txt or .csv file to write output to")
     ap.add_argument("-p", "--parallel", 
