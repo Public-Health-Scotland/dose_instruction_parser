@@ -10,8 +10,8 @@ def main():
     args = get_args()
 
     # Set up parser
-    from . import di_parser
-    dip = di_parser.DIParser(model_name=args.modelpath)
+    from . import parser
+    dip = parser.DIParser(model_name=args.modelpath)
 
     # Check if single di provided
     if args.doseinstruction is not None:

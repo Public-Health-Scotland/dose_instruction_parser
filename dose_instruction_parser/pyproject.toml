@@ -39,7 +39,7 @@ dev = ["pandas", "scikit-learn", "colorama", "ipython", "python-dotenv"]
 #"Bug Tracker" = ""
 
 [project.scripts]
-parse_dose_instructions = "parser.__main__:main"
+parse_dose_instructions = "di_parser.__main__:main"
 
 [tool.bumpver]
 current_version = "2023.1001-alpha"
