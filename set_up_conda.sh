@@ -44,7 +44,7 @@ if [ "$current_env" = "$conda_name" ]; then
     echo ""
 
     yes_or_no "Do you wish to install the med7 model? Y/n"
-    python -m pip install "$DI_FILEPATH/models/med7/en_core_med7_lg-any-py3-none-any.whl" || printf '\e[31m%s\e[0m' "Failed to get med7 model   " 
+    python -m pip install "$DI_FILEPATH/models/en_core_med7_lg-any-py3-none-any.whl" || printf '\e[31m%s\e[0m' "Failed to get med7 model   " 
 else
     printf '\e[31m%s\e[0m' "Did not successfully activate $conda_name environment"; echo ""
 fi

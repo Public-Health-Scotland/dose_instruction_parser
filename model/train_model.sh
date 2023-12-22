@@ -13,7 +13,7 @@ if [ "$1" == "-h" ]; then
 fi
 
 # Get DI_FILEPATH from hidden secrets.env file
-source ./secrets.env
+source ../secrets.env
 
 # Get today's time and date
 today=`date '+%m_%d__%H_%M_%S'`;

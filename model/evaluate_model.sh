@@ -14,7 +14,7 @@ if [ "$1" == "-h" ]; then
 fi
 
 # Get DI_FILEPATH from hidden secrets.env file
-source ./secrets.env
+source ../secrets.env
 
 # Naming log file with today's time and date and model name
 today=`date '+%m_%d__%H_%M_%S'`;
