@@ -43,8 +43,12 @@ if [ "$current_env" = "$conda_name" ]; then
     printf '\e[32m%s\e[0m' "Conda environment successfully created. Activate it using 'conda activate $conda_name'."
     echo ""
 
+    yes_or_no "Do you wish to install the edris9 model? Y/n"
+    python -m pip install "$DI_FILEPATH/models/en_edris9-1.0.0/dist/en_edris9-1.0.0-py3-none-any.whl" || printf '\e[31m%s\e[0m' "Failed to get edris9 model   " 
+
     yes_or_no "Do you wish to install the med7 model? Y/n"
     python -m pip install "$DI_FILEPATH/models/en_core_med7_lg-any-py3-none-any.whl" || printf '\e[31m%s\e[0m' "Failed to get med7 model   " 
+
 else
     printf '\e[31m%s\e[0m' "Did not successfully activate $conda_name environment"; echo ""
 fi

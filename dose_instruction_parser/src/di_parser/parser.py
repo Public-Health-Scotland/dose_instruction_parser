@@ -286,7 +286,7 @@ class DIParser:
 
     Example
     -------
-    >>> model_path = "***REMOVED***models/"
+    >>> model_path = "/conf/linkages/Technical/Dose_Instructions/Dose instructions replacement/models/"
     >>> di_parser = DIParser(model_name=f"{model_path}/original/model-best")
 
     >>> di = "take 2 3ml spoonfuls with meals for 5-6 weeks as discussed"
@@ -307,7 +307,7 @@ class DIParser:
         return _parse_dis_mp(dis, self.__language)
 
 
-#model_path = "***REMOVED***models/"
+#model_path = "/conf/linkages/Technical/Dose_Instructions/Dose instructions replacement/models/"
 #dip = DIParser(model_name=f"{model_path}/original/model-best")
 
 #from importlib import reload 
