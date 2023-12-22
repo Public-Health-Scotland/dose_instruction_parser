@@ -10,20 +10,19 @@ def main():
     args = get_args()
 
     # Set up parser
-    from dose_instruction_parser import di_parser
+    from . import di_parser
     dip = di_parser.DIParser(model_name=args.modelpath)
 
-    # Check if valid filepath provided for dis.
-    # If not, treat the input as a single dose instruction string.
-    if not path.exists(args.doseinstruction):
+    # Check if single di provided
+    if args.doseinstruction is not None:
         parsed_di = dip.parse(args.doseinstruction)
         write_out(args.doseinstruction, parsed_di, args.outfile)
     else:
-        try:
-            with open(args.doseinstruction, "r") as file:
+        # Check if valid filepath provided for dis.
+        if not path.exists(args.infile):
+            raise OSError(f"Input file {args.infile} does not exist.")  
+        with open(args.infile, "r") as file:
                 dis = [l.strip() for l in file.readlines()]
-        except OSError:
-            print(f"Could not open file: {args.doseinstruction}")
         if args.parallel == 'True':
             out = dip.parse_many_mp(dis)
         else:  
@@ -46,15 +45,13 @@ def get_args():
         epilog="Please contact the eDRIS team with any queries.",
         formatter_class=argparse.RawTextHelpFormatter
     )
-    ap.add_argument("-di", "--doseinstruction", 
-                    required=True)
-    ap.add_argument("-mp", "--modelpath", 
-                    required=True)
+    group = ap.add_mutually_exclusive_group(required=True)
+    group.add_argument("-di", "--doseinstruction")
+    group.add_argument("-f", "--infile")
+    ap.add_argument("-mp", "--modelpath", required=True)
     ap.add_argument("-o", "--outfile", 
-                    required=False,
                     help=".txt or .csv file to write output to")
     ap.add_argument("-p", "--parallel", 
-                    required=False,  
                     choices=['True', 'False'], 
                     default='True',
                     help="Whether to use parallel processing")
@@ -72,7 +69,7 @@ def write_out(dis, out, outfile):
             try:
                 with open(outfile, "w+") as file:
                     file.write("\n".join(str(i) for i in out))    
-            except OSError:
+            except (OSError, RuntimeError):
                 print(f"Could not write to file: {outfile}")
         elif fext == ".csv":
             # For csv convert output to dataframe
