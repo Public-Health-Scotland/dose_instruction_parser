@@ -1,15 +1,13 @@
-# Deidentify folder #
-deidentify/*
+# Egg info #
+dose_instruction_parser/src/dose_instruction_parser.egg-info/*
 
-# Output #
-output/*
-output_bert/*
-
-# Models #
-tok2vec_model
-vectors
+# Backup #
+model/preprocess/backup/*
 
 *.pyc
+
+# Environment files #
+*.[eE][nN][Vv]
 
 # Common text files that may contain data #
 *.[cC][sS][vV]*

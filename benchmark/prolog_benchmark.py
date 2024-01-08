@@ -8,7 +8,7 @@ Step 3: Calculate test score
 import pandas as pd
 import re
 import warnings
-import di_parser.di_parser as dip
+from dose_instruction_parser.dose_instruction_parser import di_parser as dip
 
 from contextlib import contextmanager
 from timeit import default_timer
@@ -23,7 +23,7 @@ def elapsed_timer():
 
 ## Step 1: Read in prolog test examples and reformat for di_parser
 
-with open("di_parser/benchmark/new_test.pl", "r") as lex:
+with open("benchmark/new_test.pl", "r") as lex:
     lines = lex.readlines()
 
 # Keeping only the test lines
@@ -74,7 +74,7 @@ parsed_lines = [parse_lex_line(line) for line in lines]
 parsed_lines_df = pd.DataFrame(parsed_lines, columns = ["input", "desired_output"])
 
 ## Step 2: Run di_parser on all the examples
-model_path = "***REMOVED***models/"
+model_path = f"{os.getenv('DI_FILEPATH')}/models/"
 di_parser = dip.DIParser(model_name=f"{model_path}/original/model-best")
 
 def apply_di_parser(x):

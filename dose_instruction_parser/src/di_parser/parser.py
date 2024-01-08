@@ -1,18 +1,12 @@
-import sys
 import spacy
 from dataclasses import dataclass
-from itertools import compress
-import re
-from spacy import Language
-import copy
-import os
-import warnings
+from itertools import compress, chain
+import multiprocessing as mp
 
-# Local import of postprocess functions
-import di_parser.parserfuncs.prepare as pprepare
-import di_parser.parserfuncs.dosage as pdosage
-import di_parser.parserfuncs.frequency as pfrequency
-import di_parser.parserfuncs.duration as pduration
+from . import di_prepare
+from . import di_frequency
+from . import di_dosage
+from . import di_duration
 
 @dataclass
 class StructuredDI:
@@ -20,11 +14,13 @@ class StructuredDI:
     A structured dose instruction
     Attributes:
     -----------
+    freeText: str
+        The free text before parsing
     form: str
         The form of drug (e.g. "tablet", "patch", "injection")
     dosageMin: float
         The minimum dosage 
-    dosageMax: floata
+    dosageMax: float
         The maximum dosage 
     frequencyMin: float
         The minimum frequency 
@@ -43,6 +39,7 @@ class StructuredDI:
     asDirected: bool
         Whether to take as directed
     """
+    text: str
     form: str
     dosageMin: float
     dosageMax: float
@@ -69,26 +66,36 @@ def _get_model_entities_from_text(text, model):
     """
     Retrieve the entities from text
     """
-    di_preprocessed = pprepare.pre_process(text)
+    di_preprocessed = di_prepare.pre_process(text)
     model_output = model(di_preprocessed)
     entities = model_output.ents 
     return entities
 
-def _parse_di(di: str, model: Language):
+def _parse_di(di: str, model: spacy.Language):
     """
     1. Preprocesses dose instruction
     2. Applies model to retrieve entities
     3. Creates structured dose instruction from entities using static rules
     """
-    di_preprocessed = pprepare.pre_process(di)
+    di_preprocessed = di_prepare.pre_process(di)
     model_output = model(di_preprocessed)
-    return _create_structured_dis(model_output)
+    return _create_structured_dis(di, model_output)
 
-def _parse_dis(di_lst, model: Language):
+def _parse_dis(di_lst, model: spacy.Language):
     """
     Parses multiple dose instructions at once
     """
-    return pprepare._flatmap(lambda di: _parse_di(di, model), di_lst)
+    return di_prepare._flatmap(lambda di: _parse_di(di, model), di_lst)
+
+def _parse_dis_mp(di_lst, model: spacy.Language):
+    """
+    Parses multiple dose instructions at once in parallel (synchronous)
+    """
+    with mp.Pool(mp.cpu_count()) as p:
+        parsed_dis = p.starmap(_parse_di, [(di, model) for di in di_lst])
+    # Flatten
+    parsed_dis = list(chain(*parsed_dis))
+    return parsed_dis
 
 def _split_entities_for_multiple_instructions(model_entities):
     """
@@ -193,50 +200,57 @@ def _combine_split_dis(result):
     keep_mask = [True]*len(result)
     add_index = None
     for i in range(len(result[:-1])):
-        freq1 = pfrequency.get_frequency_type(result[i]["FREQUENCY"])
-        freq2 = pfrequency.get_frequency_type(result[i+1]["FREQUENCY"])
+        freq1 = di_frequency.get_frequency_type(result[i]["FREQUENCY"])
+        freq2 = di_frequency.get_frequency_type(result[i+1]["FREQUENCY"])
         if (freq1 == freq2) \
             and (result[i]["DURATION"] is None) and (result[i+1]["DURATION"] is None):
             if add_index == None:
                 add_index = i
             if result[i+1]["DOSAGE"] is not None:
-                result[add_index]["DOSAGE"] = result[add_index]["DOSAGE"] + \
-                    " and " + result[i+1]["DOSAGE"]
-                result[add_index]["FREQUENCY"] = freq1.lower()
+                if result[add_index]["DOSAGE"] is not None:
+                    result[add_index]["DOSAGE"] = result[add_index]["DOSAGE"] + \
+                        " and " + result[i+1]["DOSAGE"]
+                else:
+                    result[add_index]["DOSAGE"] = result[i+1]["DOSAGE"]
+                try:
+                    freq1 = freq1.lower()
+                except:
+                    pass
+                result[add_index]["FREQUENCY"] = freq1
             keep_mask[i+1] = False
         else:
             add_index = None
     result = list(compress(result, keep_mask))
     return result
     
-def _create_structured_di(model_entities, form=None, asRequired=False, asDirected=False):
+def _create_structured_di(free_text, model_entities, form=None, asRequired=False, asDirected=False):
     """
     Creates a StructuredDI from model entities.
     """
-    structured_di = StructuredDI(form, None, None, None, None, 
+    structured_di = StructuredDI(free_text, form, None, None, None, None, 
                                     None, None, None, None, asRequired, asDirected)
     for label, text in model_entities.items(): 
         if text is None:
             continue
         elif label == 'FORM':
             if structured_di.form is None:
-                form = pdosage._to_singular(text)
+                form = di_dosage._to_singular(text)
                 if form is not None:
                     structured_di.form = form
         elif label == 'DOSAGE':
-            min, max, form, = pdosage.get_dosage_info(text)
+            min, max, form, = di_dosage.get_dosage_info(text)
             structured_di.dosageMin = min
             structured_di.dosageMax = max
             if form is not None:
                 structured_di.form = form
         elif label == 'FREQUENCY':
-            min, max, freqtype = pfrequency.get_frequency_info(text)
+            min, max, freqtype = di_frequency.get_frequency_info(text)
             structured_di.frequencyMin = min
             structured_di.frequencyMax = max
             if freqtype is not None:
                 structured_di.frequencyType = freqtype
         elif label == 'DURATION':
-            min, max, durtype = pduration.get_duration_info(text)
+            min, max, durtype = di_duration.get_duration_info(text)
             structured_di.durationMin = min
             structured_di.durationMax = max
             structured_di.durationType = durtype
@@ -248,7 +262,7 @@ def _create_structured_di(model_entities, form=None, asRequired=False, asDirecte
             continue
     return structured_di
 
-def _create_structured_dis(model_output):
+def _create_structured_dis(free_text, model_output):
     """
     Creates StructuredDIs from a model output.
     1. Gets entities
@@ -257,9 +271,9 @@ def _create_structured_dis(model_output):
     """
     entities = _get_model_entities(model_output)
     multiple_instructions = _split_entities_for_multiple_instructions(entities)
-    first_di = _create_structured_di(multiple_instructions[0])
+    first_di = _create_structured_di(free_text, multiple_instructions[0])
     # incase multiple instructions exist, they apply to the same drug and form
-    other_dis = [_create_structured_di(instruction_entities, 
+    other_dis = [_create_structured_di(free_text, instruction_entities, 
                                          first_di.form, first_di.asRequired,
                                          first_di.asDirected)
                   for instruction_entities in multiple_instructions[1:]]
@@ -272,7 +286,7 @@ class DIParser:
 
     Example
     -------
-    >>> model_path = "***REMOVED***models/"
+    >>> model_path = "/conf/linkages/Technical/Dose_Instructions/Dose instructions replacement/models/"
     >>> di_parser = DIParser(model_name=f"{model_path}/original/model-best")
 
     >>> di = "take 2 3ml spoonfuls with meals for 5-6 weeks as discussed"
@@ -289,10 +303,12 @@ class DIParser:
         return _parse_di(di, self.__language)
     def parse_many(self, dis: list):
         return _parse_dis(dis, self.__language)
+    def parse_many_mp(self, dis: list):
+        return _parse_dis_mp(dis, self.__language)
 
 
-#model_path = "***REMOVED***models/"
+#model_path = "/conf/linkages/Technical/Dose_Instructions/Dose instructions replacement/models/"
 #dip = DIParser(model_name=f"{model_path}/original/model-best")
 
 #from importlib import reload 
-#reload(pfrequency)
+#reload(frequency)

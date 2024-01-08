@@ -13,9 +13,12 @@ if [ "$1" == "-h" ]; then
   exit 0
 fi
 
+# Get DI_FILEPATH from hidden secrets.env file
+source ../secrets.env
+
 # Naming log file with today's time and date and model name
 today=`date '+%m_%d__%H_%M_%S'`;
-filename="logs/evaluate_${1//\//_}_$today.log"
+filename="$DI_FILEPATH/logs/evaluate_${1//\//_}_$today.log"
 touch $filename
 echo $1 >> $filename
 
