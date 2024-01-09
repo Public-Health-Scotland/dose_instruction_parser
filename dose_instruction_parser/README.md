@@ -59,8 +59,10 @@ StructuredDI(text='take one tablet daily', form='tablet', dosageMin=1.0, dosageM
 
 Multiple dose instructions can be supplied from file using the **-f** argument, where each line in the text file supplied is a dose instruction. For example, if the file **multiple_dis.txt** contains the following:
 
-> daily 2 tabs
-> once daily when required
+```
+daily 2 tabs
+once daily when required
+```
 
 then you will get the corresponding output:
 
@@ -79,9 +81,11 @@ Where you have a lot of examples to parse you may want to send the output to a f
 
 The contents of **out_dis.csv** is as follows:
 
-> ,text,form,dosageMin,dosageMax,frequencyMin,frequencyMax,frequencyType,durationMin,durationMax,durationType,asRequired,asDirected
-> 0,daily 2 tabs,tablet,2.0,2.0,1.0,1.0,Day,,,,False,False
-> 1,once daily when required,,,,1.0,1.0,Day,,,,True,False
+```
+,text,form,dosageMin,dosageMax,frequencyMin,frequencyMax,frequencyType,durationMin,durationMax,durationType,asRequired,asDirected
+0,daily 2 tabs,tablet,2.0,2.0,1.0,1.0,Day,,,,False,False
+1,once daily when required,,,,1.0,1.0,Day,,,,True,False
+```
 
 ## Development
 
