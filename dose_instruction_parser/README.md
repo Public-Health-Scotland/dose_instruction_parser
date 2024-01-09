@@ -30,11 +30,22 @@
 
 ## Setup
 
+### Basic setup
+
+#TODO: Upload package to PyPI so that this actually works!
+
+1. Create new conda environment: `conda create -n di`
+1. Install package: `python -m pip install dose_instruction_parser`
+1. Run `parse_dose_instructions -h` on command line and/or get developing
+
+### Development setup
+
 1. Clone repository
 1. Create new conda environment: `conda create -n di-dev`
 1. Activate environment: `conda activate di-dev`
-1. Install package using editable pip install: `python -m pip install -e dose_instruction_parser`
+1. Install package using editable pip install and development dependencies: `python -m pip install -e dose_instruction_parser[dev]`
 1. Run `parse_dose_instructions -h` on command line and/or get developing
+
 
 ## Usage
 
@@ -45,17 +56,21 @@
 
 In the following examples we assume the model "en_edris9" is installed. You can provide your own path to an alternative model with the same nine entities.
 
-#### A single instruction
+#### Command line interface
+
+The simplest way to get started is to use the in-built command line interface. This can be accessed by running `parse_dose_instructions` on the command line.
+
+##### A single instruction
 
 A single dose instruction can be supplied using the **-di** argument.
 
 ```bash
-(di-dev)[user@session]$ parse_dose_instructions -di "take one tablet daily" -mod en_edris9 
+(di-dev)$ parse_dose_instructions -di "take one tablet daily" -mod en_edris9 
 
 StructuredDI(text='take one tablet daily', form='tablet', dosageMin=1.0, dosageMax=1.0, frequencyMin=1.0, frequencyMax=1.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=False, asDirected=False)
 ```
 
-#### Multiple instructions
+##### Multiple instructions
 
 Multiple dose instructions can be supplied from file using the **-f** argument, where each line in the text file supplied is a dose instruction. For example, if the file **multiple_dis.txt** contains the following:
 
@@ -67,7 +82,7 @@ once daily when required
 then you will get the corresponding output:
 
 ```bash
-(di-dev)[user@session]$ parse_dose_instructions -f "multiple_dis.txt" -mod en_edris9
+(di-dev)$ parse_dose_instructions -f "multiple_dis.txt" -mod en_edris9
 
 StructuredDI(text='daily 2 tabs', form='tablet', dosageMin=2.0, dosageMax=2.0, frequencyMin=1.0, frequencyMax=1.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=False, asDirected=False)
 StructuredDI(text='once daily when required', form=None, dosageMin=1.0, dosageMax=1.0, frequencyMin=1.0, frequencyMax=1.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=True, asDirected=False)
@@ -76,7 +91,7 @@ StructuredDI(text='once daily when required', form=None, dosageMin=1.0, dosageMa
 Where you have a lot of examples to parse you may want to send the output to a file rather than the command line. To do this, specify the output file location with the **-o** argument. If this has **.txt** extension the results will be presented line by line like they would on the command line. If this has **.csv** extension the results will be cast to a data frame with one entry per row.
 
 ```bash
-(di-dev)[user@session]$ parse_dose_instructions -f "multiple_dis.txt" -mod en_edris9 -o "out_dis.csv"
+(di-dev)$ parse_dose_instructions -f "multiple_dis.txt" -mod en_edris9 -o "out_dis.csv"
 ```
 
 The contents of **out_dis.csv** is as follows:
@@ -85,6 +100,47 @@ The contents of **out_dis.csv** is as follows:
 ,text,form,dosageMin,dosageMax,frequencyMin,frequencyMax,frequencyType,durationMin,durationMax,durationType,asRequired,asDirected
 0,daily 2 tabs,tablet,2.0,2.0,1.0,1.0,Day,,,,False,False
 1,once daily when required,,,,1.0,1.0,Day,,,,True,False
+```
+
+### Usage from Python 
+
+For more bespoke usage you can load the package into Python and use it within a script. The script **docs/example.py** is an example of this, pasted below:
+
+```python
+import pandas as pd
+from di_parser import parser
+
+# Create parser
+p = parser.DIParser("en_edris9")
+
+# Parse one dose instruction
+p.parse("Take 2 tablets morning and night")
+
+# Parse many dose instructions
+parsed_dis = p.parse_many([
+    "take one tablet daily",
+    "two puffs prn",
+    "one cap after meals for three weeks",
+    "4 caplets tid"
+])
+
+print(parsed_dis)
+
+# Convert output to pandas dataframe
+di_df = pd.DataFrame(parsed_dis)
+
+print(di_df)
+```
+
+Output:
+
+```
+[StructuredDI(text='take one tablet daily', form='tablet', dosageMin=1.0, dosageMax=1.0, frequencyMin=1.0, frequencyMax=1.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=False, asDirected=False), StructuredDI(text='two puffs prn', form='puff', dosageMin=2.0, dosageMax=2.0, frequencyMin=None, frequencyMax=None, frequencyType=None, durationMin=None, durationMax=None, durationType=None, asRequired=True, asDirected=False), StructuredDI(text='one cap after meals for three weeks', form='capsule', dosageMin=1.0, dosageMax=1.0, frequencyMin=3.0, frequencyMax=3.0, frequencyType='Day', durationMin=3.0, durationMax=3.0, durationType='Week', asRequired=False, asDirected=False), StructuredDI(text='4 caplets tid', form='carpet', dosageMin=4.0, dosageMax=4.0, frequencyMin=3.0, frequencyMax=3.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=False, asDirected=False)]
+                                  text     form  dosageMin  dosageMax  frequencyMin  frequencyMax frequencyType  durationMin  durationMax durationType  asRequired  asDirected
+0                take one tablet daily   tablet        1.0        1.0           1.0           1.0           Day          NaN          NaN         None       False       False
+1                        two puffs prn     puff        2.0        2.0           NaN           NaN          None          NaN          NaN         None        True       False
+2  one cap after meals for three weeks  capsule        1.0        1.0           3.0           3.0           Day          3.0          3.0         Week       False       False
+3                        4 caplets tid   carpet        4.0        4.0           3.0           3.0           Day          NaN          NaN         None       False       False
 ```
 
 ## Development
