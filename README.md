@@ -1,4 +1,4 @@
-# Dose instructions free text parser for Public Health Scotland
+# Dose instructions free text model and parser for Public Health Scotland
 
 * This repository contains code for parsing free text dose instructions. 
 * It replaces the [parseRx](https://phs-git.nhsnss.scot.nhs.uk/eDRIS/parseRx) code, written in prolog.

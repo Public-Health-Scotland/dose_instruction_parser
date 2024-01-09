@@ -1,0 +1,7 @@
+# Dose instructions free text parser for Public Health Scotland
+
+* This repository contains code for parsing free text dose instructions which accompany NHS prescriptions.
+* It draws upon the [parsigs](https://github.com/royashcenazi/parsigs) package, adapting and expanding the code to the context of data held by Public Health Scotland.
+* The parser works by first applying a named entity recogniser (NER) model to identify parts of the text corresponding to different entities, and then using rules to extract structured output. 
+* The default model for dose instructions is provisionally named **edris9**. This is an extension of the [med7](https://www.sciencedirect.com/science/article/abs/pii/S0933365721000798) model, which has the following named entities: form, dosage, frequency, duration, strength, route, drug. **edris9** has the additional entities as_directed and as_required, and has been further trained on approximately 10,000 gold standard examples of NHS data which were manually tagged twice over and double-checked.
+* **edris9** is not currently publicly available. For interested internal NHS users please contact the eDRIS team at Public Health Scotland. For other users, code to train your own model is available [here]().
