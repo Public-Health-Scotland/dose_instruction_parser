@@ -31,7 +31,6 @@
 ## Setup
 
 1. Clone repository
-1. Obtain **secrets.env** file from colleagues which defines environment variable **DI_FILEPATH**. If you are working outwith Public Health Scotland you can define your own filepath and start the process from scratch.
 1. Create new conda environment: `conda create -n di-dev`
 1. Activate environment: `conda activate di-dev`
 1. Install package using editable pip install: `python -m pip install -e dose_instruction_parser`
