@@ -14,25 +14,25 @@
 
 ## File layout
 
-* set_up_conda.sh: script to set up conda environment for development
-* environment.yaml: environment file for development conda environment
-* secrets.env: hidden file with location of dose instruction data filepath
-* model: code for creating the new NER model (edris9)
-    * preprocess
-        * tagged: folder of tagged dose instructions in .json format produced by [spacy NER annotator](https://github.com/tecoholic/ner-annotator) desktop tool
-        * 1-json_to_dat.py: script to convert contents of **tagged** folder to .dat format for cross-checking. Output to **processed** folder.
-        * processed: folder of processed tagged dose instructions consisting of
+* **set_up_conda.sh**: script to set up conda environment for development
+* **environment.yaml**: environment file for development conda environment
+* **secrets.env**: hidden file with location of dose instruction data filepath
+* **model**: code for creating the new NER model (edris9)
+    * **preprocess**
+        * **tagged**: folder of tagged dose instructions in .json format produced by [spacy NER annotator](https://github.com/tecoholic/ner-annotator) desktop tool
+        * **1-json_to_dat.py**: script to convert contents of **tagged** folder to .dat format for cross-checking. Output to **processed** folder.
+        * **processed**: folder of processed tagged dose instructions consisting of
             * crosschecked_data: instances where tagging is consistent
             * conflicting_data: instances where tagging is not consistent
             * resolved_data: manually created file resolving the conflicting_data 
-        * 2-dat_to_spacy.py: Script to convert crosschecked and resolved data from **processed** into .spacy format, output to **model/data**
-    * config
-        * config.cfg: spacy configuration file to define model parameters
-    * train_model.sh: bash script to train model using config file and data in **data** folder
-    * evaluate_model.sh: bash script to evaluate model performance using precision, recall and F-score
-    * package_model.sh: bash script to package model
-* dose_instruction_parser: package for parsing dose instructions. See internal README.md for more detailed information.
-* benchmark: scripts for benchmarking against prolog code
+        * **2-dat_to_spacy.py**: Script to convert crosschecked and resolved data from **processed** into .spacy format, output to **model/data**
+    * **config**
+        * **config.cfg**: spacy configuration file to define model parameters
+    * **train_model.sh**: bash script to train model using config file and data in **data** folder
+    * **evaluate_model.sh**: bash script to evaluate model performance using precision, recall and F-score
+    * **package_model.sh**: bash script to package model
+* **dose_instruction_parser**: package for parsing dose instructions. See internal **README.md** for more detailed information.
+* **benchmark**: scripts for benchmarking against prolog code
 
 
 ## Setup
@@ -72,4 +72,4 @@
 
 ## How to parse dose instructions
 
-See the README.md in **dose_instruction_parser** for information on parsing dose instructions and developing the parser code.
+See the **README.md** in **dose_instruction_parser** for information on parsing dose instructions and developing the parser code.
