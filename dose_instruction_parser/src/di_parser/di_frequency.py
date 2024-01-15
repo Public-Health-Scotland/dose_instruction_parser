@@ -121,7 +121,10 @@ def _add_frequency_multiple_units(frequency, freq_type):
             return freq_type
         if len(nums) != 1:
             warnings.warn("More than one number for every x time unit. Using lowest unit.")
-        freq_type = min(nums) + " " + freq_type
+        try:
+            freq_type = min(nums) + " " + freq_type
+        except TypeError:
+            pass
     return freq_type
 
 def _get_number_of_times(frequency, default=None):
@@ -409,11 +412,14 @@ def _get_hourly_adjusted_frequency(text):
     number_words = [word.replace(".","").isnumeric() for word in words]
     # Find number words immediately preceeding "hourly/hrly" and remove
     remove = [1]*len(words)
-    for i in range(words.index(match), -1, -1):
-        if number_words[i] or (words[i] in ("/","-","\\",";", "times", match)):
-            remove[i] = 0
-        else:
-            break
+    try:
+        for i in range(words.index(match), -1, -1):
+            if number_words[i] or (words[i] in ("/","-","\\",";", "times", match)):
+                remove[i] = 0
+            else:
+                break
+    except:
+        warnings.warn(f"Not in list: {words}")
     words = list(compress(words, remove))
     _min, _max = _get_range(" ".join(words), default=1.0)
     return _min, _max, freqtype

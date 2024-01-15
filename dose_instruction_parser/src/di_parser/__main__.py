@@ -10,7 +10,7 @@ def main():
     args = get_args()
 
     # Set up parser
-    from . import parser
+    from di_parser import parser
     dip = parser.DIParser(model_name=args.model)
 
     # Check if single di provided
@@ -23,8 +23,10 @@ def main():
             raise OSError(f"Input file {args.infile} does not exist.")  
         with open(args.infile, "r") as file:
                 dis = [l.strip() for l in file.readlines()]
-        if args.parallel == 'True':
+        if args.parallel == 'mp':
             out = dip.parse_many_mp(dis)
+        elif args.parallel == 'async':
+            out = dip.parse_many_async(dis)
         else:  
             out = dip.parse_many(dis)
         write_out(dis, out, args.outfile)
@@ -55,8 +57,8 @@ def get_args():
     ap.add_argument("-o", "--outfile", 
                     help=".txt or .csv file to write output to")
     ap.add_argument("-p", "--parallel", 
-                    choices=['True', 'False'], 
-                    default='True',
+                    choices=['False', 'mp', 'async'], 
+                    default='async',
                     help="Whether to use parallel processing")
     ap.print_help()
     return ap.parse_args()

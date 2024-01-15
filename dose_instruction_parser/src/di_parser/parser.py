@@ -1,12 +1,12 @@
 import spacy
 from dataclasses import dataclass
 from itertools import compress, chain
-import multiprocessing as mp
+import asyncio
 
-from . import di_prepare
-from . import di_frequency
-from . import di_dosage
-from . import di_duration
+from di_parser import di_prepare
+from di_parser import di_frequency
+from di_parser import di_dosage
+from di_parser import di_duration
 
 @dataclass
 class StructuredDI:
@@ -91,11 +91,27 @@ def _parse_dis_mp(di_lst, model: spacy.Language):
     """
     Parses multiple dose instructions at once in parallel (synchronous)
     """
+    import multiprocessing as mp
+
     with mp.Pool(mp.cpu_count()) as p:
         parsed_dis = p.starmap(_parse_di, [(di, model) for di in di_lst])
     # Flatten
     parsed_dis = list(chain(*parsed_dis))
     return parsed_dis
+
+def background(f):
+    def wrapped(*args, **kwargs):
+        return asyncio.get_event_loop().run_in_executor(None, f, *args, **kwargs)
+
+    return wrapped
+
+@background
+def _parse_di_async(di, model: spacy.Language):
+    """
+    Parses multiple dose instructions at once in parallel (asynchronous)
+    """
+    return _parse_di(di, model)
+
 
 def _split_entities_for_multiple_instructions(model_entities):
     """
@@ -305,10 +321,11 @@ class DIParser:
         return _parse_dis(dis, self.__language)
     def parse_many_mp(self, dis: list):
         return _parse_dis_mp(dis, self.__language)
-
-
-#model_path = "/conf/linkages/Technical/Dose_Instructions/Dose instructions replacement/models/"
-#dip = DIParser(model_name=f"{model_path}/original/model-best")
-
-#from importlib import reload 
-#reload(frequency)
+    def parse_many_async(self, dis: list):
+        loop = asyncio.get_event_loop()
+        looper = asyncio.gather(*[_parse_di_async(di, self.__language) for di in dis],
+                                    return_exceptions = False)
+        results = loop.run_until_complete(looper)
+        results = [r for sublist in results for r in sublist]
+        loop.close()
+        return results
