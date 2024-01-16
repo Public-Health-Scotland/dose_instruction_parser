@@ -24,7 +24,7 @@ dependencies = [
     "spacy<3.5.0,>=3.4.2",
     "word2number",
     "inflect",
-    "pyspellchecker<= 0.5.5"
+    "pyspellchecker<=0.5.5"
 ]
 requires-python = ">=3.9"
 
@@ -40,6 +40,11 @@ dev = ["pandas", "scikit-learn", "colorama", "ipython", "python-dotenv", "pytest
 
 [project.scripts]
 parse_dose_instructions = "di_parser.__main__:main"
+
+[tool.pytest.ini_options]
+pythonpath = [
+    "."
+]
 
 [tool.bumpver]
 current_version = "2023.1001-alpha"
