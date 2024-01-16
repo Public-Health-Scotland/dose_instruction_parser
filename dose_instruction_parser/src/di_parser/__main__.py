@@ -60,7 +60,6 @@ def get_args():
                     choices=['False', 'mp', 'async'], 
                     default='async',
                     help="Whether to use parallel processing")
-    ap.print_help()
     return ap.parse_args()
 
 def write_out(dis, out, outfile):
