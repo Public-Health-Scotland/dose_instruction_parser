@@ -154,7 +154,7 @@ def _convert_fract_to_num(word):
         out = frac_dict[word]
     elif is_frac(word):
         num, denom = word.split('/')
-        out = str(int(num) / int(denom))
+        out = str(round(int(num) / int(denom), 3))
     else:
         out = word
     return out
