@@ -46,10 +46,20 @@ def test_convert_words_to_numbers(start, end):
 
 @pytest.mark.parametrize("start, end", [
     ("half", "0.5"),
-    ("one quarter", "one 0.25"),
+    ("quarter", "0.25"),
     ("1/8", "0.125"),
     ("1/3", "0.333")
 ])
 def test_convert_fract_to_num(start, end):
     assert di_prepare._convert_fract_to_num(start) == end, \
         "Converting fractions to numbers failed"
+
+@pytest.mark.parametrize("start, end", [
+    ("take two tabs MORNING and nghit", "take 2 tablets morning and night"),
+    ("half cap qh", "0.5 capsule every hour"),
+    ("two puff(s)", "2 puff"),
+    ("one/two with meals", "1 / 2 with meals")
+])
+def test_pre_process(start, end):
+    assert di_prepare.pre_process(start) == end, \
+        "Pre-processing yields incorrect result"

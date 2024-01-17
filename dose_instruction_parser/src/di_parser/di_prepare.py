@@ -91,8 +91,8 @@ def _pad_hyphens_and_slashes(s):
             e.g. "four - six"
     """
     s = re.sub(r'\-', r' - ', s)
-    s = re.sub(r'\\', ' \ ', s)
-    s = re.sub(r'\/', ' / ', s)
+    s = re.sub(r'\\', r' \ ', s)
+    s = re.sub(r'\/', r' / ', s)
     return s
 
 def _pad_numbers(s):
@@ -108,7 +108,7 @@ def _pad_numbers(s):
             String with numbers padded
             e.g. " 2 x 20 ml or  3  tablets at  8 am"
     """
-    s = re.sub('(\d+(\.\d+)?)', r' \1 ', s)
+    s = re.sub(r'(\d+(\.\d+)?)', r' \1 ', s)
     return s
 
 def _convert_words_to_numbers(sentence):
@@ -172,6 +172,8 @@ def pre_process(di):
             Pre-processed dose instruction
             e.g. "take 2 tablets morning and night"
     """
+    di = _remove_parentheses(di)
+    di = _pad_hyphens_and_slashes(di)
     # get words to replace
     output_words = []
     words = di.split()
@@ -190,12 +192,13 @@ def pre_process(di):
     di = ' '.join(output_words)
     # rest of preprocessing
     di = _autocorrect(di)
-    di = _remove_parentheses(di)
-    di = _pad_hyphens_and_slashes(di)
     di = _convert_words_to_numbers(di)
     di = _pad_numbers(di)
     # remove extra spaces between words
     di = re.sub(r'\s+', ' ', di)
+    # remove leading and trailing whitespace
+    di = re.sub(r'\A\s+', '', di)
+    di = re.sub(r'\s+\Z', '' , di)
     return di
 
 
