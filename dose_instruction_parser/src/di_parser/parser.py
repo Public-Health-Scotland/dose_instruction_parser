@@ -14,7 +14,7 @@ class StructuredDI:
     A structured dose instruction
     Attributes:
     -----------
-    freeText: str
+    text: str
         The free text before parsing
     form: str
         The form of drug (e.g. "tablet", "patch", "injection")
