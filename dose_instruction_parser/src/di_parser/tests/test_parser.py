@@ -43,13 +43,47 @@ def test_split_entities_for_multiple_instructions(text, instr_num):
     assert len(out) == instr_num, \
         f"Should be {instr_num} separate instructions detected"
 
-def test_combine_split_dis():
-    di_1 = {"DOSAGE": "1", "FREQUENCY": "in the morning", "FORM": "tablet", 
+@pytest.mark.parametrize("di_1, di_2, combined", [
+    # Adding frequency types
+    ({"DOSAGE": "1", "FREQUENCY": "in the morning", "FORM": "tablet", 
+            "DURATION": None, "AS_REQUIRED": None, "AS_DIRECTED": None},
+    {"DOSAGE": "1", "FREQUENCY": "in the evening", "FORM": None, 
+            "DURATION": "for 3 weeks", "AS_REQUIRED": None, "AS_DIRECTED": None},
+    {"DOSAGE": "1", "FREQUENCY": "in the morning and in the evening", "FORM": "tablet", 
+            "DURATION": "for 3 weeks", "AS_REQUIRED": None, "AS_DIRECTED": None}
+    ),
+    # Adding dosages
+    ({"DOSAGE": "1", "FREQUENCY": "day", "FORM": "tablet", 
+            "DURATION": None, "AS_REQUIRED": None, "AS_DIRECTED": None},
+    {"DOSAGE": "3", "FREQUENCY": "day", "FORM": None, 
+            "DURATION": None, "AS_REQUIRED": None, "AS_DIRECTED": None},
+    {"DOSAGE": "1 and 3", "FREQUENCY": "day", "FORM": "tablet", 
             "DURATION": None, "AS_REQUIRED": None, "AS_DIRECTED": None}
-    di_2 = {"DOSAGE": "1", "FREQUENCY": "in the evening", "FORM": None, 
-            "DURATION": "for 3 weeks", "AS_REQUIRED": None, "AS_DIRECTED": None}
-    combined = {"DOSAGE": "1", "FREQUENCY": "in the morning and in the evening", "FORM": "tablet", 
-            "DURATION": "for 3 weeks", "AS_REQUIRED": None, "AS_DIRECTED": None}
-
+    )
+])
+def test_combine_split_dis(di_1, di_2, combined):
     assert parser._combine_split_dis([di_1, di_2]) == [combined], \
         "Split dose instructions not combined correctly"
+
+def test_create_structured_di():
+    free_text = "1 tablet a day and 3 tablets a day prn for 1 month"
+    model_entities = {"DOSAGE": "1 and 3", "FREQUENCY": "day", "FORM": "tablet", 
+            "DURATION": "1 month", "AS_REQUIRED": "prn", "AS_DIRECTED": None}
+    expected_di = parser.StructuredDI(free_text, "tablet", 4.0, 4.0, 1.0, 1.0,
+                        "Day", 1.0, 1.0, "Month", True, False)
+    str_di = parser._create_structured_di(free_text, model_entities)
+    assert str_di == expected_di, \
+        "Structured di not created as expected"
+
+def test_create_structured_dis():
+    free_text = "2 - 3 5 ml spoonfuls with meals and at bedtime for 3 weeks as dir, \
+        then reduce down to 1 5 ml spoonful bd"
+    model_output = DEFAULT_MODEL(free_text)
+    exp_dis = [
+        parser.StructuredDI(free_text, "ml", 10.0, 15.0, 4.0, 4.0, "Day",
+            3.0, 3.0, "Week", False, True),
+        parser.StructuredDI(free_text, "ml", 5.0, 5.0, 2.0, 2.0, "Day",
+            None, None, None, False, True)
+    ]
+    assert parser._create_structured_dis(free_text, model_output) == exp_dis, \
+        "Structured dis don't match expected"

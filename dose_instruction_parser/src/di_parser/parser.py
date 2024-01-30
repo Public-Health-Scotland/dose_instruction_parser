@@ -241,7 +241,8 @@ def _combine_split_dis(result):
     result = list(compress(result, keep_mask))
     return result
     
-def _create_structured_di(free_text, model_entities, form=None, asRequired=False, asDirected=False):
+def _create_structured_di(free_text, model_entities, 
+                            form=None, asRequired=False, asDirected=False):
     """
     Creates a StructuredDI from model entities.
     """
