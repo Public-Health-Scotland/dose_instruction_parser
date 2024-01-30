@@ -4,7 +4,7 @@ import re
 import warnings
 
 # Regex expression to search for numbers in text
-re_digit = "\d*\.?\d+"
+re_digit = r"\d*\.?\d+"
 
 @dataclass(frozen=True, eq=True)
 class _Frequency:
@@ -64,11 +64,11 @@ def get_frequency_type(frequency):
     if frequency is None:
         return None
     if any(x in frequency for x in ("hour", "hr")) | \
-        (re.search("\d?h$", frequency) is not None):
+        (re.search(r"\dh$", frequency) is not None):
         freq_type = "Hour"
     elif any(x in frequency for x in ("week", "wk", "monday",
                                         "tuesday", "wednesday", "thursday",
-                                        "friday", "saturday", "sunday", "mon",
+                                        "friday", "saturday", "sunday", 
                                         "tue", "wed", "thu", "fri", "sat", "sun")):
         freq_type = "Week"
     elif frequency == "fortnight":
@@ -323,7 +323,7 @@ def _check_range_from_list(text):
     if any(x in text for x in ("and", " / ", " ; ")):
         # Remove "/ day" or "/ d"
         text = text.replace("/ day", " ").replace("/ d", " ")
-        substrs = re.split("and|,|\/|;", text)
+        substrs = re.split(r"and|,|\/|;", text)
         nums = [float(_get_number_of_times(s, default=0.0)) for s in substrs]
         if any(x in text for x in ("am", "pm")):
             _min = float(len(nums))
