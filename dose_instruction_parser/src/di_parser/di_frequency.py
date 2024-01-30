@@ -64,11 +64,11 @@ def get_frequency_type(frequency):
     if frequency is None:
         return None
     if any(x in frequency for x in ("hour", "hr")) | \
-        (re.search(r"\d?h$", frequency) is not None):
+        (re.search(r"\dh$", frequency) is not None):
         freq_type = "Hour"
     elif any(x in frequency for x in ("week", "wk", "monday",
                                         "tuesday", "wednesday", "thursday",
-                                        "friday", "saturday", "sunday", "mon",
+                                        "friday", "saturday", "sunday", 
                                         "tue", "wed", "thu", "fri", "sat", "sun")):
         freq_type = "Week"
     elif frequency == "fortnight":
