@@ -87,3 +87,4 @@ def test_create_structured_dis():
     ]
     assert parser._create_structured_dis(free_text, model_output) == exp_dis, \
         "Structured dis don't match expected"
+

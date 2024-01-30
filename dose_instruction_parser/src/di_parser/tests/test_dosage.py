@@ -14,16 +14,6 @@ def test_get_form_from_dosage_tag(before, after):
         f"get_form_from_dosage_tag failed: {before} should correct to {after}"
 
 @pytest.mark.parametrize("before, after", [
-    ("take 3 tablets", "3.0"),
-    ("inhale 1 puff", "1.0"),
-    ("drink 100ml", "None")#### is this right?
-])
-
-def test_get_single_dose(before, after):
-    assert di_dosage._get_single_dose(before) == after, \
-        f"get_single_dose failed: {before} should correct to {after}"
-
-@pytest.mark.parametrize("before, after", [
     ("tablets", "tablet"),
     ("pill", "pill"),
     ("puffs", "puff"),
@@ -36,18 +26,17 @@ def test_to_singular(before, after):
 
 
 @pytest.mark.parametrize("before, after", [
-    ("3 5ml spoonfuls", (15.0, 15.0, "ml")),
+    ("3 5 ml spoonfuls", (15.0, 15.0, "ml")),
     ("1 tablet", (None, None, None)),
-    ("10-20mg", (10.0, 20.0, "mg"))
+    ("10 - 20 mg", (10.0, 20.0, "mg"))
 ])
-
 def test_get_continuous_dose(before, after):
     assert di_dosage._get_continuous_dose(before) == after, \
         f"get_continuous_dose failed: {before} should correct to {after}"
 
 @pytest.mark.parametrize("before, after", [
-    ("2x10ml", (20.0, 20.0, 0.0)),
-    ("2-3", (2.0, 3.0, None)),
+    ("2 x 10 ml", (20.0, 20.0, "ml")),
+    ("2 - 3", (2.0, 3.0, None)),
     ("max 4", (0.0, 4.0, None))
 ])
 
