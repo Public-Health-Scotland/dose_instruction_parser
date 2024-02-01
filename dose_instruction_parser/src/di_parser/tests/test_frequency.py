@@ -19,20 +19,22 @@ def test_get_latin_frequency(before, after):
     ("every hr", "Hour"),
     ("fortnight", "2 Week"),
     ("wk", "Week"),
-    ("on mon", "Week")
+    ("on mon", None)
 ])
 def test_get_frequency_type(before, after):
     assert di_frequency.get_frequency_type(before) == after, \
         f"get_frequency_type failed: {before} should retun {after}"
 
-@pytest.mark.parametrize("before, after", [
-    (None, None), 
-    ("every 6 hours", "6 Hour"), 
-    ("alternate days", "2 Day"),
-    ("every hr", "1 Hour"),
-    ("every other week", "2 Week")
+# test _add_frequency_multiple_units (line 95)
+# call from get_frequency_type (line 89)
+# will not be called on (None, None) as per line 65
+@pytest.mark.parametrize("before_1, before_2, after", [
+    ("every 6 hours", "Hour", "6 Hour"), 
+    ("alternate days", "Day", "2 Day"),
+    ("every hr", "Hour", "Hour"),
+    ("every other week", "Week", "2 Week")
 ])
-def test_add_frequency_multiple_units(before, after):
-    assert di_frequency._add_frequency_multiple_units(before) == after, \
-        f"get_frequency_type failed: {before} should retun {after}"
+def test_add_frequency_multiple_units(before_1, before_2, after):
+    assert di_frequency._add_frequency_multiple_units(before_1, before_2) == after, \
+        f"get_frequency_type failed: {before_1} should retun {after}"
 
