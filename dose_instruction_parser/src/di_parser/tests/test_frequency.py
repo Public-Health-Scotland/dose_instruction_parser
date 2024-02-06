@@ -26,7 +26,7 @@ def test_get_frequency_type(before, after):
         f"get_frequency_type failed: {before} should retun {after}"
 
 # test _add_frequency_multiple_units (line 95)
-# call from get_frequency_type (line 89)
+# called from get_frequency_type (line 89)
 # will not be called on (None, None) as per line 65
 @pytest.mark.parametrize("before_1, before_2, after", [
     ("every 6 hours", "Hour", "6 Hour"), 
@@ -38,3 +38,17 @@ def test_add_frequency_multiple_units(before_1, before_2, after):
     assert di_frequency._add_frequency_multiple_units(before_1, before_2) == after, \
         f"get_frequency_type failed: {before_1} should retun {after}"
 
+
+# test _get_number_of_times (line 130)
+# called from _check_range_from_list (line 327)
+# called from get_frequency_info (line 466)
+@pytest.mark.parametrize("before, after", [
+    ("daily", 1.0), 
+    ("food", 3.0),
+    ("qid", 4.0),
+    ("lunch", 1.0),
+    ("nocte", 1.0)
+])
+def test_get_number_of_times(before, after):
+    assert di_frequency._get_number_of_times(before) == after, \
+        f"_get_number_of_times failed: {before} should retun {after}"
