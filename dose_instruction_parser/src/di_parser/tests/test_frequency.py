@@ -52,3 +52,27 @@ def test_add_frequency_multiple_units(before_1, before_2, after):
 def test_get_number_of_times(before, after):
     assert di_frequency._get_number_of_times(before) == after, \
         f"_get_number_of_times failed: {before} should retun {after}"
+
+# test _get_bounding_num (line 169)
+# called from _check_min_max_amount (line 204)
+@pytest.mark.parametrize("before_1, before_2, after", [
+    ([], "max", (None, None)), 
+    (["2"], "min", (float(2), None)),
+    (["2"], "max", (0.0, float(2))),
+    (["1"], "min", (float(1), None)),
+    (["6"], "max", (0.0, float(6)))
+])
+def test_get_bounding_num(before_1, before_2, after):
+    assert di_frequency._get_bounding_num(before_1, before_2) == after, \
+        f"_get_bounding_num failed: {before_1, before_2} should retun {after}"
+
+# test _check_min_max_amount (line 204)
+# called from _get_range (line 343)
+@pytest.mark.parametrize("before_1, before_2, after", [
+    ("up to 4", ["4"], (0.0, 4.0, True)), 
+    ("at least 2", ["2"], (2.0, None, True))
+])
+def test_check_min_max_amount(before_1, before_2, after):
+    assert di_frequency._check_min_max_amount(before_1, before_2) == after, \
+        f"_check_min_max_amount: {before_1, before_2} should retun {after}"
+
