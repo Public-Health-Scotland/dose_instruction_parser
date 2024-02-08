@@ -18,7 +18,10 @@ def test_get_latin_frequency(before, after):
     ("nocte", "Day"),
     ("every hr", "Hour"),
     ("fortnight", "2 Week"),
+    ("fortnightly", "2 Week"),
+    ("every 3 days", "3 Day"),
     ("wk", "Week"),
+    ("with breakfast", "Day"),
     ("on mon", None)
 ])
 def test_get_frequency_type(before, after):
