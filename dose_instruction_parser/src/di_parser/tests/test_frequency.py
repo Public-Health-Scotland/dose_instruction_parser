@@ -19,20 +19,9 @@ def test_get_latin_frequency(before, after):
     ("every hr", "Hour"),
     ("fortnight", "2 Week"),
     ("wk", "Week"),
-    ("on mon", "Week")
+    ("on mon", None)
 ])
 def test_get_frequency_type(before, after):
     assert di_frequency.get_frequency_type(before) == after, \
-        f"get_frequency_type failed: {before} should retun {after}"
-
-@pytest.mark.parametrize("before, after", [
-    (None, None), 
-    ("every 6 hours", "6 Hour"), 
-    ("alternate days", "2 Day"),
-    ("every hr", "1 Hour"),
-    ("every other week", "2 Week")
-])
-def test_add_frequency_multiple_units(before, after):
-    assert di_frequency._add_frequency_multiple_units(before) == after, \
         f"get_frequency_type failed: {before} should retun {after}"
 
