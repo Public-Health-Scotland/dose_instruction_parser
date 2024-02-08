@@ -71,7 +71,7 @@ def get_frequency_type(frequency):
                                         "friday", "saturday", "sunday", 
                                         "tue", "wed", "thu", "fri", "sat", "sun")):
         freq_type = "Week"
-    elif frequency == "fortnight":
+    elif "fortnight" in frequency:
         freq_type = "2 Week"
     elif any(x in frequency for x in ("month", "mnth", "mon ")):
         freq_type = "Month"
