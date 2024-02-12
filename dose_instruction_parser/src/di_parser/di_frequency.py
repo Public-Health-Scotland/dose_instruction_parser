@@ -224,7 +224,12 @@ def _check_min_max_amount(text, nums):
     """
     if any(x in text for x in ("max", "upto", "up to", "Maximum")):
         _min, _max = _get_bounding_num(nums, "max")
-        range_found = True
+        if _max is None:
+            if " a " in text:
+                _max = 1.0
+                _min = 0.0
+        if _max is not None:
+            range_found = True
     elif any(x in text for x in ("at least", "min")):
         if len(nums) == 0:
             range_found = True
