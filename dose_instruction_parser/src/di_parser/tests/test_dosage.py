@@ -41,5 +41,5 @@ def test_get_continuous_dose(before, after):
 ])
 
 def test_dosage_info(before, after):
-    assert di_dosage._get_continuous_dose(before) == after, \
+    assert di_dosage.get_dosage_info(before) == after, \
         f"dosage_info failed: {before} should correct to {after}"        
