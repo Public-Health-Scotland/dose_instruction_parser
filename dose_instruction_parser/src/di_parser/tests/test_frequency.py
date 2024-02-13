@@ -83,6 +83,7 @@ def test_check_min_max_amount(before_1, before_2, after):
     ("2 to 4", (2.0, 4.0, True)), 
     ("3-4 tablets", (3.0, 4.0, True))
 ])
+
 def test_check_explicit_range(before, after):
     assert di_frequency._check_explicit_range(before) == after, \
         f"check_explicit_range failed: {before} should retun {after}"
@@ -90,8 +91,8 @@ def test_check_explicit_range(before, after):
 
 @pytest.mark.parametrize("before, after", [
     ("6 hourly", (1.0, 1.0, "6 Hour")), 
-    ("3 hrly", (3.0, 3.0, "3 Hour"))
-])
+    ("3 hrly", (1.0, 1.0, "3 Hour"))
+])      
 def test_get_hourly_adjusted_frequency(before, after):
     assert di_frequency._get_hourly_adjusted_frequency(before) == after, \
         f"_get_hourly_adjusted_frequency failed: {before} should retun {after}"
