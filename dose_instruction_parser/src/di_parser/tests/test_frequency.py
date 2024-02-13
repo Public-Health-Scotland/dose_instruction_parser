@@ -89,7 +89,7 @@ def test_check_explicit_range(before, after):
 
 
 @pytest.mark.parametrize("before, after", [
-    ("6 hourly", (1.0, 1.0, "6 Hour"), 
+    ("6 hourly", (1.0, 1.0, "6 Hour")), 
     ("3 hrly", (3.0, 3.0, "3 Hour"))
 ])
 def test_get_hourly_adjusted_frequency(before, after):
