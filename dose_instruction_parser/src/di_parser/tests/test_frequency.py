@@ -97,4 +97,13 @@ def test_get_hourly_adjusted_frequency(before, after):
     assert di_frequency._get_hourly_adjusted_frequency(before) == after, \
         f"_get_hourly_adjusted_frequency failed: {before} should retun {after}"
 
-        
+@pytest.mark.parametrize("before, after", [
+    ("daily", (1.0, 1.0, "Day")), 
+    ("with meals and at bedtime", (4.0, 4.0, "Day")),
+    ("2 to 5 times a week", (2.0, 5.0, "Week")),
+    ("1 or 2 times every 4 weeks", (1.0, 2.0, "Month")),
+    ("6 hrly", (1.0, 1.0, "6 Hour")),
+])      
+def test_get_frequency_info(before, after):
+    assert di_frequency.get_frequency_info(before) == after, \
+        f"get_frequency_info failed: {before} should retun {after}"        
