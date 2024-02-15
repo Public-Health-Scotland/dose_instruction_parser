@@ -107,3 +107,12 @@ def test_get_hourly_adjusted_frequency(before, after):
 def test_get_frequency_info(before, after):
     assert di_frequency.get_frequency_info(before) == after, \
         f"get_frequency_info failed: {before} should retun {after}"        
+
+@pytest.mark.parametrize("before, after", [
+    ("8 am and 6pm", (6.0, 8.0, True)), 
+    ("1am and 7 pm", (1.0, 7.0, True)),
+    ("2 am and 11pm", (2.0, 11.0, True))
+])      
+def test_check_range_from_list(before, after):
+    assert di_frequency._check_range_from_list(before) == after, \
+        f"_check_range_from_list failed: {before} should return {after}"
