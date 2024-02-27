@@ -79,9 +79,9 @@ def test_check_min_max_amount(before_1, before_2, after):
     assert di_frequency._check_min_max_amount(before_1, before_2) == after, \
         f"_check_min_max_amount: {before_1, before_2} should retun {after}"
 
-@pytest.mark.parametrize("text, nums, after"), [
-    ("2 to 4", [2.0 , 4.0] (2.0, 4.0, True)), 
-    ("3-4 tablets", [3.0, 4.0] (3.0, 4.0, True))
+@pytest.mark.parametrize("text, nums, after", [
+    ("2 to 4", [2.0 , 4.0], (2.0, 4.0, True)), 
+    ("3-4 tablets", [3.0, 4.0], (3.0, 4.0, True))
 ])
 
 def test_check_explicit_range(text, nums, after):
