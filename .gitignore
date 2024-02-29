@@ -55,3 +55,10 @@ model/preprocess/backup/*
 
 # Tarfiles
 *.tar.gz
+
+# Pickles
+*.pickle
+
+# Sphinx files
+dose_instruction_parser/docs/_build/doctrees
+dose_instruction_parser/docs/_build/html

@@ -29,7 +29,8 @@ dependencies = [
 requires-python = ">=3.9"
 
 [project.optional-dependencies]
-dev = ["pandas", "colorama", "ipython", "python-dotenv", "pytest", "pytest-cov"]
+dev = ["pandas", "colorama", "ipython", "python-dotenv", "pytest", "pytest-cov", 
+        "sphinx", "sphinx-autobuild", "sphinx-copybutton", "insegel"]
 
 #[tool.setuptools.packages.find]
 #where = ["src"]
