@@ -58,8 +58,3 @@ model/preprocess/backup/*
 
 # Pickles
 *.pickle
-
-# Sphinx files
-dose_instruction_parser/doc/sphinx/build
-dose_instruction_parser/docs/source/_static
-dose_instruction_parser/docs/source/_templates

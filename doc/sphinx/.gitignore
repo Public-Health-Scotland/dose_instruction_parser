@@ -1,0 +1,5 @@
+# Sphinx files
+source/modules
+build
+source/_static
+source/_templates
