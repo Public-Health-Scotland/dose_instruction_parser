@@ -6,6 +6,16 @@
 Prescription dose instruction parser for Public Health Scotland
 ===============================================================
 
+This is the documentation for the tool developed at Public Health Scotland to
+parse prescription dose instruction free text into structured output.
+
+This work is a collaboation between the Electronic Data Research Innovation Service
+and Prescribing Team. The tool has drawn heavily upon the 
+`med 7 <https://github.com/kormilitzin/med7>`_ and 
+`parsigs <https://github.com/royashcenazi/parsigs>`_ projects, adapted and extended
+to apply to the prescribing information free text held by Public Health Scotland.
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
