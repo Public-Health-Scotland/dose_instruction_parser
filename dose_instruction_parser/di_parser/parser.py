@@ -3,17 +3,19 @@ from dataclasses import dataclass
 from itertools import compress, chain
 import asyncio
 
-from di_parser import di_prepare
-from di_parser import di_frequency
-from di_parser import di_dosage
-from di_parser import di_duration
+from . import di_prepare
+from . import di_frequency
+from . import di_dosage
+from . import di_duration
 
 @dataclass
 class StructuredDI:
     """
     A structured dose instruction
+
     Attributes:
     -----------
+    
     text: str
         The free text before parsing
     form: str

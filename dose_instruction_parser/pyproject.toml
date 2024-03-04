@@ -30,7 +30,7 @@ requires-python = ">=3.9"
 
 [project.optional-dependencies]
 dev = ["pandas", "colorama", "ipython", "python-dotenv", "pytest", "pytest-cov", 
-        "sphinx", "sphinx-autobuild", "sphinx-copybutton", "insegel"]
+        "sphinx", "sphinx-autobuild", "sphinx-copybutton", "sphinx_rtd_theme"]
 
 #[tool.setuptools.packages.find]
 #where = ["src"]
@@ -44,7 +44,7 @@ parse_dose_instructions = "di_parser.__main__:main"
 
 [tool.pytest.ini_options]
 pythonpath = [
-    "."
+    "di_parser"
 ]
 
 [tool.bumpver]

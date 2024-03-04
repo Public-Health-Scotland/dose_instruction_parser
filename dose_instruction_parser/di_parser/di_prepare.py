@@ -12,7 +12,7 @@ def _create_spell_checker():
     """
     sc = SpellChecker()
     keep_words_frequency = path.join(path.dirname(__file__), 
-                                        "../../data/keep_words.txt")
+                                        "./data/keep_words.txt")
     sc.word_frequency.load_text_file(keep_words_frequency)
     return sc
 
@@ -179,7 +179,7 @@ def pre_process(di):
     words = di.split()
     replace_words = {}
     replace_words_path = path.join(path.dirname(__file__), 
-                                    "../../data/replace_words.csv")
+                                    "./data/replace_words.csv")
     with open(replace_words_path, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
