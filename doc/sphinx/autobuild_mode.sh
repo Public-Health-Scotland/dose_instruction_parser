@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sphinx-autobuild . ./_build/html/
+sphinx-autobuild source ./build/html/
