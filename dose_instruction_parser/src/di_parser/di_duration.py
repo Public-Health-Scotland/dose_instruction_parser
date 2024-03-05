@@ -1,5 +1,5 @@
 import re
-from . import di_frequency 
+from di_parser import di_frequency 
 
 def get_duration_info(text):
     """ 
@@ -8,7 +8,7 @@ def get_duration_info(text):
     Input:
         text: str
             A duration entity text 
-            e.g. "for 5 weeks", "for up to a year", "for 2-3 months"
+            e.g. "for 5 weeks", "for up to a year", "for 2 - 3 months"
     Output:
         _min: float
             The minimum duration

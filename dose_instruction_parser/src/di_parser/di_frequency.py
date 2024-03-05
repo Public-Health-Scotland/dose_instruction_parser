@@ -4,7 +4,7 @@ import re
 import warnings
 
 # Regex expression to search for numbers in text
-re_digit = "\d*\.?\d+"
+re_digit = r"\d*\.?\d+"
 
 @dataclass(frozen=True, eq=True)
 class _Frequency:
@@ -64,14 +64,14 @@ def get_frequency_type(frequency):
     if frequency is None:
         return None
     if any(x in frequency for x in ("hour", "hr")) | \
-        (re.search("\d?h$", frequency) is not None):
+        (re.search(r"\dh$", frequency) is not None):
         freq_type = "Hour"
     elif any(x in frequency for x in ("week", "wk", "monday",
                                         "tuesday", "wednesday", "thursday",
-                                        "friday", "saturday", "sunday", "mon",
+                                        "friday", "saturday", "sunday", 
                                         "tue", "wed", "thu", "fri", "sat", "sun")):
         freq_type = "Week"
-    elif frequency == "fortnight":
+    elif "fortnight" in frequency:
         freq_type = "2 Week"
     elif any(x in frequency for x in ("month", "mnth", "mon ")):
         freq_type = "Month"
@@ -121,7 +121,10 @@ def _add_frequency_multiple_units(frequency, freq_type):
             return freq_type
         if len(nums) != 1:
             warnings.warn("More than one number for every x time unit. Using lowest unit.")
-        freq_type = min(nums) + " " + freq_type
+        try:
+            freq_type = min(nums) + " " + freq_type
+        except TypeError:
+            pass
     return freq_type
 
 def _get_number_of_times(frequency, default=None):
@@ -221,7 +224,12 @@ def _check_min_max_amount(text, nums):
     """
     if any(x in text for x in ("max", "upto", "up to", "Maximum")):
         _min, _max = _get_bounding_num(nums, "max")
-        range_found = True
+        if _max is None:
+            if " a " in text:
+                _max = 1.0
+                _min = 0.0
+        if _max is not None:
+            range_found = True
     elif any(x in text for x in ("at least", "min")):
         if len(nums) == 0:
             range_found = True
@@ -320,7 +328,7 @@ def _check_range_from_list(text):
     if any(x in text for x in ("and", " / ", " ; ")):
         # Remove "/ day" or "/ d"
         text = text.replace("/ day", " ").replace("/ d", " ")
-        substrs = re.split("and|,|\/|;", text)
+        substrs = re.split(r"and|,|\/|;", text)
         nums = [float(_get_number_of_times(s, default=0.0)) for s in substrs]
         if any(x in text for x in ("am", "pm")):
             _min = float(len(nums))
@@ -409,11 +417,14 @@ def _get_hourly_adjusted_frequency(text):
     number_words = [word.replace(".","").isnumeric() for word in words]
     # Find number words immediately preceeding "hourly/hrly" and remove
     remove = [1]*len(words)
-    for i in range(words.index(match), -1, -1):
-        if number_words[i] or (words[i] in ("/","-","\\",";", "times", match)):
-            remove[i] = 0
-        else:
-            break
+    try:
+        for i in range(words.index(match), -1, -1):
+            if number_words[i] or (words[i] in ("/","-","\\",";", "times", match)):
+                remove[i] = 0
+            else:
+                break
+    except:
+        warnings.warn(f"Not in list: {words}")
     words = list(compress(words, remove))
     _min, _max = _get_range(" ".join(words), default=1.0)
     return _min, _max, freqtype

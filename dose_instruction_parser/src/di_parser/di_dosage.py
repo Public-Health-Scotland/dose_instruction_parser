@@ -3,7 +3,7 @@ import re
 import warnings
 from functools import reduce
 
-from . import di_frequency
+from di_parser import di_frequency
 
 def _is_str_float(s):
     """
@@ -42,32 +42,6 @@ def _get_form_from_dosage_tag(text):
             return None
         else:
             return splitted[1]
-
-# Words that preface a dosage
-dose_words = ['take', 'inhale', 'instill', 'apply', 'spray', 'swallow']
-
-# Not sure how useful this is given most dose texts don't have a dose word in them
-def _get_single_dose(text):
-    """
-    Gets dose if it's of the form 
-        dose word + number + ...
-    e.g. "take 3 tablets", "inhale 1 puff", "apply 2 patches"
-
-    Input:
-        text: str
-            Dose entity text
-            e.g. "take 3 tablets", "inhale 1 puff", "drink 100ml"
-    Output:
-        str, None
-            Dose
-            e.g. 3.0, 1.0, None
-    """
-    def is_followed_by_number(word):
-        return word in dose_words
-    words = text.split()
-    if is_followed_by_number(words[0]) and len(words) > 1 and _is_str_float(words[1]):
-        return float(words[1])
-    return None
 
 inflect_engine = inflect.engine()
 
