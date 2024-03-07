@@ -67,9 +67,37 @@ Here is a piece of sample output:
 Methods
 -------
 
+The parsing process consists of three main stages:
+
+1. Pre-process the dose instruction to clean up the free text
+2. Use a machine learning Named Entity Recogniser (NER) model to associate key phrases
+   in the text with "entities" of interest such as "DOSAGE" and "DURATION"
+3. Apply rules to each key phrase to extract structured information
+
+As an example, consider the dose instruction "one/two tabs bid prn". 
+
+===============     ========================
+Stage               Output
+===============     ========================
+(1) Pre-process     1 / 2 tablets bid prn
+(2) NER             DOSAGE: "1 / 2", FORM: "tablets", FREQUENCY: "bid", AS_REQUIRED: "prn"    
+(3) Rules           StructuredDI(text='one/two tabs bid prn', form='tablet', dosageMin=1.0, dosageMax=2.0, frequencyMin=2.0, frequencyMax=2.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=True, asDirected=False)   
+===============     ========================
+
+The whole process is carried out by the :mod:`di_parser` package, available on `PyPI <https://pypi.org/>`_.
+See Installtion_, Quickstart_ and `Parsing dose instructions`_ for information on how to get going.
+
+
+Pre-processing
+~~~~~~~~~~~~~~
 
 
 
+Named Entity Recognition
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Rules
+~~~~~
 
 Workflow
 --------
