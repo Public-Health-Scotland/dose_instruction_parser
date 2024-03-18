@@ -1,3 +1,5 @@
+.. _`Parsing dose instructions`:
+
 Parsing dose instructions
 =========================
 
