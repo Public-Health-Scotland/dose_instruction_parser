@@ -85,13 +85,39 @@ Stage               Output
 ===============     ========================
 
 The whole process is carried out by the :mod:`di_parser` package, available on `PyPI <https://pypi.org/>`_.
-See Installtion_, Quickstart_ and `Parsing dose instructions`_ for information on how to get going.
+See Installation_, Quickstart_ and `Parsing dose instructions`_ for information on how to get going.
 
 
 Pre-processing
 ~~~~~~~~~~~~~~
 
+Pre-processing functions can be found in the :mod:`di_parser.di_prepare` module.
+Several operations are performed on the input text to get it ready for 
+the NER model:
 
+1. All parentheses are replaced with a blank space
+2. Hyphens ("-") and slashes ("/" and "\") and replaced with a blank space
+3. Certain keywords are replaced with alternatives e.g. "qad" -> "every other day". 
+   These combinations are listed in :mod:`di_parser.data.replace_words`
+4. Spelling is corrected using the `pyspellchecker <https://pypi.org/project/pyspellchecker/>`_ package.
+   Certain keywords are not corrected. These are listed in :mod:`di_parser.data.keep_words`
+5. Number-words are converted to numbers using the `word2number <https://pypi.org/project/word2number/>`_ package,
+   e.g. "two" -> "2"; "half" -> "0.5".
+6. Blank spaces are added around numbers 
+   e.g. "2x30ml" -> " 2 x 30 ml"
+7. Extra spaces between words are removed
+8. Leading and trailing whitespace is removed
+
+For example, pre-processing would have the following results:
+
+===============================  ================================
+Input                            Output
+===============================  ================================
+take two tabs MORNING and nghit  take 2 tablets morning and night
+half cap qh                      0.5 capsule every hour
+two puff(s)                      2 puff
+one/two with meals               1 / 2 with meals
+===============================  ================================
 
 Named Entity Recognition
 ~~~~~~~~~~~~~~~~~~~~~~~~
