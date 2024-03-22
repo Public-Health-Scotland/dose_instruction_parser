@@ -3,12 +3,12 @@
 Parsing dose instructions
 =========================
 
-Command line 
-------------
+Using the Command line 
+----------------------
 
-*1. A single instruction*
+**1. A single instruction**
 
-A single dose instruction can be supplied using the **-di** argument.
+A single dose instruction can be supplied using the ``-di`` argument.
  
  ``parse_dose_instructions -di "take one tablet daily" -mod en_edris9``
 
@@ -16,9 +16,9 @@ Output:
 ::
     StructuredDI(text='take one tablet daily', form='tablet', dosageMin=1.0, dosageMax=1.0, frequencyMin=1.0, frequencyMax=1.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=False, asDirected=False)
 
-*2. Multiple instructions*
+**2. Multiple instructions**
 
-Multiple dose instructions can be supplied from file using the **-f** argument, where each line in the text file supplied is a dose instruction. 
+Multiple dose instructions can be supplied from file using the ``-f`` argument, where each line in the text file supplied is a dose instruction. 
 For example, if the file multiple_dis.txt contains the following:
 
     - daily 2 tabs
