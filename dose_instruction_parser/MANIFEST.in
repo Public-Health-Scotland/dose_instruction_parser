@@ -1,3 +1,5 @@
 # MANIFEST.in 
 
-include data
+include README.md
+include di_parser/data/keep_words.txt
+include di_parser/data/replace_words.csv

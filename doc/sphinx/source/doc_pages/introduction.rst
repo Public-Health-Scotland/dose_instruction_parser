@@ -119,8 +119,64 @@ two puff(s)                      2 puff
 one/two with meals               1 / 2 with meals
 ===============================  ================================
 
-Named Entity Recognition
-~~~~~~~~~~~~~~~~~~~~~~~~
+Named Entity Recognition (NER)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The next step in processing is to identify parts of the instruction
+associated with each named entity. This is done using a neural network, 
+which is a type of machine learning
+model. The neural network is implemented via the `spacy <https://spacy.io/>`_ package.
+
+At Public Health Scotland we have trained a model called **edris9** to do NER. Due to data 
+protection concerns the model is not currently publicly available. Please contact the eDRIS team 
+on `phs.edris@phs.scot <mailto:phs.edris@phs.scot>`_ to enquire about access.
+
+In the **edris9** model there are nine named entities:
+
+* DOSAGE
+* FORM 
+* ROUTE
+* DRUG 
+* STRENGTH
+* FREQUENCY
+* DURATION
+* AS_REQUIRED
+* AS_DIRECTED
+
+**edris9** was based on the `med 7 <https://github.com/kormilitzin/med7>`_ model with the addition of
+two entities: "AS_REQUIRED" and "AS_DIRECTED".
+
+Preparing for training
+^^^^^^^^^^^^^^^^^^^^^^
+
+The code used to prepare and train the model can be found in the **model** folder. To generate **edris9**,
+the **med7** model was further trained on approximately 7,000 gold-standard tagged dose instructions. 
+Each instruction was separately tagged by two eDRIS analysts, and any tagged instructions which didn't match
+identically were manually resolved by the team. This was to ensure high quality input data. 
+
+The tagging process was carried out using the desktop version of `NER Annotator for Spacy <https://github.com/tecoholic/ner-annotator>`_,
+which outputs tagged dose instructions in .json format. An example of a .json file with just two tagged dose instructions is:
+
+.. code:: 
+
+   {"classes":["DOSE","FORM","FREQUENCY","DURATION","ROUTE","DRUG","STRENGTH","AS_DIRECTED","AS_REQUIRED"],
+   "annotations":[
+      ["1 tab in the morning",{"entities":[[0,1,"DOSE"],[2,5,"FORM"],[6,20,"FREQUENCY"]]}],
+      ["1 cap 4 times daily",{"entities":[[0,1,"DOSE"],[2,5,"FORM"],[6,19,"FREQUENCY"]]}]
+      ]
+   }
+
+For more information see TrainingModel_.
+
+Training
+^^^^^^^^
+
+Model performance
+^^^^^^^^^^^^^^^^^
+
+Adapting the model or training your own
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 
 Rules
 ~~~~~
