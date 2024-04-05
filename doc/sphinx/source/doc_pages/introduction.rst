@@ -243,13 +243,21 @@ you with to evaluate or the location
 
    ./evaluate_model.sh
 
- This will produce a log 
+This will produce a log in the **logs** folder within **DI_FILEPATH**. 
 
 Adapting the model or training your own
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+You can adapt the model by training it again using additional training examples. To do this you need to install the **edris9** model and amend the configuration file 
+so that the starting model is **edris9** rather than **med7**.
+
+To train your own model you can follow similar steps, starting from any of **med7**, **edris9** or a standard language model like **en_core_web_sm**. Refer to `spacy <https://spacy.io/usage>`_ 
+documentation for more information.
+
 Rules
 ~~~~~
+
+To convert 
 
 Workflow
 --------
