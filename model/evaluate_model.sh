@@ -22,4 +22,12 @@ filename="$DI_FILEPATH/logs/evaluate_${1//\//_}_$today.log"
 touch $filename
 echo $1 >> $filename
 
+# Check if valid filepath relative to DI_FILEPATH was provided
+
+if [ -d "$DI_FILEPATH/models/$1" ]; then
+  mod="$DI_FILEPATH/models/$1"
+else
+  mod="$1"
+fi
+
 python -m spacy evaluate $1 data/test.spacy >> $filename
