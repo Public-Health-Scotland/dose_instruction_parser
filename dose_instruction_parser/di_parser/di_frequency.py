@@ -228,6 +228,9 @@ def _check_min_max_amount(text, nums):
             if " a " in text:
                 _max = 1.0
                 _min = 0.0
+                range_found = True
+            else:
+                range_found = False
         if _max is not None:
             range_found = True
     elif any(x in text for x in ("at least", "min")):
@@ -235,7 +238,9 @@ def _check_min_max_amount(text, nums):
             range_found = True
             if " a " in text:
                 _min = 1.0
+                _max = 1.0
             else:
+                _min = None
                 _max = None
         else:
             _min, _max = _get_bounding_num(nums, "min")
@@ -454,7 +459,7 @@ def get_frequency_info(text):
     # The part after is used to determine freq type e.g. "month"
     if "every" in text:
         # Split on every
-        before, after = text.split("every")
+        before, after = text.split("every", 1)
         # Get all numbers
         freqtype = get_frequency_type("every" + after)
         _min, _max = _get_range(before)
