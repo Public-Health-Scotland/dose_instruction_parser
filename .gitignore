@@ -1,5 +1,5 @@
 # Egg info #
-dose_instruction_parser/src/dose_instruction_parser.egg-info/*
+dose_instruction_parser/dose_instruction_parser.egg-info/*
 
 # Backup #
 model/preprocess/backup/*
@@ -55,3 +55,6 @@ model/preprocess/backup/*
 
 # Tarfiles
 *.tar.gz
+
+# Pickles
+*.pickle

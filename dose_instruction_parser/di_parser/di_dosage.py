@@ -3,7 +3,7 @@ import re
 import warnings
 from functools import reduce
 
-from di_parser import di_frequency
+from . import di_frequency
 
 def _is_str_float(s):
     """
@@ -93,6 +93,8 @@ def _get_continuous_dose(text):
             if len(dose_nums) > 1:
                 # e.g. 2 5ml spoonfuls becomes 10 ml
                 dose = float(reduce(lambda x, y: x*y, [float(num) for num in dose_nums]))
+            elif len(dose_nums) == 0:
+                dose = None
             else:
                 dose = float(dose_nums[0])
             _min = dose

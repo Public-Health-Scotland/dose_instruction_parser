@@ -3,17 +3,22 @@ from dataclasses import dataclass
 from itertools import compress, chain
 import asyncio
 
-from di_parser import di_prepare
-from di_parser import di_frequency
-from di_parser import di_dosage
-from di_parser import di_duration
+from . import di_prepare
+from . import di_frequency
+from . import di_dosage
+from . import di_duration
 
 @dataclass
 class StructuredDI:
     """
     A structured dose instruction
+
     Attributes:
     -----------
+    inputID: str
+        ID corresponding to input dose instruction.
+        Ensures multiple StructuredDIs coming from the same original
+        dose instruction are linkable
     text: str
         The free text before parsing
     form: str
@@ -39,6 +44,7 @@ class StructuredDI:
     asDirected: bool
         Whether to take as directed
     """
+    inputID: str
     text: str
     form: str
     dosageMin: float
@@ -71,30 +77,42 @@ def _get_model_entities_from_text(text, model):
     entities = model_output.ents 
     return entities
 
-def _parse_di(di: str, model: spacy.Language):
+def _parse_di(di: str, model: spacy.Language, input_id=None):
     """
     1. Preprocesses dose instruction
     2. Applies model to retrieve entities
     3. Creates structured dose instruction from entities using static rules
     """
-    di_preprocessed = di_prepare.pre_process(di)
-    model_output = model(di_preprocessed)
-    return _create_structured_dis(di, model_output)
+    try:
+        di_preprocessed = di_prepare.pre_process(di)
+        model_output = model(di_preprocessed)
+        return _create_structured_dis(di, model_output, input_id)
+    except Exception:
+        print(f"Error when parsing {di}: {Exception}")
+        return StructuredDI(inputID=input_id, text=di, 
+                            form=None, dosageMin=None, dosageMax=None, 
+                            frequencyMin=None, frequencyMax=None, frequencyType=None,
+                            durationMin=None, durationMax=None, durationType=None,
+                            asRequired=None, asDirected=None)
 
-def _parse_dis(di_lst, model: spacy.Language):
+def _parse_dis(di_lst, model: spacy.Language, rowid_lst=None):
     """
     Parses multiple dose instructions at once
     """
-    return di_prepare._flatmap(lambda di: _parse_di(di, model), di_lst)
+    rowid_lst = range(len(di_lst)) if rowid_lst is None else rowid_lst
+    return di_prepare._flatmap(lambda di, id: _parse_di(di, model, id), 
+                                            *(di_lst, rowid_lst))
 
-def _parse_dis_mp(di_lst, model: spacy.Language):
+def _parse_dis_mp(di_lst, model: spacy.Language, rowid_lst=None):
     """
     Parses multiple dose instructions at once in parallel (synchronous)
     """
     import multiprocessing as mp
 
+    rowid_lst = range(len(di_lst)) if rowid_lst is None else rowid_lst
+
     with mp.Pool(mp.cpu_count()) as p:
-        parsed_dis = p.starmap(_parse_di, [(di, model) for di in di_lst])
+        parsed_dis = p.starmap(_parse_di, [(di, model, id) for di, id in zip(di_lst, rowid_lst)])
     # Flatten
     parsed_dis = list(chain(*parsed_dis))
     return parsed_dis
@@ -106,11 +124,11 @@ def background(f):
     return wrapped
 
 @background
-def _parse_di_async(di, model: spacy.Language):
+def _parse_di_async(di, model: spacy.Language, id):
     """
     Parses multiple dose instructions at once in parallel (asynchronous)
     """
-    return _parse_di(di, model)
+    return _parse_di(di, model, id)
 
 def _split_entities_for_multiple_instructions(model_entities):
     """
@@ -241,12 +259,12 @@ def _combine_split_dis(result):
     result = list(compress(result, keep_mask))
     return result
     
-def _create_structured_di(free_text, model_entities, 
+def _create_structured_di(free_text, model_entities, input_id=None, 
                             form=None, asRequired=False, asDirected=False):
     """
     Creates a StructuredDI from model entities.
     """
-    structured_di = StructuredDI(free_text, form, None, None, None, None, 
+    structured_di = StructuredDI(input_id, free_text, form, None, None, None, None, 
                                     None, None, None, None, asRequired, asDirected)
     for label, text in model_entities.items(): 
         if text is None:
@@ -281,7 +299,7 @@ def _create_structured_di(free_text, model_entities,
             continue
     return structured_di
 
-def _create_structured_dis(free_text, model_output):
+def _create_structured_dis(free_text, model_output, input_id=None):
     """
     Creates StructuredDIs from a model output.
     1. Gets entities
@@ -290,11 +308,12 @@ def _create_structured_dis(free_text, model_output):
     """
     entities = _get_model_entities(model_output)
     multiple_instructions = _split_entities_for_multiple_instructions(entities)
-    first_di = _create_structured_di(free_text, multiple_instructions[0])
+    first_di = _create_structured_di(free_text, multiple_instructions[0], input_id)
     # incase multiple instructions exist, they apply to the same drug and form
     other_dis = [_create_structured_di(free_text, instruction_entities, 
-                                         first_di.form, first_di.asRequired,
-                                         first_di.asDirected)
+                                        first_di.inputID, 
+                                        first_di.form, first_di.asRequired,
+                                        first_di.asDirected)
                   for instruction_entities in multiple_instructions[1:]]
     return [first_di] + other_dis
 
@@ -320,13 +339,13 @@ class DIParser:
         self.__language = spacy.load(model_name)
     def parse(self, di: str):
         return _parse_di(di, self.__language)
-    def parse_many(self, dis: list):
-        return _parse_dis(dis, self.__language)
-    def parse_many_mp(self, dis: list):
-        return _parse_dis_mp(dis, self.__language)
-    def parse_many_async(self, dis: list):
+    def parse_many(self, dis: list, rowids=None):
+        return _parse_dis(dis, self.__language, rowids)
+    def parse_many_mp(self, dis: list, rowids=None):
+        return _parse_dis_mp(dis, self.__language, rowids)
+    def parse_many_async(self, dis: list, rowids=None):
         loop = asyncio.get_event_loop()
-        looper = asyncio.gather(*[_parse_di_async(di, self.__language) for di in dis],
+        looper = asyncio.gather(*[_parse_di_async(di, self.__language, rowid) for di, rowid in zip(dis, rowids)],
                                     return_exceptions = False)
         results = loop.run_until_complete(looper)
         results = [r for sublist in results for r in sublist]
