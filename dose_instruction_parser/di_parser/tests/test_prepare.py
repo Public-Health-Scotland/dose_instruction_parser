@@ -1,6 +1,5 @@
 import pytest
 from di_parser import di_prepare
-from di_parser.tests.conftest import DIS_SMALL
 
 @pytest.mark.parametrize("misspelt, corrected", [
     ("five tabletts", "five tablets"),

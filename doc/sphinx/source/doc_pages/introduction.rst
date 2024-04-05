@@ -274,7 +274,7 @@ Parsing dose instructions
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. Create a new conda environment
-2. Install `mod:dose_instruction_parser` package 
+2. Install :mod:`dose_instruction_parser` package 
 3. Install `en_edris9` model 
 4. Run `parse_dose_instructions -h` on the command line to get help on parsing dose instructions
 
@@ -294,3 +294,35 @@ Improving/modifying the existing rules
 
 Project layout
 --------------
+
+* **set_up_conda.sh**: script to set up conda environment for development
+* **environment.yaml**: environment file for development conda environment
+* **secrets.env**: hidden file with location of dose instruction data filepath
+* **docs**: contents for creating this documentation 
+* **model**: code for creating the new NER model (edris9)
+    * **preprocess**
+        * **tagged**: folder of tagged dose instructions in .json format produced by [spacy NER annotator](https://github.com/tecoholic/ner-annotator) desktop tool
+        * **1-json_to_dat.py**: script to convert contents of **tagged** folder to .dat format for cross-checking. Output to **processed** folder.
+        * **processed**: folder of processed tagged dose instructions consisting of
+            * crosschecked_data: instances where tagging is consistent
+            * conflicting_data: instances where tagging is not consistent
+            * resolved_data: manually created file resolving the conflicting_data 
+        * **2-dat_to_spacy.py**: Script to convert crosschecked and resolved data from **processed** into .spacy format, output to **model/data**
+    * **config**
+        * **config.cfg**: spacy configuration file to define model parameters
+    * **train_model.sh**: bash script to train model using config file and data in **data** folder
+    * **evaluate_model.sh**: bash script to evaluate model performance using precision, recall and F-score
+    * **package_model.sh**: bash script to package model
+* **dose_instruction_parser**: package for parsing dose instructions. 
+   * **data**
+      * **keep_words.txt**: words to be ignored by spellchecker when pre-processing dose instructions
+      * **replace_words.csv**: mapping of words to substitue during pre-processing
+   * **src/di_parser**: source code for the package
+      * **__main__.py**: script for command line interface to package
+      * **parser.py**: module containing primary parser function
+      * **di_dosage.py**: module containing functions to do with dosage rules
+      * **di_duration.py**: module containing functions to do with duration rules
+      * **di_frequency.py**: module containing functions to do with frequency rules
+      * **di_prepare.py**: module containing functions to do with pre-processing rules
+   * **tests**: tests 
+* **benchmark**: scripts for benchmarking against prolog code
