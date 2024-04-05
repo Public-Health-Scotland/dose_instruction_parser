@@ -1,6 +1,9 @@
 # Egg info #
 dose_instruction_parser/dose_instruction_parser.egg-info/*
 
+# Build #
+dose_instruction_parser/build/*
+
 # Backup #
 model/preprocess/backup/*
 
