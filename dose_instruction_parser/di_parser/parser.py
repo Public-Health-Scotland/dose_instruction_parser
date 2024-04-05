@@ -83,9 +83,17 @@ def _parse_di(di: str, model: spacy.Language, input_id=None):
     2. Applies model to retrieve entities
     3. Creates structured dose instruction from entities using static rules
     """
-    di_preprocessed = di_prepare.pre_process(di)
-    model_output = model(di_preprocessed)
-    return _create_structured_dis(di, model_output, input_id)
+    try:
+        di_preprocessed = di_prepare.pre_process(di)
+        model_output = model(di_preprocessed)
+        return _create_structured_dis(di, model_output, input_id)
+    except Exception:
+        print(f"Error when parsing {di}: {Exception}")
+        return StructuredDI(inputID=input_id, text=di, 
+                            form=None, dosageMin=None, dosageMax=None, 
+                            frequencyMin=None, frequencyMax=None, frequencyType=None,
+                            durationMin=None, durationMax=None, durationType=None,
+                            asRequired=None, asDirected=None)
 
 def _parse_dis(di_lst, model: spacy.Language, rowid_lst=None):
     """
