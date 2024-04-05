@@ -257,10 +257,40 @@ documentation for more information.
 Rules
 ~~~~~
 
-To convert 
+To convert named entities to the desired structured output we take a rule-based approach. The infrastructure was based on the open source `parsigs <https://github.com/royashcenazi/parsigs>`_ package
+for parsing dose instructions.
+
+There are different modules in the **dose_instruction_parser** package which deal with different entities. Some of the named entities (ROUTE, DRUG, STRENGTH) are not processed here because this
+is information which is separately stored for prescriptions so we don't need to extract it from the dose instructions. The **DIParser** class in :mod:`di_parser.parser` 
+is the culmination of all the pre-processing, NER and rule-based post-processing.
 
 Workflow
 --------
+
+This is a summary of the overall workflow for different processes. More information can
+be found in dedicated sections of this documentation.
+
+Parsing dose instructions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. Create a new conda environment
+2. Install `mod:dose_instruction_parser` package 
+3. Install `en_edris9` model 
+4. Run `parse_dose_instructions -h` on the command line to get help on parsing dose instructions
+
+Improving/modifying the existing rules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. Create a new conda environment (keep it separate from the one for parsing instructions)
+2. Clone the `Github repository <https://github.io>`_ 
+3. Check out a new Git branch
+4. Do the development setup as outlined in the Github README.md 
+5. Edit the contents of the **dose_instructions_parser** folder 
+6. Check the outcome using `parse_dose_instructions` on the command line, or by importing 
+   the local **di_parser** package and running from python 
+7. Make sure you update any tests in **parse_dose_instructions/di_parser/tests**
+8. Commit the changes and push to Github
+9. Open a new pull request to merge the changes into the main branch
 
 Project layout
 --------------
