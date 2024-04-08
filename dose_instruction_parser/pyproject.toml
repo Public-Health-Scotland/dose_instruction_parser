@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dose_instruction_parser"
-version = "2023.1001-alpha"
 authors = [
     { name = "Rosalyn Pearson",     email = "rosalyn.pearson@phs.scot"},
     { name = "Nathalie Thureau",    email = "nathalie.thureau@phs.scot"},
     { name = "Mark Macartney",      email = "mark.macartney@phs.scot"},
-    { name = "John Reid",           email = "john.reid5@phs.scot"}
+    { name = "John Reid",           email = "john.reid5@phs.scot"},
+    { name = "Johanna Jokio",       email = "johanna.jokio@phs.scot"}
 ]
 description = "Tool for parsing free text prescription dose instructions into structured output"
 readme = "README.md"
@@ -24,16 +24,15 @@ dependencies = [
     "spacy<3.5.0,>=3.4.2",
     "word2number",
     "inflect",
-    "pyspellchecker<=0.5.5"
+    "pyspellchecker<=0.5.5",
+    "pandas"
 ]
 requires-python = ">=3.9"
 
 [project.optional-dependencies]
-dev = ["pandas", "colorama", "ipython", "python-dotenv", "pytest", "pytest-cov", 
-        "sphinx", "sphinx-autobuild", "sphinx-copybutton", "sphinx_rtd_theme"]
-
-#[tool.setuptools.packages.find]
-#where = ["src"]
+dev = ["colorama", "ipython", "python-dotenv", "pytest", "pytest-cov", 
+        "sphinx", "sphinx-autobuild", "sphinx-copybutton", "sphinx_rtd_theme",
+        "bumpver"]
 
 [project.urls]
 #"Homepage" = ""
@@ -63,8 +62,11 @@ push = true
 "pyproject.toml" = [
     'current_version = "{version}"',
 ]
-"README.md" = [
-    "{version}",
-    "{pep440_version}",
+"di_parser/__init__.py" = [
+    '^__version__ = "{version}"$',
 ]
+"README.md" = [
+    'Current version: "{version}"'
+]
+
 
