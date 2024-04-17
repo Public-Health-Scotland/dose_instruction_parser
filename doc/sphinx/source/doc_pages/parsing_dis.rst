@@ -56,8 +56,15 @@ If you have saved a file in .csv format with your free text (one dose instructio
 
 .. code-block:: python
     
-    dose_instructions = pd.read_csv(“(PATH)/dose_instructions.csv”)
+    dose_instructions = pd.read_csv("(PATH)/dose_instructions.csv")
     
     parsed_dis = p.parse_many([
-    dose_instructions[“COLUMN”]
+    dose_instructions["COLUMN"]
     ])
+    
+    print(parsed_dis)
+
+    # Convert output to pandas dataframe
+    di_df = pd.DataFrame(parsed_dis)
+
+    print(di_df)
