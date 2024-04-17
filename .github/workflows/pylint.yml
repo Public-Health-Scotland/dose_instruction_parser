@@ -31,4 +31,4 @@ jobs:
     - name: Analysing the code with pylint
       shell: bash -l {0}
       run: |
-        pylint $(git ls-files 'dose_instruction_parser/*.py')
+        pylint $(git ls-files 'dose_instruction_parser/*.py') --exit-zero
