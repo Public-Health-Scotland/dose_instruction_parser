@@ -32,7 +32,7 @@ jobs:
         python -m pip install ./dose_instruction_parser
         pip install pytest
         pip install coverage
-        python -m pytest --cov-report xml:coverage.xml
+        python -m pytest --cov --cov-report xml:coverage.xml
     - name: Get Cover 
       uses: orgoro/coverage@v3.1
       with:
