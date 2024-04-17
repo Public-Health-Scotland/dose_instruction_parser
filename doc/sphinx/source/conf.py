@@ -27,7 +27,8 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
-    'sphinx.ext.autosectionlabel'   
+    'sphinx.ext.autosectionlabel',
+    'sphinx.ext.githubpages'   
 ]
 
 templates_path = ['_templates']
