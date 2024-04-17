@@ -18,6 +18,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pylint
+        python -m pip install -e dose_instruction_parser
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
