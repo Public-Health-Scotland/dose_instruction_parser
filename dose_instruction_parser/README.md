@@ -1,5 +1,7 @@
 # Dose instructions free text parser for Public Health Scotland
 
+Current version: "2023.1001-alpha"
+
 * This repository contains code for parsing free text dose instructions which accompany NHS prescriptions.
 * It draws upon the [parsigs](https://github.com/royashcenazi/parsigs) package, adapting and expanding the code to the context of data held by Public Health Scotland.
 * The parser works by first applying a named entity recogniser (NER) model to identify parts of the text corresponding to different entities, and then using rules to extract structured output. 
@@ -45,6 +47,7 @@
 1. Create new conda environment: `conda create -n di-dev`
 1. Activate environment: `conda activate di-dev`
 1. Install package using editable pip install and development dependencies: `python -m pip install -e dose_instruction_parser[dev]`
+1. Install the **edris9** model or alternative
 1. Run `parse_dose_instructions -h` on command line and/or get developing
 
 

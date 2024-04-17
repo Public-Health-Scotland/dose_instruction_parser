@@ -6,6 +6,11 @@
 Prescription dose instruction parser for Public Health Scotland
 ===============================================================
 
+.. warning::
+    This project is a work in progress. The documentation is not yet finished,
+    and the code is preliminary. We do not advise using the code at this stage.
+    Please contact **phs.edris@phs.scot** with any queries.
+
 This is the documentation for the tool developed at Public Health Scotland to
 parse prescription dose instruction free text into structured output.
 

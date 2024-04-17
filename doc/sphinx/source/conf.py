@@ -5,7 +5,7 @@
 
 import os
 import sys
-
+print(sys.executable)
 sys.path.insert(0, os.path.abspath('../../dose_instruction_parser/di_parser'))
 
 # -- Project information -----------------------------------------------------
