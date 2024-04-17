@@ -32,6 +32,7 @@ to apply to the prescribing information free text held by Public Health Scotland
    doc_pages/developing_di_parser.rst
    doc_pages/training_model.rst
    doc_pages/adapting_code.rst
+   modules/di_parser/modules.rst
 
 Indices and tables
 ==================
