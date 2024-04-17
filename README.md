@@ -1,7 +1,12 @@
 # Dose instructions free text model and parser for Public Health Scotland
 
+_____
+**THIS PROJECT IS A WORK IN PROGRESS. WE DO NOT RECOMMEND YOU USE THE CODE AT THIS STAGE. PLEASE CONTACT phs.edris@phs.scot WITH ANY QUERIES**
+_____
+
+Documentation can be found at https://public-health-scotland.github.io/dose_instruction_parser/
+
 * This repository contains code for parsing free text dose instructions. 
-* It replaces the [parseRx](https://phs-git.nhsnss.scot.nhs.uk/eDRIS/parseRx) code, written in prolog.
 * It is written primarily in python, and consists of named entity recognition (NER) via the [spacy](https://spacy.io) package
 * The output model was generated using the code in this repository by starting with the external [med7](https://www.sciencedirect.com/science/article/abs/pii/S0933365721000798) [model](https://huggingface.co/kormilitzin/en_core_med7_lg/tree/main). This was additionally trained using examples specific to the prescribing information system data held by Public Health Scotland. The resulting model is provisionally named **edris9**.
 
