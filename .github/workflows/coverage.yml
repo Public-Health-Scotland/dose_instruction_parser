@@ -1,0 +1,37 @@
+name: 'coverage'
+on:
+    pull_request:
+        branches:
+            - main
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.9", "3.10"]
+        include:
+          - os: ubuntu-latest
+            CONDA_OS: linux-64
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+        use-mamba: true
+        auto-update-conda: true
+        activate-environment: test
+    - name: Set up conda and install dependencies
+      shell: bash -l {0}
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install ./dose_instruction_parser
+        pip install pytest
+        pip install coverage
+        python -m pytest --cov-report xml:coverage.xml
+    - name: Get Cover 
+      uses: orgoro/coverage@v3.1
+      with:
+          coverageFile: coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
