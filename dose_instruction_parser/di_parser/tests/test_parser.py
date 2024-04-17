@@ -69,7 +69,7 @@ def test_create_structured_di():
     free_text = "1 tablet a day and 3 tablets a day prn for 1 month"
     model_entities = {"DOSAGE": "1 and 3", "FREQUENCY": "day", "FORM": "tablet", 
             "DURATION": "1 month", "AS_REQUIRED": "prn", "AS_DIRECTED": None}
-    expected_di = parser.StructuredDI(free_text, "tablet", 4.0, 4.0, 1.0, 1.0,
+    expected_di = parser.StructuredDI(0, free_text, "tablet", 4.0, 4.0, 1.0, 1.0,
                         "Day", 1.0, 1.0, "Month", True, False)
     str_di = parser._create_structured_di(free_text, model_entities)
     assert str_di == expected_di, \
@@ -80,9 +80,9 @@ def test_create_structured_dis():
         then reduce down to 1 5 ml spoonful bd"
     model_output = DEFAULT_MODEL(free_text)
     exp_dis = [
-        parser.StructuredDI(free_text, "ml", 10.0, 15.0, 4.0, 4.0, "Day",
+        parser.StructuredDI(0, free_text, "ml", 10.0, 15.0, 4.0, 4.0, "Day",
             3.0, 3.0, "Week", False, True),
-        parser.StructuredDI(free_text, "ml", 5.0, 5.0, 2.0, 2.0, "Day",
+        parser.StructuredDI(1, free_text, "ml", 5.0, 5.0, 2.0, 2.0, "Day",
             None, None, None, False, True)
     ]
     assert parser._create_structured_dis(free_text, model_output) == exp_dis, \
