@@ -32,5 +32,5 @@ jobs:
         python -m pip install ./dose_instruction_parser[dev]
     - name: Test with pytest
       run: |
-        pip install pytest-cov
-        pytest dose_instruction_parser/di_parser/tests --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+        python -m pip install pytest-cov
+        python -m pytest dose_instruction_parser/di_parser/tests --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
