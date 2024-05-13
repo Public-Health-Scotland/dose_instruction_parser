@@ -1,6 +1,7 @@
 import spacy
 from dataclasses import dataclass
 from itertools import compress, chain
+import enlighten
 import asyncio
 
 from . import di_prepare
@@ -77,12 +78,14 @@ def _get_model_entities_from_text(text, model):
     entities = model_output.ents 
     return entities
 
-def _parse_di(di: str, model: spacy.Language, input_id=None):
+def _parse_di(di: str, model: spacy.Language, input_id=None, pbar=None):
     """
     1. Preprocesses dose instruction
     2. Applies model to retrieve entities
     3. Creates structured dose instruction from entities using static rules
     """
+    if pbar is not None:
+        pbar.update()
     try:
         di_preprocessed = di_prepare.pre_process(di)
         model_output = model(di_preprocessed)
@@ -99,8 +102,11 @@ def _parse_dis(di_lst, model: spacy.Language, rowid_lst=None):
     """
     Parses multiple dose instructions at once
     """
+    # Progress bar
+    manager = enlighten.get_manager()
+    pbar = manager.counter(total=len(di_lst), desc="Parsed", unit="instructions")
     rowid_lst = range(len(di_lst)) if rowid_lst is None else rowid_lst
-    return di_prepare._flatmap(lambda di, id: _parse_di(di, model, id), 
+    return di_prepare._flatmap(lambda di, id: _parse_di(di, model, id, pbar), 
                                             *(di_lst, rowid_lst))
 
 def _parse_dis_mp(di_lst, model: spacy.Language, rowid_lst=None):
