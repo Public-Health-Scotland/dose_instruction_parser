@@ -3,9 +3,11 @@ from spacy import load
 
 from di_parser import parser
 from di_parser.tests.conftest import (
-    DEFAULT_MODEL_NAME, DEFAULT_MODEL,
     DIS_SMALL, OUTPUT_DIS_SMALL
 )
+
+DEFAULT_MODEL_NAME = "en_edris9"
+DEFAULT_MODEL = load(DEFAULT_MODEL_NAME)
 
 def test_parser():
     p = parser.DIParser(DEFAULT_MODEL_NAME)

@@ -44,9 +44,8 @@ dev = ["colorama", "ipython", "python-dotenv", "pytest", "pytest-cov",
 parse_dose_instructions = "di_parser.__main__:main"
 
 [tool.pytest.ini_options]
-pythonpath = [
-    "di_parser"
-]
+pythonpath = ["di_parser"]
+addopts = "--cov=di_parser --cov-report html"
 
 [tool.bumpver]
 current_version = "2023.1001-alpha"
