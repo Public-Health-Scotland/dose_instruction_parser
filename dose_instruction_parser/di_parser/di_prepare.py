@@ -93,6 +93,7 @@ def _pad_hyphens_and_slashes(s):
     s = re.sub(r'\-', r' - ', s)
     s = re.sub(r'\\', r' \ ', s)
     s = re.sub(r'\/', r' / ', s)
+    s = re.sub(r'.', r' . ', s)
     return s
 
 def _pad_numbers(s):
