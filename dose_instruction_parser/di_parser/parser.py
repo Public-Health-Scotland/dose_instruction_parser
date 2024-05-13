@@ -104,10 +104,16 @@ def _parse_dis(di_lst, model: spacy.Language, rowid_lst=None):
     """
     # Progress bar
     manager = enlighten.get_manager()
+    status_bar = manager.status_bar('Parsing dose instructions',
+                                color="white_on_blue",
+                                justify=enlighten.Justify.CENTER)
     pbar = manager.counter(total=len(di_lst), desc="Parsed", unit="instructions")
     rowid_lst = range(len(di_lst)) if rowid_lst is None else rowid_lst
-    return di_prepare._flatmap(lambda di, id: _parse_di(di, model, id, pbar), 
+    parsed_dis = di_prepare._flatmap(lambda di, id: _parse_di(di, model, id, pbar), 
                                             *(di_lst, rowid_lst))
+    status_bar.color = "white_on_green"
+    status_bar.update("Parsing complete")
+    return parsed_dis
 
 def _parse_dis_mp(di_lst, model: spacy.Language, rowid_lst=None):
     """
