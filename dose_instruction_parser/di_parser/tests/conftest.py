@@ -3,9 +3,6 @@ from spacy import load
 
 from di_parser.parser import StructuredDI
 
-DEFAULT_MODEL_NAME = "en_edris9"
-DEFAULT_MODEL = load(DEFAULT_MODEL_NAME)
-
 DIS_SMALL = ("take 2 tablets twice daily",
             "one puff morning and night",
             "take half after meals and at night time for three weeks",

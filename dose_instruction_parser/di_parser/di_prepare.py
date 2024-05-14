@@ -93,7 +93,9 @@ def _pad_hyphens_and_slashes(s):
     s = re.sub(r'\-', r' - ', s)
     s = re.sub(r'\\', r' \ ', s)
     s = re.sub(r'\/', r' / ', s)
-    s = re.sub(r'.', r' . ', s)
+    # Pad . in middle of words e.g. "hello.there" -> "hello . there"
+    # but don't pad e.g. "0.5" or "end. start"
+    s = re.sub(r'(?<=[A-Za-z])\.(?=[A-Za-z])', ' . ', s)
     return s
 
 def _pad_numbers(s):

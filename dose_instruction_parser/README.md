@@ -44,7 +44,7 @@ Current version: "2023.1001-alpha"
 ### Development setup
 
 1. Clone repository
-1. Create new conda environment: `conda create -n di-dev`
+1. Create new conda environment: `conda create -n di-dev python=3.10.0`
 1. Activate environment: `conda activate di-dev`
 1. Install package using editable pip install and development dependencies: `python -m pip install -e dose_instruction_parser[dev]`
 1. Install the **edris9** model or alternative

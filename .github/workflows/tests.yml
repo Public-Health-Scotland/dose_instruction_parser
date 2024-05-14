@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.9", "3.10"]
+        python-version: ["3.10"]
         include:
           - os: ubuntu-latest
             CONDA_OS: linux-64
@@ -31,6 +31,6 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install ./dose_instruction_parser[dev]
     - name: Test with pytest
+      shell: bash -l {0}
       run: |
-        python -m pip install pytest-cov
-        python -m pytest dose_instruction_parser/di_parser/tests --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+        python -m pytest -vv dose_instruction_parser/di_parser/tests --ignore=dose_instruction_parser/di_parser/tests/test_parser.py --cov=dose_instruction_parser/di_parser --cov-report=xml --cov-report=html

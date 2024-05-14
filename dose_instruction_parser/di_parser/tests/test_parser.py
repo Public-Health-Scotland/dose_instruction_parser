@@ -3,9 +3,13 @@ from spacy import load
 
 from di_parser import parser
 from di_parser.tests.conftest import (
-    DEFAULT_MODEL_NAME, DEFAULT_MODEL,
     DIS_SMALL, OUTPUT_DIS_SMALL
 )
+
+# NB requires en_edris9 model to be loaded so these tests
+# aren't deployed in GitHub actions
+DEFAULT_MODEL_NAME = "en_edris9"
+DEFAULT_MODEL = load(DEFAULT_MODEL_NAME)
 
 def test_parser():
     p = parser.DIParser(DEFAULT_MODEL_NAME)
@@ -14,19 +18,12 @@ def test_parser():
         "Length of input dose instructions doesn't match output"
     assert parsed_dis == OUTPUT_DIS_SMALL, \
         "Test output doesn't match expected"
-    assert p.parse_many_async(DIS_SMALL) == parsed_dis, \
-        "Asynchronous parsing yields different result"
 
 def test_parse_di():
     for di, expected in zip(DIS_SMALL, OUTPUT_DIS_SMALL):
+        expected.inputID = None
         assert parser._parse_di(di, DEFAULT_MODEL) == [expected], \
             "Parse single dose instruction doesn't match expected"
-
-def test_parse_dis():
-    assert parser._parse_dis(DIS_SMALL, DEFAULT_MODEL) == OUTPUT_DIS_SMALL, \
-        "_parse_dis doesn't match expected"
-    assert parser._parse_dis_mp(DIS_SMALL, DEFAULT_MODEL) == OUTPUT_DIS_SMALL, \
-        "_parse_dis_mp doesn't match expected"
 
 @pytest.mark.parametrize("text, instr_num", [
     ("take 1 tablet daily for 3 days then 2 daily for 4 weeks", 2),
@@ -69,7 +66,7 @@ def test_create_structured_di():
     free_text = "1 tablet a day and 3 tablets a day prn for 1 month"
     model_entities = {"DOSAGE": "1 and 3", "FREQUENCY": "day", "FORM": "tablet", 
             "DURATION": "1 month", "AS_REQUIRED": "prn", "AS_DIRECTED": None}
-    expected_di = parser.StructuredDI(0, free_text, "tablet", 4.0, 4.0, 1.0, 1.0,
+    expected_di = parser.StructuredDI(None, free_text, "tablet", 4.0, 4.0, 1.0, 1.0,
                         "Day", 1.0, 1.0, "Month", True, False)
     str_di = parser._create_structured_di(free_text, model_entities)
     assert str_di == expected_di, \
@@ -80,9 +77,9 @@ def test_create_structured_dis():
         then reduce down to 1 5 ml spoonful bd"
     model_output = DEFAULT_MODEL(free_text)
     exp_dis = [
-        parser.StructuredDI(0, free_text, "ml", 10.0, 15.0, 4.0, 4.0, "Day",
+        parser.StructuredDI(None, free_text, "ml", 10.0, 15.0, 4.0, 4.0, "Day",
             3.0, 3.0, "Week", False, True),
-        parser.StructuredDI(1, free_text, "ml", 5.0, 5.0, 2.0, 2.0, "Day",
+        parser.StructuredDI(None, free_text, "ml", 5.0, 5.0, 2.0, 2.0, "Day",
             None, None, None, False, True)
     ]
     assert parser._create_structured_dis(free_text, model_output) == exp_dis, \

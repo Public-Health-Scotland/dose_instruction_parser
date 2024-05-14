@@ -356,6 +356,7 @@ class DIParser:
     def parse_many_mp(self, dis: list, rowids=None):
         return _parse_dis_mp(dis, self.__language, rowids)
     def parse_many_async(self, dis: list, rowids=None):
+        rowids = range(len(dis)) if rowids is None else rowids
         loop = asyncio.get_event_loop()
         looper = asyncio.gather(*[_parse_di_async(di, self.__language, rowid) for di, rowid in zip(dis, rowids)],
                                     return_exceptions = False)
