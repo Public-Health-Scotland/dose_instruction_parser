@@ -43,15 +43,42 @@ dev = ["colorama", "ipython", "python-dotenv", "pytest", "pytest-cov",
 [project.scripts]
 parse_dose_instructions = "di_parser.__main__:main"
 
+# Pytest & coverage
+
 [tool.pytest.ini_options]
 pythonpath = ["di_parser"]
-#addopts = "--cov=di_parser --cov-report html"
 
 [tool.coverage.run]
-omit = [
-    "data/*",
-    "tests/*",
+branch = true
+
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_also = [
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self\\.debug",
+
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod",
     ]
+
+omit = ["dose_instruction_parser/di_parser/tests/*", 
+        "dose_instruction_parser/di_parser/data/*"]
+
+ignore_errors = true
+
+[tool.coverage.xml]
+directory = "coverage.xml"
+
+# Bump version
 
 [tool.bumpver]
 current_version = "2023.1001-alpha"
