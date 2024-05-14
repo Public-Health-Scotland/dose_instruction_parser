@@ -49,8 +49,11 @@ jobs:
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add coverage.svg
-        git commit -m "Updated coverage.svg"
+        mv coverage.svg coverage/
+        mv coverage.xml coverage/
+        mv coverage.html coverage/
+        git add coverage/*
+        git commit -m "Updated coverage files"
     - name: Push changes
       if: steps.verify-changed-files.outputs.files_changed == 'true'
       uses: ad-m/github-push-action@master
