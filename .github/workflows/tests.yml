@@ -51,7 +51,7 @@ jobs:
         git config --local user.name "github-actions[bot]"
         mv coverage.svg coverage/
         mv coverage.xml coverage/
-        mv coverage.html coverage/
+        mv -r htmlcov coverage/
         git add coverage/*
         git commit -m "Updated coverage files"
     - name: Push changes
