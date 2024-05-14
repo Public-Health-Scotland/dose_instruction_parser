@@ -81,7 +81,7 @@ def test_check_min_max_amount(before_1, before_2, after):
 
 @pytest.mark.parametrize("text, nums, after", [
     ("2 to 4", [2.0 , 4.0], (2.0, 4.0, True)), 
-    ("3-4 tablets", [3.0, 4.0], (3.0, 4.0, True))
+    ("3 - 4 tablets", [3.0, 4.0], (3.0, 4.0, True))
 ])
 
 def test_check_explicit_range(text, nums, after):
@@ -109,9 +109,10 @@ def test_get_frequency_info(before, after):
         f"get_frequency_info failed: {before} should retun {after}"        
 
 @pytest.mark.parametrize("before, after", [
-    ("8 am and 6pm", (6.0, 8.0, True)), 
-    ("1am and 7 pm", (1.0, 7.0, True)),
-    ("2 am and 11pm", (2.0, 11.0, True))
+    ("8 am and 6pm", (2.0, 2.0, True)), 
+    ("1am and 7 pm and midnight", (3.0, 3.0, True)),
+    ("4 / d", (4.0, 4.0, True)),
+    ("14 times daily", (None, None, False))
 ])      
 def test_check_range_from_list(before, after):
     assert di_frequency._check_range_from_list(before) == after, \

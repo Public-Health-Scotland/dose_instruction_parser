@@ -320,7 +320,7 @@ def _check_range_from_list(text):
     ------
         text: str
             text to look for pattern in 
-            e.g. "8 am and 6pm"
+            e.g. "8 am and 6pm" -> (2.0, 2.0, True) as this is 2 times a day
     Output:
     -------
         _min: float (None)
