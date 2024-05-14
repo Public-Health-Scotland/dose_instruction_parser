@@ -47,6 +47,12 @@ parse_dose_instructions = "di_parser.__main__:main"
 pythonpath = ["di_parser"]
 #addopts = "--cov=di_parser --cov-report html"
 
+[tool.coverage.run]
+omit = [
+    "data/*",
+    "tests/*",
+    ]
+
 [tool.bumpver]
 current_version = "2023.1001-alpha"
 version_pattern = "YYYY.BUILD[-TAG]"

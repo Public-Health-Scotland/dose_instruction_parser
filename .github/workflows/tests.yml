@@ -63,11 +63,11 @@ jobs:
         recreate: true
         path: code-coverage-results.md
     - name: Commit files
+      # Move files to coverage folder and commit this folder
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        ls
-        mv coverage.svg coverage/
+        mv coverage.svg coverage/ 
         mv coverage.xml coverage/
         mv code-coverage-results.md coverage/
         git add coverage/*
