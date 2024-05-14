@@ -4,7 +4,7 @@
 
 ![Build status](https://github.com/Public-Health-Scotland/dose_instruction_parser/actions/workflows/tests.yml/badge.svg)
 
-# Dose instructions free text model and parser for Public Health Scotland
+# Dose instructions free text model and parser
 
 _____
 **THIS PROJECT IS A WORK IN PROGRESS. WE DO NOT RECOMMEND YOU USE THE CODE AT THIS STAGE. PLEASE CONTACT phs.edris@phs.scot WITH ANY QUERIES**
