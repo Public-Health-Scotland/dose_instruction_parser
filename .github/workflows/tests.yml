@@ -29,7 +29,7 @@ jobs:
     - name: Test with pytest
       shell: bash -l {0}
       run: |
-        python -m pytest -vv dose_instruction_parser/di_parser/tests --ignore=dose_instruction_parser/di_parser/tests/test_parser.py --cov dose_instruction_parser/di_parser
+        python -m pytest -vv dose_instruction_parser --ignore=dose_instruction_parser/di_parser/tests/test_parser.py --cov dose_instruction_parser/di_parser
     - name: Create badge
       uses: tj-actions/coverage-badge-py@v2
       id: coverage-badge-py

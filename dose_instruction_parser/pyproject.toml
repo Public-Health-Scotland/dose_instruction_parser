@@ -76,7 +76,7 @@ omit = ["dose_instruction_parser/di_parser/tests/*",
 ignore_errors = true
 
 [tool.coverage.xml]
-directory = "coverage.xml"
+output = "coverage.xml"
 
 # Bump version
 
