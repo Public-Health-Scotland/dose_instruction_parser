@@ -1,3 +1,9 @@
+<div align="center">
+  <img src="doc/sphinx/source/_static/phs-logo.png" height=100>
+</div>
+
+![Build status](https://github.com/Public-Health-Scotland/dose_instruction_parser/actions/workflows/tests.yml/badge.svg)
+
 # Dose instructions free text model and parser for Public Health Scotland
 
 _____
