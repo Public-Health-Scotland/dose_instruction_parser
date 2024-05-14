@@ -38,7 +38,7 @@ jobs:
         # coverage badge. 
         # Type: string
         # Default: "coverage.svg"
-        output: 'coverage.xml'
+        output: 'coverage.svg'
 
 
       
