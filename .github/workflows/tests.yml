@@ -41,6 +41,7 @@ jobs:
         output: 'coverage.svg'
     - name: Code Coverage Report
       uses: irongut/CodeCoverageSummary@v1.3.0
+      if: github.event_name == 'pull_request'
       with:
         filename: coverage.xml
         badge: true
@@ -58,6 +59,7 @@ jobs:
         recreate: true
         path: code-coverage-results.md
     - name: List all changed files tracked and untracked files
+      if: github.event_name == 'pull_request'
       env:
          CHANGED_FILES: ${{ steps.verify-changed-files.outputs.changed_files }}
       run: |
@@ -67,6 +69,7 @@ jobs:
         ls coverage
         echo "Changed files: $CHANGED_FILES"
     - name: Commit files
+      if: github.event_name == 'pull_request'
       # Move files to coverage folder and commit this folder
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
@@ -75,6 +78,7 @@ jobs:
         git pull
         git commit -m "Updated coverage files"
     - name: Push changes
+      if: github.event_name == 'pull_request'
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.github_token }}
