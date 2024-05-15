@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.10"]
+        python-version: ["3.11"]
         include:
           - os: ubuntu-latest
             CONDA_OS: linux-64
@@ -30,7 +30,7 @@ jobs:
       shell: bash -l {0}
       run: |
         cd dose_instruction_parser
-        python -m pytest -vv . --ignore=di_parser/tests/test_parser.py --cov di_parser --cov-config .coveragerc
+        python -m pytest -vv . --ignore=di_parser/tests/test_parser.py
     - name: Create badge
       uses: tj-actions/coverage-badge-py@v2
       id: coverage-badge-py

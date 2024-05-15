@@ -45,6 +45,13 @@ parse_dose_instructions = "di_parser.__main__:main"
 
 [tool.pytest.ini_options]
 pythonpath = ["di_parser"]
+testpaths = ["di_parser/tests"]
+norecursedirs = ["di_parser/data", "build"]
+addopts = ["--cov=di_parser"]
+
+[tool.coverage.run]
+source = ["di_parser/*"]
+omit = ["di_parser/data/*", "di_parser/tests/*"]
 
 # Bump version
 
