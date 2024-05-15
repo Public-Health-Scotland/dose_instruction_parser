@@ -30,7 +30,7 @@ jobs:
       shell: bash -l {0}
       run: |
         cd dose_instruction_parser
-        python -m pytest -vv . --ignore=di_parser/tests/test_parser.py
+        python -m pytest -vv . --ignore=di_parser/tests/test_parser.py --cov-report=xml
     - name: Create badge
       uses: tj-actions/coverage-badge-py@v2
       id: coverage-badge-py
