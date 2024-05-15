@@ -2,9 +2,9 @@
 
 Package | Line Rate | Health
 -------- | --------- | ------
-. | 51% | ➖
-data | 100% | ✔
-tests | 70% | ➖
+dose_instruction_parser.di_parser | 51% | ➖
+dose_instruction_parser.di_parser.data | 100% | ✔
+dose_instruction_parser.di_parser.tests | 70% | ➖
 **Summary** | **54%** (441 / 815) | ➖
 
-_Minimum allowed line rate is `30%`_
+_Minimum allowed line rate is `40%`_

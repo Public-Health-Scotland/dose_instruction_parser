@@ -32,7 +32,7 @@ dependencies = [
 requires-python = ">=3.9"
 
 [project.optional-dependencies]
-dev = ["colorama", "ipython", "python-dotenv", "pytest", "pytest-cov", 
+dev = ["colorama", "ipython", "python-dotenv", "pytest", "pytest-cov", "pytest-md-report",
         "sphinx", "sphinx-autobuild", "sphinx-copybutton", "sphinx_rtd_theme",
         "bumpver"]
 
@@ -45,7 +45,21 @@ parse_dose_instructions = "di_parser.__main__:main"
 
 [tool.pytest.ini_options]
 pythonpath = ["di_parser"]
-#addopts = "--cov=di_parser --cov-report html"
+testpaths = ["di_parser/tests"]
+norecursedirs = ["di_parser/data", "build"]
+md_report = true
+md_report_verbose = 0
+md_report_color = "auto"
+addopts = ["--cov=di_parser"]
+
+[tool.coverage.run]
+source = ["di_parser/*"]
+omit = ["di_parser/data/*", "di_parser/tests/*"]
+
+[tool.coverage.report]
+omit = ["di_parser/data/*", "di_parser/tests/*"]
+
+# Bump version
 
 [tool.bumpver]
 current_version = "2023.1001-alpha"
