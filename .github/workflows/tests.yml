@@ -33,10 +33,10 @@ jobs:
       shell: bash -l {0}
       run: |
         echo '## Test Coverage Report' >> $GITHUB_STEP_SUMMARY
-        python -m pytest -vv dose_instruction_parser 
-            --ignore=dose_instruction_parser/di_parser/tests/test_parser.py 
-            --cov-report=xml --cov-report json 
-            --cov-report term-missing | tee $GITHUB_STEP_SUMMARY
+        python -m pytest -vv dose_instruction_parser \
+            --ignore=dose_instruction_parser/di_parser/tests/test_parser.py \
+            --cov-report=xml --cov-report json \
+            --cov-report term-missing | tee $GITHUB_STEP_SUMMARY 
     - name: Create badge
       if: github.event_name == 'pull_request'
       uses: tj-actions/coverage-badge-py@v2
