@@ -15,6 +15,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
+      with:
+        branch: ${{ github.head_ref }}
+        fetch-depth: 0
     - uses: conda-incubator/setup-miniconda@v3
       with:
         python-version: ${{ matrix.python-version }}
@@ -31,6 +34,7 @@ jobs:
       run: |
         python -m pytest -vv dose_instruction_parser --ignore=dose_instruction_parser/di_parser/tests/test_parser.py --cov-report=xml
     - name: Create badge
+      if: github.event_name == 'pull_request'
       uses: tj-actions/coverage-badge-py@v2
       id: coverage-badge-py
       with:
@@ -40,8 +44,8 @@ jobs:
         # Default: "coverage.svg"
         output: 'coverage.svg'
     - name: Code Coverage Report
-      uses: irongut/CodeCoverageSummary@v1.3.0
       if: github.event_name == 'pull_request'
+      uses: irongut/CodeCoverageSummary@v1.3.0
       with:
         filename: coverage.xml
         badge: true
@@ -53,8 +57,8 @@ jobs:
         output: both
         thresholds: '40 80'
     - name: Add Coverage PR Comment
-      uses: marocchino/sticky-pull-request-comment@v2
       if: github.event_name == 'pull_request'
+      uses: marocchino/sticky-pull-request-comment@v2
       with:
         recreate: true
         path: code-coverage-results.md
@@ -75,6 +79,7 @@ jobs:
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add coverage/*
+        git pull 
         git commit -m "Updated coverage files"
     - name: Push changes
       if: github.event_name == 'pull_request'
