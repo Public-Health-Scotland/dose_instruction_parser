@@ -49,6 +49,7 @@ jobs:
         PR_NUMBER: ${{ github.event.number }}
       run: |
         if [ -f "$REPORT_FILE" ]; then
+          echo "True"
           gh pr comment $PR_NUMBER --body-file "$REPORT_FILE"
         fi
     - name: Create badge
