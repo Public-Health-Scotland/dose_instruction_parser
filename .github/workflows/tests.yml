@@ -39,7 +39,7 @@ jobs:
             --cov-report term-missing \
             --md-report --md-report-flavor gfm \
             --md-report-exclude-outcomes passed skipped xpassed \
-            --md-report-output tests.md | tee $GITHUB_STEP_SUMMARY 
+            --md-report-output 'tests.md' | tee $GITHUB_STEP_SUMMARY 
     - name: Render reports to the PR when tests fail
       #if: failure()
       env:
