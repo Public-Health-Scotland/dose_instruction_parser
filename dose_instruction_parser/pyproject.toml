@@ -50,7 +50,7 @@ norecursedirs = ["di_parser/data", "build"]
 md_report = true
 md_report_verbose = 0
 md_report_color = "auto"
-addopts = ["--cov=di_parser"]
+#addopts = ["--cov=di_parser"]
 
 [tool.coverage.run]
 source = ["di_parser/*"]
