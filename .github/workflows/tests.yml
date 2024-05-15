@@ -29,7 +29,8 @@ jobs:
     - name: Test with pytest
       shell: bash -l {0}
       run: |
-        python -m pytest -vv dose_instruction_parser --ignore=dose_instruction_parser/di_parser/tests/test_parser.py --cov dose_instruction_parser/di_parser --cov-config=dose_instruction_parser/.coveragerc
+        cd dose_instruction_parser
+        python -m pytest -vv . --ignore=di_parser/tests/test_parser.py --cov di_parser --cov-config .coveragerc
     - name: Create badge
       uses: tj-actions/coverage-badge-py@v2
       id: coverage-badge-py
@@ -47,7 +48,7 @@ jobs:
     - name: Code Coverage Report
       uses: irongut/CodeCoverageSummary@v1.3.0
       with:
-        filename: coverage/coverage.xml
+        filename: coverage.xml
         badge: true
         fail_below_min: true
         format: markdown
@@ -55,7 +56,7 @@ jobs:
         hide_complexity: true
         indicators: true
         output: both
-        thresholds: '30 80'
+        thresholds: '40 80'
     - name: Add Coverage PR Comment
       uses: marocchino/sticky-pull-request-comment@v2
       if: github.event_name == 'pull_request'
@@ -67,10 +68,10 @@ jobs:
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        mv coverage.svg coverage/ 
-        mv coverage.xml coverage/
-        mv code-coverage-results.md coverage/
-        git add coverage/*
+        mv coverage.svg ../coverage/
+        mv coverage.xml ../coverage/
+        mv code-coverage-results.md ../coverage/
+        git add ../coverage/*
         git commit -m "Updated coverage files"
     - name: Push changes
       uses: ad-m/github-push-action@master
