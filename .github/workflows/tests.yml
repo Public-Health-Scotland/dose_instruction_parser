@@ -73,7 +73,8 @@ jobs:
         git config --local user.name "github-actions[bot]"
         git add coverage/*
         git commit -m "Updated coverage files"
-        git pull
+        git fetch 
+        git merge ${{ github.head_ref }}
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
