@@ -33,25 +33,20 @@ jobs:
       shell: bash -l {0}
       run: |
         echo '## Test Coverage Report' | tee $GITHUB_STEP_SUMMARY
-        report_file=md_report.md
-        echo "REPORT_FILE=${report_file}" >> "$GITHUB_ENV"
         python -m pytest -vv dose_instruction_parser \
             --ignore=dose_instruction_parser/di_parser/tests/test_parser.py \
             --cov-report=xml --cov-report json \
             --cov-report term-missing \
             --md-report --md-report-flavor gfm \
             --md-report-exclude-outcomes passed skipped xpassed \
-            --md-report-output "$report_file" | tee $GITHUB_STEP_SUMMARY 
+            --md-report-output tests.md | tee $GITHUB_STEP_SUMMARY 
     - name: Render reports to the PR when tests fail
       #if: failure()
       env:
         GH_TOKEN: ${{ github.token }}
         PR_NUMBER: ${{ github.event.number }}
       run: |
-        if [ -f "$REPORT_FILE" ]; then
-          echo "True"
-          gh pr comment $PR_NUMBER --body-file "$REPORT_FILE"
-        fi
+          gh pr comment $PR_NUMBER --body-file tests.md
     - name: Create badge
       if: github.event_name == 'pull_request'
       uses: tj-actions/coverage-badge-py@v2
@@ -89,6 +84,7 @@ jobs:
         mv coverage.svg coverage/
         mv coverage.xml coverage/
         mv coverage.json coverage/
+        mv tests.md coverage/
         mv code-coverage-results.md coverage/
         ls coverage
         echo "Changed files: $CHANGED_FILES"
