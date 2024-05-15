@@ -22,29 +22,26 @@ def test_get_latin_frequency(before, after):
     ("every 3 days", "3 Day"),
     ("wk", "Week"),
     ("with breakfast", "Day"),
-    ("on mon", None)
+    ("on mon", None),
+    ("qid", "Day")
 ])
 def test_get_frequency_type(before, after):
     assert di_frequency.get_frequency_type(before) == after, \
         f"get_frequency_type failed: {before} should retun {after}"
 
-# test _add_frequency_multiple_units (line 95)
-# called from get_frequency_type (line 89)
-# will not be called on (None, None) as per line 65
 @pytest.mark.parametrize("before_1, before_2, after", [
     ("every 6 hours", "Hour", "6 Hour"), 
     ("alternate days", "Day", "2 Day"),
     ("every hr", "Hour", "Hour"),
-    ("every other week", "Week", "2 Week")
+    ("every other week", "Week", "2 Week"),
+    ("every sixth day", "Day", "6 Day"),
+    ("every 2 - 3 days", "Day" "2 Day")
 ])
 def test_add_frequency_multiple_units(before_1, before_2, after):
     assert di_frequency._add_frequency_multiple_units(before_1, before_2) == after, \
         f"get_frequency_type failed: {before_1} should retun {after}"
 
 
-# test _get_number_of_times (line 130)
-# called from _check_range_from_list (line 327)
-# called from get_frequency_info (line 466)
 @pytest.mark.parametrize("before, after", [
     ("daily", 1.0), 
     ("food", 3.0),
@@ -56,24 +53,23 @@ def test_get_number_of_times(before, after):
     assert di_frequency._get_number_of_times(before) == after, \
         f"_get_number_of_times failed: {before} should retun {after}"
 
-# test _get_bounding_num (line 169)
-# called from _check_min_max_amount (line 204)
 @pytest.mark.parametrize("before_1, before_2, after", [
     ([], "max", (None, None)), 
     (["2"], "min", (float(2), None)),
     (["2"], "max", (0.0, float(2))),
     (["1"], "min", (float(1), None)),
-    (["6"], "max", (0.0, float(6)))
+    (["6"], "max", (0.0, float(6))),
+    (["2", "3"], "min", (float(2), None))
 ])
 def test_get_bounding_num(before_1, before_2, after):
     assert di_frequency._get_bounding_num(before_1, before_2) == after, \
         f"_get_bounding_num failed: {before_1, before_2} should retun {after}"
 
-# test _check_min_max_amount (line 204)
-# called from _get_range (line 343)
 @pytest.mark.parametrize("before_1, before_2, after", [
     ("up to 4", ["4"], (0.0, 4.0, True)), 
-    ("at least 2", ["2"], (2.0, None, True))
+    ("at least 2", ["2"], (2.0, None, True)),
+    ("at least", [], (None, None, True)),
+    ("at least a", [], (1.0, None, True))
 ])
 def test_check_min_max_amount(before_1, before_2, after):
     assert di_frequency._check_min_max_amount(before_1, before_2) == after, \
@@ -81,7 +77,8 @@ def test_check_min_max_amount(before_1, before_2, after):
 
 @pytest.mark.parametrize("text, nums, after", [
     ("2 to 4", [2.0 , 4.0], (2.0, 4.0, True)), 
-    ("3 - 4 tablets", [3.0, 4.0], (3.0, 4.0, True))
+    ("3 - 4 tablets", [3.0, 4.0], (3.0, 4.0, True)),
+    ("1 - 2 to 3 tablets", [1.0, 2.0, 3.0], (1.0, 3.0, True))
 ])
 
 def test_check_explicit_range(text, nums, after):

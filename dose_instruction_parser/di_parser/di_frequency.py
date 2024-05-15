@@ -238,7 +238,7 @@ def _check_min_max_amount(text, nums):
             range_found = True
             if " a " in text:
                 _min = 1.0
-                _max = 1.0
+                _max = None
             else:
                 _min = None
                 _max = None
