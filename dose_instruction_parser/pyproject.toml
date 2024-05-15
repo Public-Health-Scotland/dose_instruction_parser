@@ -53,6 +53,9 @@ addopts = ["--cov=di_parser"]
 source = ["di_parser/*"]
 omit = ["di_parser/data/*", "di_parser/tests/*"]
 
+[tool.coverage.report]
+omit = ["di_parser/data/*", "di_parser/tests/*"]
+
 # Bump version
 
 [tool.bumpver]
