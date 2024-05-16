@@ -54,10 +54,10 @@ md_report_color = "auto"
 
 [tool.coverage.run]
 source = "di_parser"
-omit = ["**/__main__.py", "**/*parser*"]
+omit = ["**/__main__.py"]
 
 [tool.coverage.report]
-omit = ["**/__main__.py", "**/*parser*"]
+omit = ["**/__main__.py", "**/parser.py"]
 exclude_also = [
     "def __repr__",
     "if self.debug:",
