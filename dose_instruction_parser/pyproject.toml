@@ -54,14 +54,14 @@ md_report_color = "auto"
 
 [tool.coverage.run]
 source = "di_parser"
-omit = ["*/data/*", "*/tests/*",
-        "*/__main__.py", "*/__init__.py",
-        "*/parser.py"]
+omit = ["**/data/**", "**/tests/**",
+        "**/__main__.py", "**/__init__.py",
+        "**/parser.py"]
 
 [tool.coverage.report]
-omit = ["*/data/*", "*/tests/*", 
-        "*/__main__.py", "*/__init__.py",
-        "*/parser.py"]
+omit = ["**/data/**", "**/tests/**", 
+        "**/__main__.py", "**/__init__.py",
+        "**/parser.py"]
 
 # Bump version
 
