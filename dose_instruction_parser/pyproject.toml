@@ -54,7 +54,9 @@ md_report_color = "auto"
 
 [tool.coverage.run]
 source = ["di_parser/*"]
-omit = ["di_parser/data/*", "di_parser/tests/*"]
+omit = ["di_parser/data/*", "di_parser/tests/*",
+        "di_parser/__main__.py", "di_parser/__init__.py",
+        "di_parser/parser.py"]
 
 [tool.coverage.report]
 omit = ["di_parser/data/*", "di_parser/tests/*", 
