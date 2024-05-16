@@ -36,7 +36,8 @@ jobs:
         report_file=tests.md
         echo "REPORT_FILE=${report_file}" >> "$GITHUB_ENV"
         python -m pytest -vv dose_instruction_parser \
-            --ignore=dose_instruction_parser/di_parser/tests/test_parser.py,dose_instruction_parser/di_parser/parser.py \
+            --ignore=dose_instruction_parser/di_parser/tests/test_parser.py \
+            --ignore=dose_instruction_parser/di_parser/parser.py \
             --cov=./ \
             --cov-report=xml --cov-report json \
             --cov-report term-missing \
