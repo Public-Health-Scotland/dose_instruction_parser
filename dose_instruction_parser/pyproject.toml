@@ -53,15 +53,15 @@ md_report_color = "auto"
 #addopts = ["--cov=di_parser"]
 
 [tool.coverage.run]
-source = ["di_parser/*"]
-omit = ["di_parser/data/*", "di_parser/tests/*",
-        "di_parser/__main__.py", "di_parser/__init__.py",
-        "di_parser/parser.py"]
+source = "di_parser"
+omit = ["*/data/*", "*/tests/*",
+        "*/__main__.py", "*/__init__.py",
+        "*/parser.py"]
 
 [tool.coverage.report]
-omit = ["di_parser/data/*", "di_parser/tests/*", 
-        "di_parser/__main__.py", "di_parser/__init__.py",
-        "di_parser/parser.py"]
+omit = ["*/data/*", "*/tests/*", 
+        "*/__main__.py", "*/__init__.py",
+        "*/parser.py"]
 
 # Bump version
 
