@@ -6,4 +6,4 @@ dose_instruction_parser.di_parser | 70% | ➖
 dose_instruction_parser.di_parser.tests | 100% | ✔
 **Summary** | **74%** (504 / 683) | ➖
 
-_Minimum allowed line rate is `40%`_
+_Minimum allowed line rate is `50%`_
