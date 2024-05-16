@@ -43,7 +43,7 @@ jobs:
             --md-report --md-report-flavor gfm \
             --md-report-output "${report_file}" | tee $GITHUB_STEP_SUMMARY 
     - name: Render reports to the PR when tests fail
-      if: github.event_name == 'pull_request'
+      if: fail() & github.event_name == 'pull_request' 
       env:
         GH_TOKEN: ${{ github.token }}
         PR_NUMBER: ${{ github.event.number }}

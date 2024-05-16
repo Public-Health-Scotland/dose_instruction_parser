@@ -35,7 +35,7 @@ def test_get_frequency_type(before, after):
     ("every hr", "Hour", "Hour"),
     ("every other week", "Week", "2 Week"),
     ("every sixth day", "Day", "6 Day"),
-    ("every 2 - 3 days", "Day" "2 Day")
+    ("every 2 - 3 days", "Day", "2 Day")
 ])
 def test_add_frequency_multiple_units(before_1, before_2, after):
     assert di_frequency._add_frequency_multiple_units(before_1, before_2) == after, \

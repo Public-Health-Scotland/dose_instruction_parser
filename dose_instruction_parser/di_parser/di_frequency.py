@@ -236,7 +236,7 @@ def _check_min_max_amount(text, nums):
     elif any(x in text for x in ("at least", "min")):
         if len(nums) == 0:
             range_found = True
-            if " a " in text:
+            if (" a " in text) or text.endswith(" a"):
                 _min = 1.0
                 _max = None
             else:
@@ -278,17 +278,12 @@ def _check_explicit_range(text, nums):
         indexes = [i for i in range(len(words)) if words[i] in ("to", "-", "or")]
         if len(indexes) != 1:
             warnings.warn("More than one instance of ('to', '-', 'or') in phrase")
-        index = indexes[0]
-        try:
-            _min = float(words[index-1])
-            _max = float(words[index+1])
-            range_found = True
-        except:
-            min_nums = min(nums, default=None)
-            max_nums = max(nums, default=None)
-            _min = float(min_nums) if min_nums is not None else min_nums
-            _max = float(max_nums) if max_nums is not None else max_nums
-            range_found = True
+        # Take min an max numbers overall
+        min_nums = min(nums, default=None)
+        max_nums = max(nums, default=None)
+        _min = float(min_nums) if min_nums is not None else min_nums
+        _max = float(max_nums) if max_nums is not None else max_nums
+        range_found = True
         # If there is a third number e.g. 2 to 4 5ml spoonfuls
         # need to multiply 2 and 4 by 5 to get total ml
         if len(nums) > 2:
