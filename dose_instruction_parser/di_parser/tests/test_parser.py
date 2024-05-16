@@ -19,6 +19,23 @@ def test_parser():
     assert parsed_dis == OUTPUT_DIS_SMALL, \
         "Test output doesn't match expected"
 
+def test_get_model_entities():
+    model_output = DEFAULT_MODEL("take 2 tablets daily")
+    ents = parser._get_model_entities(model_output)
+    assert ents[0].text == "2" \
+        and ents[1].text == "tablets" \
+            and ents[2].text == "daily", \
+        "Model entities not as expected"
+
+def test_get_model_entities_from_text():
+    ents = parser._get_model_entities_from_text(
+        "take 2 tablets daily", DEFAULT_MODEL
+        )
+    assert ents[0].text == "2" \
+        and ents[1].text == "tablets" \
+            and ents[2].text == "daily", \
+        "Model entities not as expected"
+
 def test_parse_di():
     for di, expected in zip(DIS_SMALL, OUTPUT_DIS_SMALL):
         expected.inputID = None
