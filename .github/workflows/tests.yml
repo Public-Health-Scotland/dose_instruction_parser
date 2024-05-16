@@ -100,7 +100,7 @@ jobs:
         github_token: ${{ secrets.github_token }}
         branch: ${{ github.head_ref }}
     - name: Render reports to the PR when tests fail
-      if: fail() 
+      if: github.event_name == 'pull_request'
       env:
         GH_TOKEN: ${{ github.token }}
         PR_NUMBER: ${{ github.event.number }}
