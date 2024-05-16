@@ -383,7 +383,7 @@ def _get_range(text, default=None):
     if not range_found:
         _min, _max, range_found = _check_range_from_list(text)
     if not range_found:
-        if len(nums) >=2:
+        if len(nums) >=2 and not any(x in text for x in (" x ", " ml ", " mg ")):
             _min = min(nums)
             _max = max(nums)
             range_found = True

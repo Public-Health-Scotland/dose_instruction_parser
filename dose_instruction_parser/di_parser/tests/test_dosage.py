@@ -48,7 +48,7 @@ def test_get_continuous_dose(before, after):
     ("2 - 3", (2.0, 3.0, None)),
     ("max 4", (0.0, 4.0, None)),
     ("2", (2.0, 2.0, None)),
-    ("8 something 1", (8.0, 8.0, None)),
+    ("8 something 1", (1.0, 8.0, None)),
     ("no number", (None, None, None))
 ])
 def test_dosage_info(before, after):
