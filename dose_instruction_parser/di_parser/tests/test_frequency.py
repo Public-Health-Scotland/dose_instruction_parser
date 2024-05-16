@@ -78,9 +78,10 @@ def test_check_min_max_amount(before_1, before_2, after):
 @pytest.mark.parametrize("text, nums, after", [
     ("2 to 4", [2.0 , 4.0], (2.0, 4.0, True)), 
     ("3 - 4 tablets", [3.0, 4.0], (3.0, 4.0, True)),
-    ("1 - 2 to 3 tablets", [1.0, 2.0, 3.0], (1.0, 3.0, True))
+    ("1 - 2 to 3 tablets", [1.0, 2.0, 3.0], (1.0, 3.0, True)),
+    ("1 or 2 5 ml spoons /mg", [1.0, 2.0, 5.0], (5.0, 10.0, True)),
+    ("4 or 5 word mg", [4.0, 5.0], (4.0, 5.0, True))
 ])
-
 def test_check_explicit_range(text, nums, after):
     assert di_frequency._check_explicit_range(text, nums) == after, \
         f"check_explicit_range failed: {text, nums} should retun {after}"
@@ -88,7 +89,8 @@ def test_check_explicit_range(text, nums, after):
 
 @pytest.mark.parametrize("before, after", [
     ("6 hourly", (1.0, 1.0, "6 Hour")), 
-    ("3 hrly", (1.0, 1.0, "3 Hour"))
+    ("3 hrly", (1.0, 1.0, "3 Hour")),
+    ("4 hrly or 5 hrly", (1.0, 1.0, "4 Hour"))
 ])      
 def test_get_hourly_adjusted_frequency(before, after):
     assert di_frequency._get_hourly_adjusted_frequency(before) == after, \
@@ -100,6 +102,9 @@ def test_get_hourly_adjusted_frequency(before, after):
     ("2 to 5 times a week", (2.0, 5.0, "Week")),
     ("1 or 2 times every 4 weeks", (1.0, 2.0, "Month")),
     ("6 hrly", (1.0, 1.0, "6 Hour")),
+    ("3 times", (3.0, 3.0, None)),
+    ("3 4 5 times", (3.0, 5.0, None)),
+    ("hello", (1.0, 1.0, None)),
 ])      
 def test_get_frequency_info(before, after):
     assert di_frequency.get_frequency_info(before) == after, \
