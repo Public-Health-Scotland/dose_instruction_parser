@@ -37,17 +37,12 @@ jobs:
         echo "REPORT_FILE=${report_file}" >> "$GITHUB_ENV"
         python -m pytest -vv dose_instruction_parser \
             --ignore=dose_instruction_parser/di_parser/tests/test_parser.py \
+            --cov=dose_instruction_parser/ \
+            --cov-config=dose_instruction_parser/.coveragerc \
             --cov-report=xml --cov-report json \
             --cov-report term-missing \
             --md-report --md-report-flavor gfm \
             --md-report-output "${report_file}" | tee $GITHUB_STEP_SUMMARY 
-    - name: Render reports to the PR when tests fail
-      if: github.event_name == 'pull_request'
-      env:
-        GH_TOKEN: ${{ github.token }}
-        PR_NUMBER: ${{ github.event.number }}
-      run: |
-          gh pr comment $PR_NUMBER --body-file "$REPORT_FILE"
     - name: Create badge
       if: github.event_name == 'pull_request'
       uses: tj-actions/coverage-badge-py@v2
@@ -70,7 +65,7 @@ jobs:
         hide_complexity: true
         indicators: true
         output: both
-        thresholds: '40 80'
+        thresholds: '50 80'
     - name: Add Coverage PR Comment
       if: github.event_name == 'pull_request'
       uses: marocchino/sticky-pull-request-comment@v2
@@ -105,6 +100,13 @@ jobs:
       with:
         github_token: ${{ secrets.github_token }}
         branch: ${{ github.head_ref }}
+    - name: Render reports to the PR when tests fail
+      if: failure() && github.event_name == 'pull_request'
+      env:
+        GH_TOKEN: ${{ github.token }}
+        PR_NUMBER: ${{ github.event.number }}
+      run: |
+          gh pr comment $PR_NUMBER --body-file "$REPORT_FILE"
     
 
 

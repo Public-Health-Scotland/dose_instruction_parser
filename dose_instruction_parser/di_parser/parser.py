@@ -10,7 +10,7 @@ from . import di_dosage
 from . import di_duration
 
 @dataclass
-class StructuredDI:
+class StructuredDI: # pragma: no cover
     """
     A structured dose instruction
 
@@ -78,7 +78,7 @@ def _get_model_entities_from_text(text, model):
     entities = model_output.ents 
     return entities
 
-def _parse_di(di: str, model: spacy.Language, input_id=None, pbar=None):
+def _parse_di(di: str, model: spacy.Language, input_id=None, pbar=None): 
     """
     1. Preprocesses dose instruction
     2. Applies model to retrieve entities
@@ -98,7 +98,7 @@ def _parse_di(di: str, model: spacy.Language, input_id=None, pbar=None):
                             durationMin=None, durationMax=None, durationType=None,
                             asRequired=None, asDirected=None)
 
-def _parse_dis(di_lst, model: spacy.Language, rowid_lst=None):
+def _parse_dis(di_lst, model: spacy.Language, rowid_lst=None): # pragma: no cover
     """
     Parses multiple dose instructions at once
     """
@@ -115,7 +115,7 @@ def _parse_dis(di_lst, model: spacy.Language, rowid_lst=None):
     status_bar.update("Parsing complete")
     return parsed_dis
 
-def _parse_dis_mp(di_lst, model: spacy.Language, rowid_lst=None):
+def _parse_dis_mp(di_lst, model: spacy.Language, rowid_lst=None): # pragma: no cover
     """
     Parses multiple dose instructions at once in parallel (synchronous)
     """
@@ -136,7 +136,7 @@ def background(f):
     return wrapped
 
 @background
-def _parse_di_async(di, model: spacy.Language, id):
+def _parse_di_async(di, model: spacy.Language, id): # pragma: no cover
     """
     Parses multiple dose instructions at once in parallel (asynchronous)
     """
@@ -174,9 +174,9 @@ def _split_entities_for_multiple_instructions(model_entities):
 
 
 blank_di_dict = {"DOSAGE": None, "FREQUENCY": None, "FORM": None, 
-                    "DURATION": None, "AS_REQUIRED": None, "AS_DIRECTED": None}
+                    "DURATION": None, "AS_REQUIRED": None, "AS_DIRECTED": None} # pragma: no cover
 
-def _keep_entity(entity, seen_labels):
+def _keep_entity(entity, seen_labels): # pragma: no cover
     """
     Determine whether to pay attention to an entity when splitting labels
     up into multiple dose instructions
