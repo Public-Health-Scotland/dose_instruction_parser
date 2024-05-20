@@ -9,7 +9,9 @@ source =
     di_parser
 
 [report]
-omit = __main__.py, **__init__.py**
+omit = 
+    __main__.py
+    **__init__.py**
 show_missing = true
 precision = 2
 exclude_also =

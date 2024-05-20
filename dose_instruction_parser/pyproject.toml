@@ -52,24 +52,24 @@ md_report_verbose = 0
 md_report_color = "auto"
 #addopts = ["--cov=di_parser"]
 
-[tool.coverage.run]
-source = ["di_parser"]
-#omit = ["**/__main__.py"]
+# [tool.coverage.run]
+# source = ["di_parser"]
+# #omit = ["**/__main__.py"]
 
-[tool.coverage.report]
-#omit = ["**/__main__.py", "**/parser.py"]
-exclude_also = [
-    "def __repr__",
-    "if self.debug:",
-    "if settings.DEBUG",
-    "raise AssertionError",
-    "raise NotImplementedError",
-    "if 0:",
-    "if __name__ == .__main__.:",
-    "if TYPE_CHECKING:",
-    "class .*\\bProtocol\\):",
-    "@(abc\\.)?abstractmethod",
-    ]
+# [tool.coverage.report]
+# #omit = ["**/__main__.py", "**/parser.py"]
+# exclude_also = [
+#     "def __repr__",
+#     "if self.debug:",
+#     "if settings.DEBUG",
+#     "raise AssertionError",
+#     "raise NotImplementedError",
+#     "if 0:",
+#     "if __name__ == .__main__.:",
+#     "if TYPE_CHECKING:",
+#     "class .*\\bProtocol\\):",
+#     "@(abc\\.)?abstractmethod",
+#     ]
 
 # Bump version
 
