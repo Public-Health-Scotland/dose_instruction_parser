@@ -53,7 +53,7 @@ md_report_color = "auto"
 #addopts = ["--cov=di_parser"]
 
 [tool.coverage.run]
-#source = "di_parser"
+source = ["di_parser"]
 #omit = ["**/__main__.py"]
 
 [tool.coverage.report]
