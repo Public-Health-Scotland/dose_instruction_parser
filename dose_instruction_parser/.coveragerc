@@ -10,8 +10,8 @@ source =
 
 [report]
 omit = 
-    __main__.py
-    **__init__.py**
+    **/__main__.py
+    **/__init__.py
 show_missing = true
 precision = 2
 exclude_also =
