@@ -13,6 +13,7 @@ omit =
     **/__main__.py
     **/__init__.py
     **/parser.py
+    **/test_parser.py
 show_missing = true
 precision = 2
 exclude_also =
