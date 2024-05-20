@@ -1,9 +1,9 @@
-![Code Coverage](https://img.shields.io/badge/Code%20Coverage-72%25-yellow?style=flat)
+![Code Coverage](https://img.shields.io/badge/Code%20Coverage-87%25-success?style=flat)
 
 Package | Line Rate | Branch Rate | Health
 -------- | --------- | ----------- | ------
-di_parser | 73% | 71% | ➖
+di_parser | 93% | 92% | ✔
 di_parser.tests | 67% | 88% | ➖
-**Summary** | **72%** (484 / 674) | **74%** (239 / 325) | ➖
+**Summary** | **87%** (457 / 525) | **92%** (239 / 261) | ✔
 
 _Minimum allowed line rate is `50%`_
