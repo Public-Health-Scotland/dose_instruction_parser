@@ -1,0 +1,25 @@
+[paths]
+source =
+   di_parser
+
+[run]
+branch = true
+parallel = true
+source =
+    di_parser
+
+[report]
+omit = __main__.py, **__init__.py**
+show_missing = true
+precision = 2
+exclude_also =
+    def __repr__
+    if self.debug:
+    if settings.DEBUG
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    class .*\bProtocol\):
+    @(abc\.)?abstractmethod
