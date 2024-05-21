@@ -1,6 +1,12 @@
 name: 'tests'
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -43,15 +49,6 @@ jobs:
             --cov-report term-missing \
             --md-report --md-report-flavor gfm \
             --md-report-output "${report_file}" | tee $GITHUB_STEP_SUMMARY 
-    - name: Create badge
-      uses: tj-actions/coverage-badge-py@v2
-      id: coverage-badge-py
-      with:
-        # Output path to write the 
-        # coverage badge. 
-        # Type: string
-        # Default: "coverage.svg"
-        output: 'coverage.svg'
     - name: Code Coverage Report
       uses: irongut/CodeCoverageSummary@v1.3.0
       with:
@@ -69,13 +66,16 @@ jobs:
       with:
         recreate: true
         path: code-coverage-results.md
+    - name: Copy coverage shield to README.md
+      run: |
+        i=6 # Line in README.md to replace
+        line=$(sed -n "1p" code-coverage-results.md)
+        sed -i "${i}c\\$line" README.md
     - name: List all changed files tracked and untracked files
       env:
          CHANGED_FILES: ${{ steps.verify-changed-files.outputs.changed_files }}
       run: |
-        mv coverage.svg coverage/
-        mv coverage.xml coverage/
-        mv coverage.json coverage/
+        mv coverage.* coverage/
         mv tests.md coverage/
         mv code-coverage-results.md coverage/
         ls coverage
@@ -87,6 +87,7 @@ jobs:
         git config --local user.name "github-actions[bot]"
         git add -f coverage/coverage.json
         git add coverage/*
+        git add README.md
         git pull 
         git commit -m "Updated coverage files"
     - name: Push changes

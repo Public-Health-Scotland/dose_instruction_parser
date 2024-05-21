@@ -3,7 +3,7 @@
 </div>
 
 ![Build status](https://github.com/Public-Health-Scotland/dose_instruction_parser/actions/workflows/tests.yml/badge.svg)
-![Coverage](https://github.com/Public-Health-Scotland/dose_instruction_parser/blob/main/coverage/coverage.svg)
+![Code Coverage](https://img.shields.io/badge/Code%20Coverage-94%25-success?style=flat)
 
 # Dose instructions free text model and parser
 
