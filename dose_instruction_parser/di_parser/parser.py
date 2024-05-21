@@ -1,6 +1,7 @@
 import spacy
 from dataclasses import dataclass
 from itertools import compress, chain
+import enlighten
 import asyncio
 
 from . import di_prepare
@@ -9,7 +10,7 @@ from . import di_dosage
 from . import di_duration
 
 @dataclass
-class StructuredDI:
+class StructuredDI: # pragma: no cover
     """
     A structured dose instruction
 
@@ -77,12 +78,14 @@ def _get_model_entities_from_text(text, model):
     entities = model_output.ents 
     return entities
 
-def _parse_di(di: str, model: spacy.Language, input_id=None):
+def _parse_di(di: str, model: spacy.Language, input_id=None, pbar=None): 
     """
     1. Preprocesses dose instruction
     2. Applies model to retrieve entities
     3. Creates structured dose instruction from entities using static rules
     """
+    if pbar is not None:
+        pbar.update()
     try:
         di_preprocessed = di_prepare.pre_process(di)
         model_output = model(di_preprocessed)
@@ -95,15 +98,24 @@ def _parse_di(di: str, model: spacy.Language, input_id=None):
                             durationMin=None, durationMax=None, durationType=None,
                             asRequired=None, asDirected=None)
 
-def _parse_dis(di_lst, model: spacy.Language, rowid_lst=None):
+def _parse_dis(di_lst, model: spacy.Language, rowid_lst=None): # pragma: no cover
     """
     Parses multiple dose instructions at once
     """
+    # Progress bar
+    manager = enlighten.get_manager()
+    status_bar = manager.status_bar('Parsing dose instructions',
+                                color="white_on_blue",
+                                justify=enlighten.Justify.CENTER)
+    pbar = manager.counter(total=len(di_lst), desc="Parsed", unit="instructions")
     rowid_lst = range(len(di_lst)) if rowid_lst is None else rowid_lst
-    return di_prepare._flatmap(lambda di, id: _parse_di(di, model, id), 
+    parsed_dis = di_prepare._flatmap(lambda di, id: _parse_di(di, model, id, pbar), 
                                             *(di_lst, rowid_lst))
+    status_bar.color = "white_on_green"
+    status_bar.update("Parsing complete")
+    return parsed_dis
 
-def _parse_dis_mp(di_lst, model: spacy.Language, rowid_lst=None):
+def _parse_dis_mp(di_lst, model: spacy.Language, rowid_lst=None): # pragma: no cover
     """
     Parses multiple dose instructions at once in parallel (synchronous)
     """
@@ -124,7 +136,7 @@ def background(f):
     return wrapped
 
 @background
-def _parse_di_async(di, model: spacy.Language, id):
+def _parse_di_async(di, model: spacy.Language, id): # pragma: no cover
     """
     Parses multiple dose instructions at once in parallel (asynchronous)
     """
@@ -162,9 +174,9 @@ def _split_entities_for_multiple_instructions(model_entities):
 
 
 blank_di_dict = {"DOSAGE": None, "FREQUENCY": None, "FORM": None, 
-                    "DURATION": None, "AS_REQUIRED": None, "AS_DIRECTED": None}
+                    "DURATION": None, "AS_REQUIRED": None, "AS_DIRECTED": None} # pragma: no cover
 
-def _keep_entity(entity, seen_labels):
+def _keep_entity(entity, seen_labels): # pragma: no cover
     """
     Determine whether to pay attention to an entity when splitting labels
     up into multiple dose instructions
@@ -344,6 +356,7 @@ class DIParser:
     def parse_many_mp(self, dis: list, rowids=None):
         return _parse_dis_mp(dis, self.__language, rowids)
     def parse_many_async(self, dis: list, rowids=None):
+        rowids = range(len(dis)) if rowids is None else rowids
         loop = asyncio.get_event_loop()
         looper = asyncio.gather(*[_parse_di_async(di, self.__language, rowid) for di, rowid in zip(dis, rowids)],
                                     return_exceptions = False)

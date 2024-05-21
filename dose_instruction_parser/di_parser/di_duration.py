@@ -37,8 +37,6 @@ def get_duration_info(text):
         else:
             _min = None
             _max = None
-    # Default added only if there is a frequency tag in the di
-    # handles cases such as "Every TIME_UNIT"
     if _min is None:
         _min = 1.0
         _max = 1.0

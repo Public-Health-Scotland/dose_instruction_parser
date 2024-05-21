@@ -18,8 +18,8 @@ yes_or_no "Do you wish to continue? Y/n"
 source ./secrets.env
 
 # The name of the conda environment
-read -p "Name for conda environment [di]: " conda_name
-conda_name=${conda_name:-di}
+read -p "Name for conda environment [model]: " conda_name
+conda_name=${conda_name:-model}
 
 # Initialise terminal for conda
 conda init bash > /dev/null

@@ -1,4 +1,11 @@
-# Dose instructions free text model and parser for Public Health Scotland
+<div align="center">
+  <img src="doc/sphinx/source/_static/phs-logo.png" height=100>
+</div>
+
+![Build status](https://github.com/Public-Health-Scotland/dose_instruction_parser/actions/workflows/tests.yml/badge.svg)
+![Code Coverage](https://img.shields.io/badge/Code%20Coverage-94%25-success?style=flat)
+
+# Dose instructions free text model and parser
 
 _____
 **THIS PROJECT IS A WORK IN PROGRESS. WE DO NOT RECOMMEND YOU USE THE CODE AT THIS STAGE. PLEASE CONTACT phs.edris@phs.scot WITH ANY QUERIES**

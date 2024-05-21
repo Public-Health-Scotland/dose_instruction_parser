@@ -236,9 +236,9 @@ def _check_min_max_amount(text, nums):
     elif any(x in text for x in ("at least", "min")):
         if len(nums) == 0:
             range_found = True
-            if " a " in text:
+            if (" a " in text) or text.endswith(" a"):
                 _min = 1.0
-                _max = 1.0
+                _max = None
             else:
                 _min = None
                 _max = None
@@ -276,10 +276,10 @@ def _check_explicit_range(text, nums):
     if any(x in text for x in (" to ", "-", " or ")):
         words = text.split()
         indexes = [i for i in range(len(words)) if words[i] in ("to", "-", "or")]
-        if len(indexes) != 1:
-            warnings.warn("More than one instance of ('to', '-', 'or') in phrase")
-        index = indexes[0]
         try:
+            assert len(indexes) == 1,\
+                 "More than one instance of ('to', '-', 'or') in phrase"
+            index = indexes[0]
             _min = float(words[index-1])
             _max = float(words[index+1])
             range_found = True
@@ -291,14 +291,14 @@ def _check_explicit_range(text, nums):
             range_found = True
         # If there is a third number e.g. 2 to 4 5ml spoonfuls
         # need to multiply 2 and 4 by 5 to get total ml
-        if len(nums) > 2:
-            indexes = [i for i in range(len(words)) if words[i] in ("ml", "mg")]
-            if len(indexes) != 0:
-                if len(indexes) != 1:
+        if len(nums) > 2 and len(indexes) == 1:
+            mindexes = [i for i in range(len(words)) if words[i] in ("ml", "mg")]
+            if len(mindexes) != 0:
+                if len(mindexes) != 1:
                     warnings.warn("More than one instance of ('ml', 'mg') in phrase")
-                index = indexes[0]
+                mindex = mindexes[0]
                 try:
-                    multiplier = float(words[index-1])
+                    multiplier = float(words[mindex-1])
                     _min *= multiplier
                     _max *= multiplier
                     range_found = True
@@ -320,7 +320,7 @@ def _check_range_from_list(text):
     ------
         text: str
             text to look for pattern in 
-            e.g. "8 am and 6pm"
+            e.g. "8 am and 6pm" -> (2.0, 2.0, True) as this is 2 times a day
     Output:
     -------
         _min: float (None)
@@ -382,6 +382,11 @@ def _get_range(text, default=None):
         _min, _max, range_found = _check_explicit_range(text, nums)
     if not range_found:
         _min, _max, range_found = _check_range_from_list(text)
+    if not range_found:
+        if len(nums) >=2 and not any(x in text for x in (" x ", " ml ", " mg ")):
+            _min = min(nums)
+            _max = max(nums)
+            range_found = True
     # Found no range
     if not range_found:
         _min = default
