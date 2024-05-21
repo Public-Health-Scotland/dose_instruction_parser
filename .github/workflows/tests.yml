@@ -68,7 +68,7 @@ jobs:
         path: code-coverage-results.md
     - name: Copy coverage shield to README.md
       run: |
-        i=5 # Line in README.md to replace
+        i=6 # Line in README.md to replace
         line=$(sed -n "1p" code-coverage-results.md)
         sed -i "${i}c\\$line" README.md
     - name: List all changed files tracked and untracked files
