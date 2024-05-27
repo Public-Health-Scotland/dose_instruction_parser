@@ -19,5 +19,35 @@ performance by further training the model on this subset of data. To do this, fo
 Extracting different structural information
 -------------------------------------------
 
+In `en_edris9` there are nine named entities extracted, which give rise to the following structured fields:
+
+===============     ==================================================================
+Field               Description
+===============     ==================================================================
+inputID             ID passed in with dose instruction for bookkeeping 
+text                The original free text dose instruction (can be later removed)
+form                The form of drug e.g. "tablet", "patch", "injection"
+dosageMin           The minimum dosage 
+dosageMax           The maximum dosage
+frequencyMin        The minimum frequency
+frequencyMax        The maximum frequency 
+frequencyType       The type of frequency for the dosage e.g. "Hour", "Day", "2 Week"
+durationMin         The minimum duration of treatment 
+durationMax         The maximum duration of treatment
+durationType        The type of duration for dosage e.g. "Day", "Week"
+asRequired          True/False: Whether to take as required / as needed
+asDirected          True/False: Whether to take as directed
+===============     ==================================================================
+
+Changing this output requires three main steps:
+
+1. Create new training data tagged with all the named entities you are interested in. You can add new entities here e.g. "AS_REQUIRED" and "AS_DIRECTED"
+   were new entities surplus to those in `med7`
+1. Make sure that `overwrite_ents = True` in the `\[components.ner\]` section of `model/config/config.cfg`, then train a new model
+   following TrainingModel_
+1. Modify `dose_instruction_parser/di_parser` code to process the new entities into the output you desire.
+   This process is more or less involved depending on the complexity of the entities. You can use the existing
+   entities as a guide.
+
 General application to medical free text parsing
 ------------------------------------------------
