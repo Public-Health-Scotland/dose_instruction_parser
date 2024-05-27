@@ -12,10 +12,22 @@
 > [!TIP]
 > Documentation can be found at https://public-health-scotland.github.io/dose_instruction_parser/
 
+<div>
 <img alt="Example prescription with dose instruction '125mg three times daily' source: BNF" style="float: left; width: 400px" src="doc/sphinx/source/_static/bnf_prescription_example.png">
+
 This repository contains code for parsing *dose instructions*. These are short pieces of 
 free text written on prescriptions to tell patients how to use their medication. An example
-prescription is shown to the left, with the dose instruction highlighted.
+prescription is shown to the left, with the dose instruction "125mg three times daily" highlighted.
+
+The code can be used to parse this dose instruction from the command line in the following way:
+
+```py
+(di-dev)$ parse_dose_instructions -di "125mg three times daily"
+
+StructuredDI(inputID=None, text='125mg three times daily', form='mg', dosageMin=125.0, dosageMax=125.0, frequencyMin=3.0, frequencyMax=3.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=False, asDirected=False)
+```
+
+</div>
 
 * It is written primarily in python, and consists of named entity recognition (NER) via the [spacy](https://spacy.io) package
 * The output model was generated using the code in this repository by starting with the external [med7](https://www.sciencedirect.com/science/article/abs/pii/S0933365721000798) [model](https://huggingface.co/kormilitzin/en_core_med7_lg/tree/main). This was additionally trained using examples specific to the prescribing information system data held by Public Health Scotland. The resulting model is provisionally named **edris9**.
