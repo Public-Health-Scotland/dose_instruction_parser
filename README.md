@@ -1,9 +1,10 @@
 <div align="center">
   <img src="doc/sphinx/source/_static/phs-logo.png" height=100>
+</div>
+
 ![Build status](https://github.com/Public-Health-Scotland/dose_instruction_parser/actions/workflows/tests.yml/badge.svg)
 ![Code Coverage](https://img.shields.io/badge/Code%20Coverage-94%25-success?style=flat)
-</div>
-![Code Coverage](https://img.shields.io/badge/Code%20Coverage-94%25-success?style=flat)
+
 # Dose instructions free text model and parser
 > [!WARNING]
 > This project is a work in progress. We do not recommend you use the code at this stage. Please contact [phs.edris@phs.scot](mailto:phs.edris@phs.scot) with any queries.
@@ -11,7 +12,7 @@
 > [!TIP]
 > Documentation can be found at https://public-health-scotland.github.io/dose_instruction_parser/
 
-<img alt="Example prescription with dose instruction '125mg three times daily' source: BNF" style="float: left; width: 128px" src="doc/sphinx/source/_static/bnf_prescription_example.png">
+<img alt="Example prescription with dose instruction '125mg three times daily' source: BNF" style="float: left; width: 300px" src="doc/sphinx/source/_static/bnf_prescription_example.png">
 
 This repository contains code for parsing *dose instructions*. These are short pieces of 
 free text written on prescriptions to tell patients how to use their medication. An example
