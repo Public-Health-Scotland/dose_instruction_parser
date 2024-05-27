@@ -11,7 +11,7 @@
 > [!TIP]
 > Documentation can be found at https://public-health-scotland.github.io/dose_instruction_parser/
 
-<img alt="Example prescription with dose instruction '125mg three times daily' source: BNF" style="float: left;" src="doc/sphinx/source/_static/bnf_prescription_example.png">
+<img alt="Example prescription with dose instruction '125mg three times daily' source: BNF" style="float: left; width: 128px" src="doc/sphinx/source/_static/bnf_prescription_example.png">
 
 This repository contains code for parsing *dose instructions*. These are short pieces of 
 free text written on prescriptions to tell patients how to use their medication. An example
