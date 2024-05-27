@@ -1,9 +1,8 @@
 <div align="center">
   <img src="doc/sphinx/source/_static/phs-logo.png" height=100>
-</div>
-
 ![Build status](https://github.com/Public-Health-Scotland/dose_instruction_parser/actions/workflows/tests.yml/badge.svg)
 ![Code Coverage](https://img.shields.io/badge/Code%20Coverage-94%25-success?style=flat)
+</div>
 
 # Dose instructions free text model and parser
 > [!WARNING]
@@ -12,7 +11,12 @@
 > [!TIP]
 > Documentation can be found at https://public-health-scotland.github.io/dose_instruction_parser/
 
-* This repository contains code for parsing free text dose instructions. 
+<img alt="Example prescription with dose instruction '125mg three times daily' source: BNF" style="float: left;" src="doc/sphinx/source/_static/bnf_prescription_example.png">
+
+This repository contains code for parsing *dose instructions*. These are short pieces of 
+free text written on prescriptions to tell patients how to use their medication. An example
+prescription is shown to the left, with the dose instruction highlighted.
+
 * It is written primarily in python, and consists of named entity recognition (NER) via the [spacy](https://spacy.io) package
 * The output model was generated using the code in this repository by starting with the external [med7](https://www.sciencedirect.com/science/article/abs/pii/S0933365721000798) [model](https://huggingface.co/kormilitzin/en_core_med7_lg/tree/main). This was additionally trained using examples specific to the prescribing information system data held by Public Health Scotland. The resulting model is provisionally named **edris9**.
 
