@@ -6,12 +6,11 @@
 ![Code Coverage](https://img.shields.io/badge/Code%20Coverage-94%25-success?style=flat)
 
 # Dose instructions free text model and parser
+> [!WARNING]
+> This project is a work in progress. We do not recommend you use the code at this stage. Please contact [phs.edris@phs.scot](mailto:phs.edris@phs.scot) with any queries.
 
-_____
-**THIS PROJECT IS A WORK IN PROGRESS. WE DO NOT RECOMMEND YOU USE THE CODE AT THIS STAGE. PLEASE CONTACT phs.edris@phs.scot WITH ANY QUERIES**
-_____
-
-Documentation can be found at https://public-health-scotland.github.io/dose_instruction_parser/
+> [!TIP]
+> Documentation can be found at https://public-health-scotland.github.io/dose_instruction_parser/
 
 * This repository contains code for parsing free text dose instructions. 
 * It is written primarily in python, and consists of named entity recognition (NER) via the [spacy](https://spacy.io) package
