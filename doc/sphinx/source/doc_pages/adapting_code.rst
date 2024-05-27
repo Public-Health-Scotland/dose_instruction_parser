@@ -41,10 +41,8 @@ asDirected          True/False: Whether to take as directed
 
 Changing this output requires three main steps:
 
-1. Create new training data tagged with all the named entities you are interested in. You can add new entities here e.g. "AS_REQUIRED" and "AS_DIRECTED"
-   were new entities surplus to those in `med7`
-1. Make sure that `overwrite_ents = True` in the `\[components.ner\]` section of `model/config/config.cfg`, then train a new model
-   following TrainingModel_
+1. Create new training data tagged with all the named entities you are interested in. You can add new entities here e.g. "AS_REQUIRED" and "AS_DIRECTED" were new entities surplus to those in `med7`
+1. Make sure that `overwrite_ents = True` in the `\[components.ner\]` section of `model/config/config.cfg`, then train a new model following TrainingModel_
 1. Modify `dose_instruction_parser/di_parser` code to process the new entities into the output you desire.
    This process is more or less involved depending on the complexity of the entities. You can use the existing
    entities as a guide.
@@ -66,7 +64,6 @@ This is a more involved version of the above. Broadly, you will need to
    in the way you want.
 
 .. note::
-    In this case it would be best to create a totally new repository using this
-    repository as a starting point
+   In this case it would be best to create a totally new repository using this
+   repository as a starting point
 
-    

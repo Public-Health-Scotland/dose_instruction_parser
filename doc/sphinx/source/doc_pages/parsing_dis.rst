@@ -13,7 +13,9 @@ A single dose instruction can be supplied using the ``-di`` argument.
  ``parse_dose_instructions -di "take one tablet daily" -mod en_edris9``
 
 This will produce the corresponding output in the terminal:
-::
+
+.. code::
+    
     StructuredDI(text='take one tablet daily', form='tablet', dosageMin=1.0, dosageMax=1.0, frequencyMin=1.0, frequencyMax=1.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=False, asDirected=False)
 
 **2. Multiple instructions**
@@ -28,7 +30,9 @@ Running:
 ``parse_dose_instructions -f "multiple_dis.txt" -mod en_edris9``
 
 will produce the corresponding output in the terminal:
-::
+
+.. code::
+
     StructuredDI(text='daily 2 tabs', form='tablet', dosageMin=2.0, dosageMax=2.0, frequencyMin=1.0, frequencyMax=1.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=False, asDirected=False)
     StructuredDI(text='once daily when required', form=None, dosageMin=1.0, dosageMax=1.0, frequencyMin=1.0, frequencyMax=1.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=True, asDirected=False)
 
