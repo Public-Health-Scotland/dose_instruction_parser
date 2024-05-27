@@ -49,5 +49,24 @@ Changing this output requires three main steps:
    This process is more or less involved depending on the complexity of the entities. You can use the existing
    entities as a guide.
 
+.. warning::
+    Note that you should include training data which is fully representative of the data you
+    would like to use the model for. If you only train the model further on a certain type of example
+    it will begin to "forget" what it already knows i.e. get worse at extracting entities which 
+    it could do before but is now not being trained on.
+
 General application to medical free text parsing
 ------------------------------------------------
+
+This is a more involved version of the above. Broadly, you will need to
+
+1. Create tagged training data with all the named entities you are interested in
+1. Train a model following TrainingModel_
+1. Heavily alter the `dose_instruction_parser/di_parser` code to process the output
+   in the way you want.
+
+.. note::
+    In this case it would be best to create a totally new repository using this
+    repository as a starting point
+
+    
