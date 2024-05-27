@@ -12,7 +12,7 @@
 > [!TIP]
 > Documentation can be found at https://public-health-scotland.github.io/dose_instruction_parser/
 
-<img alt="Example prescription with dose instruction '125mg three times daily' source: BNF" align="left" style="width: 400px" src="doc/sphinx/source/_static/bnf_prescription_example.png">
+<img alt="Example prescription with dose instruction '125mg three times daily' source: BNF" align="left" style="width: 400px; margin:18px" src="doc/sphinx/source/_static/bnf_prescription_example.png">
 
 This repository contains code for parsing *dose instructions*. These are short pieces of 
 free text written on prescriptions to tell patients how to use their medication. An example
@@ -28,21 +28,21 @@ The code is written primarily in Python and consists of two main phases:
    frequencyType='Day'
    ```
 
-Code for **1.** can be found in the **model** folder.
-Code for **2.** can be found in the **dose_instruction_parser** folder.
+Code to create the model (**1.**) can be found in the **model** folder.
+Code to parse dose instructions given a model (**2.**) can be found in the **dose_instruction_parser** folder.
+
+When the code is installed, dose instructions can be parsed from the command line in the following way:
 
 <br clear="left"/>
 
-Dose instructions can be parsed from the command line in the following way:
-
 ```py
-(di-dev)$ parse_dose_instructions -di "125mg three times daily"
+(di-dev)$ parse_dose_instructions -di "125mg three times daily" -mod "en_edris9"
 
 StructuredDI(inputID=None, text='125mg three times daily', form='mg', dosageMin=125.0, dosageMax=125.0, frequencyMin=3.0, frequencyMax=3.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=False, asDirected=False)
 ```
 
 > [!NOTE]
-> Code in the **model** folder was used to generate a model for **1.** called **edris9**. This is based on the [med7](https://www.sciencedirect.com/science/article/abs/pii/S0933365721000798) [model](https://huggingface.co/kormilitzin/en_core_med7_lg/tree/main), further trained using examples specific to the prescribing information system data held by Public Health Scotland. 
+> Code in the **model** folder was used to generate a model for **1.** called **edris9**. This is based on the [med7](https://www.sciencedirect.com/science/article/abs/pii/S0933365721000798) [model](https://huggingface.co/kormilitzin/en_core_med7_lg/tree/main), further trained using examples specific to the prescribing information system data held by Public Health Scotland. Due to information governance, the **edris9** model is not public. Please contact [phs.edris@phs.scot](mailto:phs.edris@phs.scot) if you wish to use the model.
 
 ## Contents
 
@@ -53,26 +53,30 @@ StructuredDI(inputID=None, text='125mg three times daily', form='mg', dosageMin=
 
 ## File layout
 
-* **set_up_conda.sh**: script to set up conda environment for development
-* **environment.yaml**: environment file for development conda environment
-* **secrets.env**: hidden file with location of dose instruction data filepath
-* **model**: code for creating the new NER model (edris9)
-    * **preprocess**
-        * **tagged**: folder of tagged dose instructions in .json format produced by [spacy NER annotator](https://github.com/tecoholic/ner-annotator) desktop tool
-        * **1-json_to_dat.py**: script to convert contents of **tagged** folder to .dat format for cross-checking. Output to **processed** folder.
-        * **processed**: folder of processed tagged dose instructions consisting of
-            * crosschecked_data: instances where tagging is consistent
-            * conflicting_data: instances where tagging is not consistent
-            * resolved_data: manually created file resolving the conflicting_data 
-        * **2-dat_to_spacy.py**: Script to convert crosschecked and resolved data from **processed** into .spacy format, output to **model/data**
-    * **config**
-        * **config.cfg**: spacy configuration file to define model parameters
-    * **train_model.sh**: bash script to train model using config file and data in **data** folder
-    * **evaluate_model.sh**: bash script to evaluate model performance using precision, recall and F-score
-    * **package_model.sh**: bash script to package model
-* **dose_instruction_parser**: package for parsing dose instructions. See internal **README.md** for more detailed information.
-* **benchmark**: scripts for benchmarking against prolog code
-
+```
+📦dose_instructions_parser
+ ┣ 📂.github
+ ┃ ┣ 📂workflows                
+ ┣ 📂coverage                  # code coverage information 
+ ┣ 📂doc                       # documentation
+ ┃ ┣ 📂examples                # -- example scripts
+ ┃ ┗ 📂sphinx                  # -- source behind github pages docs
+ ┃ ┃ ┣ 📂source
+ ┃ ┃ ┃ ┣ 📂doc_pages
+ ┃ ┃ ┃ ┣ 📂modules
+ ┃ ┃ ┃ ┃ ┗ 📂di_parser
+ ┃ ┃ ┃ ┣ 📂_static
+ ┣ 📂dose_instruction_parser   # package for parsing dose instructions
+ ┃ ┣ 📂di_parser
+ ┃ ┃ ┣ 📂data
+ ┃ ┃ ┣ 📂tests
+ ┣ 📂model                     # code for creating NER model
+ ┃ ┣ 📂config                  # -- model configuration 
+ ┃ ┣ 📂data                    # -- processed .spacy data created here
+ ┃ ┣ 📂preprocess              # -- code for pre-processing training data         
+ ┃ ┃ ┣ 📂processed             # ---- intermediate processing carried out here
+ ┗ ┗ ┗ 📂tagged                # ---- put tagged .json training data here
+```
 
 ## Setup
 
