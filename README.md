@@ -16,19 +16,33 @@
 
 This repository contains code for parsing *dose instructions*. These are short pieces of 
 free text written on prescriptions to tell patients how to use their medication. An example
-prescription is shown to the left, with the dose instruction "125mg three times daily" highlighted.
+prescription is shown to the left, with the dose instruction "*125mg three times daily*" highlighted.
 
-The code can be used to parse this dose instruction from the command line in the following way:
+The code is written primarily in Python and consists of two main phases:
+
+1. *Named entity recognition (NER)* using a model trained via the [spacy](https://spacy.io)  package to identify phrases linked to key information, e.g. "*three times daily*" is tagged as **FREQUENCY**
+2. Rules to extract structured output from the recognised entities, e.g. 
+   ```python
+   frequencyMin=3.0
+   frequencyMax=3.0
+   frequencyType='Day'
+   ```
+
+Code for **1.** can be found in the **model** folder.
+Code for **2.** can be found in the **dose_instruction_parser** folder.
+
+<br clear="left"/>
+
+Dose instructions can be parsed from the command line in the following way:
 
 ```py
 (di-dev)$ parse_dose_instructions -di "125mg three times daily"
 
 StructuredDI(inputID=None, text='125mg three times daily', form='mg', dosageMin=125.0, dosageMax=125.0, frequencyMin=3.0, frequencyMax=3.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=False, asDirected=False)
 ```
-<br clear="left"/>
 
-* It is written primarily in python, and consists of named entity recognition (NER) via the [spacy](https://spacy.io) package
-* The output model was generated using the code in this repository by starting with the external [med7](https://www.sciencedirect.com/science/article/abs/pii/S0933365721000798) [model](https://huggingface.co/kormilitzin/en_core_med7_lg/tree/main). This was additionally trained using examples specific to the prescribing information system data held by Public Health Scotland. The resulting model is provisionally named **edris9**.
+> [!NOTE]
+> Code in the **model** folder was used to generate a model for **1.** called **edris9**. This is based on the [med7](https://www.sciencedirect.com/science/article/abs/pii/S0933365721000798) [model](https://huggingface.co/kormilitzin/en_core_med7_lg/tree/main), further trained using examples specific to the prescribing information system data held by Public Health Scotland. 
 
 ## Contents
 
