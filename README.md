@@ -3,7 +3,7 @@
 ![Build status](https://github.com/Public-Health-Scotland/dose_instruction_parser/actions/workflows/tests.yml/badge.svg)
 ![Code Coverage](https://img.shields.io/badge/Code%20Coverage-94%25-success?style=flat)
 </div>
-
+![Code Coverage](https://img.shields.io/badge/Code%20Coverage-94%25-success?style=flat)
 # Dose instructions free text model and parser
 > [!WARNING]
 > This project is a work in progress. We do not recommend you use the code at this stage. Please contact [phs.edris@phs.scot](mailto:phs.edris@phs.scot) with any queries.
