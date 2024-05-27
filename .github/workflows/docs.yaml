@@ -36,11 +36,13 @@ jobs:
       - name: Sphinx build
         shell: bash -l {0}
         run: |
-          make doc/sphinx/html
+          cd doc/sphinx
+          make html
       - name: Deploy
+        shell: bash -l {0}
         uses: peaceiris/actions-gh-pages@v3
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: doc/sphinx/build/html
+          publish_dir: build/html
           force_orphan: true
