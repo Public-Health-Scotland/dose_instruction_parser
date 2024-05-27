@@ -34,6 +34,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install ./dose_instruction_parser[dev]
       - name: Sphinx build
+        shell: bash -l {0}
         run: |
           cd doc/sphinx
           make html
