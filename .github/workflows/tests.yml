@@ -88,8 +88,8 @@ jobs:
         git add -f coverage/coverage.json
         git add coverage/*
         git add README.md
-        git pull -X ours
         git commit -m "Updated coverage files"
+        git pull -X ours
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
