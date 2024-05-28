@@ -1,5 +1,5 @@
-Introduction
-============
+Overview
+========
 
 This is the documentation for a tool developed at Public Health Scotland to parse
 prescription dose instructions.

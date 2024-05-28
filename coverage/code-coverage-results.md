@@ -6,4 +6,4 @@ di_parser | 93% | 92% | ✔
 di_parser.tests | 100% | 100% | ✔
 **Summary** | **94%** (457 / 484) | **94%** (239 / 255) | ✔
 
-_Minimum allowed line rate is `50%`_
+_Minimum allowed line rate is `60%`_
