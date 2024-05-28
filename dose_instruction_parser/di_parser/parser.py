@@ -333,19 +333,6 @@ def _create_structured_dis(free_text, model_output, input_id=None):
 class DIParser:
     """
     Dose instruction parser class 
-
-    Example
-    -------
-    >>> model_path = "/conf/linkages/Technical/Dose_Instructions/Dose instructions replacement/models/"
-    >>> di_parser = DIParser(model_name=f"{model_path}/original/model-best")
-
-    >>> di = "take 2 3ml spoonfuls with meals for 5-6 weeks as discussed"
-    >>> parsed_di = di_parser.parse(di)
-    >>> parsed_di
-    [StructuredDI(form='ml', dosageMin=6.0, dosageMax=6.0, 
-        frequencyMin=3.0, frequencyMax=3.0, frequencyType='Day',
-         durationMin=5.0, durationMax=6.0, durationType='Week', 
-         asRequired=False, asDirected=True)]
     """
     def __init__(self, model_name):
         self.__language = spacy.load(model_name)
