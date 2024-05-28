@@ -132,7 +132,7 @@ Logging to command line. Use the --logfile argument to set a log file instead.
 2024-05-28 07:47:56,270 Checking input and output files
 2024-05-28 07:47:56,282 Setting up parser
 2024-05-28 07:48:18,003 Parsing multiple dose instructions
-                                                                                               Parsing dose instructions                                                                                               
+Parsing dose instructions                                                                                               
 Parsed 100%|██████████████████████████████████████| 2/2 [00:00<00:00, 79.78 instructions/s]
 
 StructuredDI(inputID=0, text='daily 2 tabs', form='tablet', dosageMin=2.0, dosageMax=2.0, frequencyMin=1.0, frequencyMax=1.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=False, asDirected=False)
@@ -188,18 +188,6 @@ In [7]: print(di_df)
 1        1                        two puffs prn     puff        2.0        2.0           NaN           NaN          None          NaN          NaN         None        True       False
 2        2  one cap after meals for three weeks  capsule        1.0        1.0           3.0           3.0           Day          3.0          3.0         Week       False       False
 3        3                        4 caplets tid   carpet        4.0        4.0           3.0           3.0           Day          NaN          NaN         None       False       False
-```
-
-Output:
-
-```
-[StructuredDI(text='take one tablet daily', form='tablet', dosageMin=1.0, dosageMax=1.0, frequencyMin=1.0, frequencyMax=1.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=False, asDirected=False), StructuredDI(text='two puffs prn', form='puff', dosageMin=2.0, dosageMax=2.0, frequencyMin=None, frequencyMax=None, frequencyType=None, durationMin=None, durationMax=None, durationType=None, asRequired=True, asDirected=False), StructuredDI(text='one cap after meals for three weeks', form='capsule', dosageMin=1.0, dosageMax=1.0, frequencyMin=3.0, frequencyMax=3.0, frequencyType='Day', durationMin=3.0, durationMax=3.0, durationType='Week', asRequired=False, asDirected=False), StructuredDI(text='4 caplets tid', form='carpet', dosageMin=4.0, dosageMax=4.0, frequencyMin=3.0, frequencyMax=3.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=False, asDirected=False)]
-
-text     form  dosageMin  dosageMax  frequencyMin  frequencyMax frequencyType  durationMin  durationMax durationType  asRequired  asDirected
-0                take one tablet daily   tablet        1.0        1.0           1.0           1.0           Day          NaN          NaN         None       False       False
-1                        two puffs prn     puff        2.0        2.0           NaN           NaN          None          NaN          NaN         None        True       False
-2  one cap after meals for three weeks  capsule        1.0        1.0           3.0           3.0           Day          3.0          3.0         Week       False       False
-3                        4 caplets tid   carpet        4.0        4.0           3.0           3.0           Day          NaN          NaN         None       False       False
 ```
 
 ## Development
