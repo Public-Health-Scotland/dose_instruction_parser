@@ -1,6 +1,6 @@
 <div align="center">
   <img src="doc/sphinx/source/_static/phs-logo.png" height=100>
-</div>
+</div><br>
 
 ![Build status](https://github.com/Public-Health-Scotland/dose_instruction_parser/actions/workflows/tests.yml/badge.svg)
 ![Code Coverage](https://img.shields.io/badge/Code%20Coverage-94%25-success?style=flat)
