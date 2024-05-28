@@ -40,7 +40,7 @@ This runs the `Makefile` and produces the documentation in the `build/index/html
 * To add a new section to the documentation, create a new **.rst** file in `sphinx/source/doc_pages`
 * Amend `source/index.rst` to include your new file in the table of contents at the correct location
 
-   ```rst
+   ```diff
    Chapter Name
    ============
 
@@ -51,7 +51,7 @@ This runs the `Makefile` and produces the documentation in the `build/index/html
       doc_pages/installation.rst
       doc_pages/quickstart.rst
       doc_pages/overview.rst
-   +  doc_pages/your_new_file.rst         # New file added here
+  +  doc_pages/your_new_file.rst         # New file added here 
       doc_pages/parsing_dis.rst
       doc_pages/developing_di_parser.rst
       doc_pages/training_model.rst
