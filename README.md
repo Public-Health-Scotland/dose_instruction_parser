@@ -154,5 +154,6 @@ parse_dose_instructions -h  # get help on parsing dose instructions
 * 📓 Check out the documentation at https://public-health-scotland.github.io/dose_instruction_parser/ for more information on how to use and develop the code
 * 💊 See the README in the `dose_instruction_parser` folder for information on the `di_parser` package
 * 🔧 See the README in the `doc/sphinx` folder for information on adding to the documentation
+* 👷 See the README in the `.github/workflows` folder for information on GitHub workflows for this repository
 * 📧 Contact [phs.edris@phs.scot](mailto:phs.edris@phs.scot) with any queries
 
