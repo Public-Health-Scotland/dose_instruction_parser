@@ -93,7 +93,7 @@ parse_dose_instructions -h  # get help on parsing dose instructions
 > [!TIP]
 >   Run `parse_dose_instructions -h` on the command line to get help on parsing dose instructions
 
-In the following examples we assume the model "en_edris9" is installed. You can provide your own path to an alternative model with the same nine entities.
+In the following examples we assume the model `en_edris9` is installed. You can provide your own path to an alternative model with the same nine entities.
 
 ### Command line interface
 
@@ -101,7 +101,7 @@ The simplest way to get started is to use the in-built command line interface. T
 
 #### A single instruction
 
-A single dose instruction can be supplied using the **-di** argument.
+A single dose instruction can be supplied using the `-di` argument.
 
 ```bash
 (di-dev)$ parse_dose_instructions -di "take one tablet daily" -mod en_edris9 
@@ -116,7 +116,7 @@ StructuredDI(inputID=None, text='take one tablet daily', form='tablet', dosageMi
 
 #### Multiple instructions
 
-Multiple dose instructions can be supplied from file using the **-f** argument, where each line in the text file supplied is a dose instruction. For example, if the file `multiple_dis.txt` contains the following:
+Multiple dose instructions can be supplied from file using the `-f` argument, where each line in the text file supplied is a dose instruction. For example, if the file `multiple_dis.txt` contains the following:
 
 ```
 daily 2 tabs
@@ -139,7 +139,7 @@ StructuredDI(inputID=0, text='daily 2 tabs', form='tablet', dosageMin=2.0, dosag
 StructuredDI(inputID=1, text='once daily when required', form=None, dosageMin=None, dosageMax=None, frequencyMin=1.0, frequencyMax=1.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=True, asDirected=False)
 ```
 
-Where you have a lot of examples to parse you may want to send the output to a file rather than the command line. To do this, specify the output file location with the **-o** argument. If this has **.txt** extension the results will be presented line by line like they would on the command line. If this has **.csv** extension the results will be cast to a data frame with one entry per row.
+Where you have a lot of examples to parse you may want to send the output to a file rather than the command line. To do this, specify the output file location with the `-o` argument. If this has **.txt** extension the results will be presented line by line like they would on the command line. If this has **.csv** extension the results will be cast to a data frame with one entry per row.
 
 ```bash
 (di-dev)$ parse_dose_instructions -f "multiple_dis.txt" -mod en_edris9 -o "out_dis.csv"
