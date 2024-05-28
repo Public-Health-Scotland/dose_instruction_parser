@@ -4,7 +4,6 @@
 
 ![Build status](https://github.com/Public-Health-Scotland/dose_instruction_parser/actions/workflows/tests.yml/badge.svg)
 ![Code Coverage](https://img.shields.io/badge/Code%20Coverage-94%25-success?style=flat)
-[![GitHub license](https://img.shields.io/github/license/Public-Health-Scotland/dose_instruction_parser)](https://github.com/Public-Health-Scotland/dose_instruction_parser/blob/main/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/Public-Health-Scotland/dose_instruction_parser)](https://github.com/Public-Health-Scotland/dose_instruction_parser/issues)
 [![GitHub last commit](https://img.shields.io/github/last-commit/Public-Health-Scotland/dose_instruction_parser)](https://github.com/Public-Health-Scotland/dose_instruction_parser/commits/main)
 
