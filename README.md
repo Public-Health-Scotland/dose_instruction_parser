@@ -128,7 +128,7 @@ parse_dose_instructions -h  # get help on parsing dose instructions
 ### 📦 I want to develop the `di_parser` package 
 
 1.  Clone this repository
-1.  Add a file called called `secrets.env` in the top level of the cloned    repository with the following contents:
+2.  Add a file called called `secrets.env` in the top level of the cloned    repository with the following contents:
 
     ```bash
     export DI_FILEPATH="</path/to/model/folder>"
@@ -136,18 +136,18 @@ parse_dose_instructions -h  # get help on parsing dose instructions
 
     This sets the environment variable `DI_FILEPATH` where the code will read/write models. If you are working within Public Health Scotland please contact
     [phs.edris@phs.scot](mailto:phs.edris@phs.scot) to receive the filepath. 
-1. Create new conda environment and activate: 
+3. Create new conda environment and activate: 
     ```bash
     conda create -n di-dev
     conda activate di-dev
     ```
-1. Install package using editable pip install and development dependencies: 
+4. Install package using editable pip install and development dependencies: 
     ```bash
     python -m pip install -e dose_instruction_parser[dev]
     ```
-    > [!IMPORTANT]
-    > Make sure you run this from the top directory of the repository
-1. Get developing! 
+  > [!IMPORTANT]
+  > Make sure you run this from the top directory of the repository
+5. Get developing! 
 
 ## 🔍 Further information
 
