@@ -50,9 +50,9 @@ StructuredDI(inputID=None, text='125mg three times daily', form='mg', dosageMin=
 
 ## Contents
 
-1. [📁 Folder structure](#folder-structure)
-1. [💿 Installation and Setup](#installation-and-setup)
-1. [🔍 Further information](#further-information)
+1. [📁 Folder structure](#📁-folder-structure)
+1. [💿 Installation and Setup](#💿-installation-and-setup)
+1. [🔍 Further information](#🔍-further-information)
 
 ## 📁 Folder structure
 
