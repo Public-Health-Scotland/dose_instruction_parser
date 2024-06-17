@@ -59,6 +59,11 @@ When the code is installed, dose instructions can be parsed from the command lin
 ```py
 $ parse_dose_instructions -di "125mg three times daily" -mod "en_edris9"
 
+Logging to command line. Use the --logfile argument to set a log file instead.
+2024-05-28 07:45:49,803 Checking input and output files
+2024-05-28 07:45:49,803 Setting up parser
+2024-05-28 07:46:34,205 Parsing single dose instruction
+
 StructuredDI(inputID=None, text='125mg three times daily', form='mg', dosageMin=125.0, dosageMax=125.0, frequencyMin=3.0, frequencyMax=3.0, frequencyType='Day', durationMin=None, durationMax=None, durationType=None, asRequired=False, asDirected=False)
 ```
 
@@ -120,10 +125,10 @@ If you are an analyst wishing to develop the model or code, see below.
 > This requires a model (e.g. `edris9`) to be installed
 
 ```bash
-conda create -n di          # setup new conda env
-conda activate di           # activate
-pip install di_parser       # install di_parser from PyPI
-parse_dose_instructions -h  # get help on parsing dose instructions
+conda create -n di                        # setup new conda env
+conda activate di                         # activate
+pip install dose_instruction_parser       # install di_parser from PyPI
+parse_dose_instructions -h                # get help on parsing dose instructions
 ```
 
 ### ⏳ I want to develop a model
@@ -148,7 +153,7 @@ parse_dose_instructions -h  # get help on parsing dose instructions
     conda activate model
     ```
 
-### 📦 I want to develop the `di_parser` package 
+### 📦 I want to develop the `dose_instruction_parser` package 
 
 
 1.  Clone this repository
@@ -176,7 +181,7 @@ parse_dose_instructions -h  # get help on parsing dose instructions
 ## 🔍 Further information
 
 * 📓 Check out the documentation at https://public-health-scotland.github.io/dose_instruction_parser/ for more information on how to use and develop the code
-* 💊 See the README in the `dose_instruction_parser` folder for information on the `di_parser` package
+* 💊 See the README in the `dose_instruction_parser` folder for information on the `dose_instruction_parser` package
 * 🔧 See the README in the `doc/sphinx` folder for information on adding to the documentation
 * 👷 See the README in the `.github/workflows` folder for information on GitHub workflows for this repository
 * 📧 Contact [phs.edris@phs.scot](mailto:phs.edris@phs.scot) with any queries

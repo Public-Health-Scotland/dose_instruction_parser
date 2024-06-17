@@ -1,14 +1,14 @@
-# `di_parser`: Dose instructions free text parser for Public Health Scotland
+# `dose_instruction_parser`: Dose instructions free text parser for Public Health Scotland
 
 Current version: "2023.1001-alpha"
 
 📓 Documentation can be found at https://public-health-scotland.github.io/dose_instruction_parser/
 
-* Thie `di_parser` package is for parsing free text dose instructions which accompany NHS prescriptions.
+* The `dose_instruction_parser` package is for parsing free text dose instructions which accompany NHS prescriptions.
 * It draws upon the [`parsigs`](https://pypi.org/project/parsigs/) package, adapting and expanding the code to the context of data held by Public Health Scotland.
-* `di_parser` works by first applying a named entity recogniser (NER) model to identify parts of the text corresponding to different entities, and then using rules to extract structured output. 
-* The default NER model is named `edris9`. This is an extension of the [`med7`](https://www.sciencedirect.com/science/article/abs/pii/S0933365721000798) model, which has the following named entities: form; dosage; frequency; duration; strength; route; drug. `edris9` has the additional entities as_directed and as_required, and has been further trained on approximately 10,000 gold standard examples of NHS dose instructions which were manually tagged by analysts at Public Health Scotland.
-* `edris9` is not currently publicly available. For interested researchers and colleagues in the NHS, please contact the eDRIS team at Public Health Scotland via [phs.edris@phs.scot](mailto:phs.edris@phs.scot). For other users, code to train your own model is available [on GitHub](https://github.com/Public-Health-Scotland/dose_instruction_parser/).
+* `dose_instruction_parser` works by first applying a named entity recogniser (NER) model to identify parts of the text corresponding to different entities, and then using rules to extract structured output. 
+* The default NER model is named `en_edris9`. This is an extension of the [`med7`](https://www.sciencedirect.com/science/article/abs/pii/S0933365721000798) model, which has the following named entities: form; dosage; frequency; duration; strength; route; drug. `en_edris9` has the additional entities as_directed and as_required, and has been further trained on approximately 7,000 gold standard examples of NHS dose instructions which were manually tagged by analysts at Public Health Scotland.
+* `en_edris9` is not currently publicly available. For interested researchers and colleagues in the NHS, please contact the eDRIS team at Public Health Scotland via [phs.edris@phs.scot](mailto:phs.edris@phs.scot). For other users, code to train your own model is available [on GitHub](https://github.com/Public-Health-Scotland/dose_instruction_parser/).
 
 ## Contents
 
@@ -56,10 +56,10 @@ Current version: "2023.1001-alpha"
 > This package is 🚧 not yet available 🚧 on PyPI. This functionality is coming soon!
 
 ```bash
-conda create -n di          # setup new conda env
-conda activate di           # activate
-pip install di_parser       # install di_parser from PyPI
-parse_dose_instructions -h  # get help on parsing dose instructions
+conda create -n di                        # setup new conda env
+conda activate di                         # activate
+pip install dose_instruction_parser       # install di_parser from PyPI
+parse_dose_instructions -h                # get help on parsing dose instructions
 ```
 
 (Optional) Install the `en_edris9` model. Contact [phs.edris@phs.scot](mailto:phs.edris@phs.scot) for access.
