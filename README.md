@@ -12,23 +12,42 @@
 > [!WARNING]
 > This project is a 🚧 work in progress 🚧. We do not recommend you use the code at this stage. Please contact [phs.edris@phs.scot](mailto:phs.edris@phs.scot) with any queries. 
 
-> [!TIP]
+> [!NOTE]
 > 📓 Documentation can be found at https://public-health-scotland.github.io/dose_instruction_parser/
 
-<img alt="Example prescription with dose instruction '125mg three times daily' source: BNF" align="left" style="width: 400px; margin:18px" src="doc/sphinx/source/_static/bnf_prescription_example.png">
 
 This repository contains code for parsing *dose instructions*. These are short pieces of 
 free text written on prescriptions to tell patients how to use their medication. An example
-prescription is shown to the left, with the dose instruction "*125mg three times daily*" highlighted.
+prescription is shown to the below, with the dose instruction "**125mg three times daily**" highlighted.
+
+<img alt="Example prescription with dose instruction '125mg three times daily' source: BNF" style="width: 400px; display: block; margin-left: auto; margin-right: auto" src="doc/sphinx/source/_static/bnf_prescription_example.png">
+<br clear="left"/>
 
 The code is written primarily in Python and consists of two main phases:
 
-1. *Named entity recognition (NER)* using a model trained via the [`spacy`](https://spacy.io)  package to identify phrases linked to key information, e.g. "*three times daily*" is tagged as `FREQUENCY`
+1. *Named entity recognition (NER)* using a model trained via the [`spacy`](https://spacy.io)  package to identify phrases linked to key information, e.g. 
+
+<div class="entities" style="display: flex; justify-content: center; align-items: center; line-height: 2.5; direction: ltr">
+<mark class="entity" style="background: #33FF57; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1; border-radius: 0.35em;">    125 mg
+<span style="font-size: 0.8em; font-weight: bold; line-height: 1; border-radius: 0.35em; vertical-align: middle; margin-left: 0.5rem">DOSAGE</span>
+</mark>
+<mark class="entity" style="background: #33C7FF; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1; border-radius: 0.35em;">
+three times daily
+<span style="font-size: 0.8em; font-weight: bold; line-height: 1; border-radius: 0.35em; vertical-align: middle; margin-left: 0.5rem">FREQUENCY</span>
+</mark>
+</div>
+<br>
+
 2. Rules to extract structured output from the recognised entities, e.g. 
    ```python
+   ...
+   form="mg"
+   dosageMin=125.0
+   dosageMax=125.0
    frequencyMin=3.0
    frequencyMax=3.0
    frequencyType='Day'
+   ...
    ```
 
 Code to create the model (**1.**) can be found in the **model** folder.
@@ -36,7 +55,6 @@ Code to parse dose instructions given a model (**2.**) can be found in the **dos
 
 When the code is installed, dose instructions can be parsed from the command line in the following way:
 
-<br clear="left"/>
 
 ```py
 (di-dev)$ parse_dose_instructions -di "125mg three times daily" -mod "en_edris9"
