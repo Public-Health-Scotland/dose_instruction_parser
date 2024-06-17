@@ -27,13 +27,15 @@ The code is written primarily in Python and consists of two main phases:
 
 1. *Named entity recognition (NER)* using a model trained via the [`spacy`](https://spacy.io)  package to identify phrases linked to key information, e.g. 
 
+![](docs/sphinx/source/_static/tag_example.svg)
+
 <div class="entities" style="display: flex; justify-content: center; align-items: center; line-height: 2.5; direction: ltr">
 <mark class="entity" style="background: #33FF57; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1; border-radius: 0.35em;">    125 mg
-<span style="font-size: 0.8em; font-weight: bold; line-height: 1; border-radius: 0.35em; vertical-align: middle; margin-left: 0.5rem">DOSAGE</span>
+<div style="font-size: 0.8em; font-weight: bold; line-height: 1; border-radius: 0.35em; vertical-align: middle; margin-left: 0.5rem">DOSAGE</div>
 </mark>
 <mark class="entity" style="background: #33C7FF; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1; border-radius: 0.35em;">
 three times daily
-<span style="font-size: 0.8em; font-weight: bold; line-height: 1; border-radius: 0.35em; vertical-align: middle; margin-left: 0.5rem">FREQUENCY</span>
+<div style="font-size: 0.8em; font-weight: bold; line-height: 1; border-radius: 0.35em; vertical-align: middle; margin-left: 0.5rem">FREQUENCY</div>
 </mark>
 </div>
 <br>
