@@ -1,5 +1,5 @@
-Developing the `di_parser` package
-==================================
+Developing the :program:`dose_instruction_parser` package
+=========================================================
 
 If you find a bug or would like to request an enhancement to the code, please open
 an issue on GitHub. If you would like to contribute, please fork this repository

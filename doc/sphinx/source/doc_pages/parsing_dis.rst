@@ -153,7 +153,7 @@ yields the corresponding output
 Usage from Python
 -----------------
 
-For more adaptable usage you can load the package into Python and use it within a script or on the Python prompt. For example, using `iPython <https://pypi.org/project/ipython/>`_`:
+For more adaptable usage you can load the package into Python and use it within a script or on the Python prompt. For example, using `iPython <https://pypi.org/project/ipython/>`_:
 
 .. code:: ipython 
 
