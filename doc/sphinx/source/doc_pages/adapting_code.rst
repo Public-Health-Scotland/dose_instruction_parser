@@ -1,3 +1,5 @@
+.. _`Adapting to similar tasks`:
+
 Adapting the code to similar tasks
 ==================================
 

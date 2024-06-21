@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath('../../dose_instruction_parser/di_parser'))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'di_parser'
+project = 'dose_instruction_parser'
 copyright = '2024, Rosalyn Pearson, Nathalie Thureau, Mark Macartney, John Reid, Johanna Jokio'
 author = 'Rosalyn Pearson, Nathalie Thureau, Mark Macartney, John Reid, Johanna Jokio'
 release = '1.0.0'
