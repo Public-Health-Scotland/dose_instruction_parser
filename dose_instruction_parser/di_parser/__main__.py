@@ -71,8 +71,7 @@ def main():
                 logging.info("Using asynchronous processing")
                 out = dip.parse_many_async(dis, di_info["rowid"].to_list())
         else: 
-            logging.error(f"Input file {args.infile} must be .txt or .csv",
-                          exec_info=True)    
+            logging.error(f"Input file {args.infile} must be .txt or .csv")    
             
         logging.info("Writing output")    
         write_out(dis, out, args.outfile)
@@ -119,7 +118,7 @@ def check_setup(infile, outfile):
     else:
         single_di = False
         if not path.exists(infile):
-            logging.error(f"Input file {infile} does not exist.", exec_info=True)  
+            logging.error(f"Input file {infile} does not exist.")  
         ifname, ifext = path.splitext(infile)
         assert ifext in [".txt", ".csv"], \
             "Input file must be either .txt or .csv"
@@ -149,8 +148,7 @@ def write_out(dis, out, outfile):
                 with open(outfile, "w+") as file:
                     file.write("\n".join(str(i) for i in out))    
             except (OSError, RuntimeError):
-                logging.warning(f"Could not write to file: {outfile}", 
-                    exec_info=True)
+                logging.warning(f"Could not write to file: {outfile}")
         elif fext == ".csv":
             # For csv convert output to dataframe
             logging.info("Converting output to dataframe")
