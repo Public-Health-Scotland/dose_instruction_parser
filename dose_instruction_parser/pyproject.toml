@@ -26,6 +26,7 @@ dependencies = [
     "word2number",
     "inflect",
     "pyspellchecker<=0.5.5",
+    "numpy==1.26.4",
     "pandas>=2.1.2",
     "enlighten>=1.12.4"
 ]
@@ -43,7 +44,8 @@ dev = [
     "sphinx-autobuild",
     "sphinx-copybutton",
     "sphinx_rtd_theme",
-    "bumpver"]
+    "bumpver"
+]
 
 [project.urls]
 #"Homepage" = ""
