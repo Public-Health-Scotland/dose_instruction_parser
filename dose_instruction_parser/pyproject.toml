@@ -30,14 +30,14 @@ dependencies = [
     "pandas>=2.1.2",
     "enlighten>=1.12.4"
 ]
-requires-python = ">=3.9"
+requires-python = "3.11"
 
 [project.optional-dependencies]
 dev = [
     "colorama", 
     "ipython",
     "python-dotenv",
-    "pytest==8.2.1",
+    "pytest",
     "pytest-cov",
     "pytest-md-report",
     "sphinx",
