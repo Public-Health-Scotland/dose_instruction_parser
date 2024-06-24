@@ -1,10 +1,10 @@
-.. _`Development`:
+.. _Development:
 
 Developing the :program:`dose_instruction_parser` package
 =========================================================
 
 If you find a bug or would like to request an enhancement to the code, please open
-an issue on GitHub. If you would like to contribute, please fork this repository
+an issue on `GitHub <https://github.com/Public-Health-Scotland/dose_instruction_parser/issues>`_. If you would like to contribute, please fork this repository
 and open a pull request.
 
 Improving/modifying the existing rules
@@ -20,11 +20,10 @@ is the culmination of all the pre-processing, NER and rule-based post-processing
 Best practice workflow
 ----------------------
 
-* Follow the Installation_ instructions for a development install
+* Follow the :ref:`Installation` instructions for a development install
 * Checkout a new branch
 * Edit the contents of the :file:`dose_instructions_parser` folder 
-* Check the outcome using :program:`parse_dose_instructions` on the command line, or by importing 
-   the local :mod:`dose_instruction_parser` package and running from python 
+* Check the outcome using :program:`parse_dose_instructions` on the command line, or by importing the local :mod:`dose_instruction_parser` package and running from python 
 * Add comments for other developers
 * Add docstrings for code users
 * Make sure you update any tests in :file:`parse_dose_instructions/di_parser/tests`

@@ -1,4 +1,4 @@
-.. _`Installation`:
+.. _Installation:
 
 Installation
 ============
@@ -24,7 +24,7 @@ Development install
 -------------------
 
 #.  Clone this repository
-#.  Add a file called called :program:`secrets.env` in the top level of the cloned repository with the following contents:
+#.  Add a file called called :file:`secrets.env` in the top level of the cloned repository with the following contents:
     
     .. code:: bash
 

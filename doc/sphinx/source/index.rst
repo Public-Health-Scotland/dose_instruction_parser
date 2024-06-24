@@ -24,10 +24,9 @@ to apply to the prescribing information free text held by Public Health Scotland
    :maxdepth: 2
    :caption: Contents:
 
-   Home <self>
    doc_pages/installation.rst
-   doc_pages/parsing_dis.rst
    doc_pages/overview.rst
+   doc_pages/parsing_dis.rst
    doc_pages/developing_di_parser.rst
    doc_pages/training_model.rst
    doc_pages/adapting_code.rst

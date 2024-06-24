@@ -1,4 +1,4 @@
-.. _`Overview`:
+.. _Overview:
 
 Overview
 ========
@@ -87,7 +87,7 @@ Stage               Output
 ===============     ========================
 
 The whole process is carried out by the :mod:`dose_instruction_parser` package, available on `PyPI <https://pypi.org/>`_.
-See `Installation`_ and `Parsing dose instructions`_ for information on how to get going.
+See :ref:`Installation` and :ref:`Parsing dose instructions` for information on how to get going.
 
 Project layout
 --------------

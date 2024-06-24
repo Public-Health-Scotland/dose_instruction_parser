@@ -1,9 +1,9 @@
-.. _`Parsing dose instructions`:
+.. _Parsing dose instructions:
 
 Parsing dose instructions
 =========================
 
-Follow the `Installation`_ instructions, then get started using the command line:
+Follow the :ref:`Installation` instructions, then get started using the command line:
 
 .. note::
 
@@ -65,7 +65,8 @@ data frame with one entry per row.
 
 The contents of :file:`out_dis.csv` is as follows:
 
-.. code::
+.. csv-table:: Sample output
+   :header-rows: 1
 
     ,inputID,text,form,dosageMin,dosageMax,frequencyMin,frequencyMax,frequencyType,durationMin,durationMax,durationType,asRequired,asDirected
     0,0,daily 2 tabs,tablet,2.0,2.0,1.0,1.0,Day,,,,False,False
