@@ -65,6 +65,5 @@ This is a more involved version of the above. Broadly, you will need to
 
 #. Create tagged training data with all the named entities you are interested in
 #. Train a model following :ref:`Training a model`
-#. Heavily alter the :file:`dose_instruction_parser/di_parser` code to process the output
-   in the way you want.
+#. Heavily alter the :file:`dose_instruction_parser/di_parser` code to process the output in the way you want.
 
