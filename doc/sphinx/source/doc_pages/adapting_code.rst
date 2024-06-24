@@ -1,3 +1,5 @@
+.. _Adapting to similar tasks:
+
 Adapting the code to similar tasks
 ==================================
 
@@ -9,7 +11,7 @@ Parsing dose instructions for specific drugs or conditions
 
 The :program:`en_edris9` model was trained on a balanced set of data covering the whole of national prescribing information. This makes the model a
 good "all rounder" when it comes to performance. If you are interested in a specific subset of drugs or conditions, you should be able to boost
-performance by further training the model on this subset of data. To do this, follow instructions in the TrainingModel_ section, taking care to: 
+performance by further training the model on this subset of data. To do this, follow instructions in the :ref:`Training a model` section, taking care to: 
 
 1. Create training data for the types of dose instruction you are interested in
 1. Install the :program:`en_edris9` model (if you don't have access you can use :program:`en_core_med7_lg`, obtained following the instructions `here <https://github.com/kormilitzin/med7>`_)
@@ -41,11 +43,9 @@ asDirected          True/False: Whether to take as directed
 
 Changing this output requires three main steps:
 
-1. Create new training data tagged with all the named entities you are interested in. You can add new entities here e.g. "AS_REQUIRED" and "AS_DIRECTED" were new entities surplus to those in `med7`
-1. Make sure that :code:`overwrite_ents = True` in the :code:`\[components.ner\]` section of :file:`model/config/config.cfg`, then train a new model following TrainingModel_
-1. Modify :file:`dose_instruction_parser/di_parser` code to process the new entities into the output you desire.
-   This process is more or less involved depending on the complexity of the entities. You can use the existing
-   entities as a guide.
+#. Create new training data tagged with all the named entities you are interested in. You can add new entities here e.g. "AS_REQUIRED" and "AS_DIRECTED" were new entities surplus to those in :program:`en_med7`
+#. Make sure that :code:`overwrite_ents = True` in the :code:`\[components.ner\]` section of :file:`model/config/config.cfg`, then train a new model following :ref:`Training a model`
+#. Modify :file:`dose_instruction_parser/di_parser` code to process the new entities into the output you desire. This process is more or less involved depending on the complexity of the entities. You can use the existing entities as a guide.
 
 .. warning::
     Note that you should include training data which is fully representative of the data you
@@ -62,8 +62,8 @@ General application to medical free text parsing
 
 This is a more involved version of the above. Broadly, you will need to
 
-1. Create tagged training data with all the named entities you are interested in
-1. Train a model following TrainingModel_
-1. Heavily alter the :file:`dose_instruction_parser/di_parser` code to process the output
-   in the way you want.
+
+#. Create tagged training data with all the named entities you are interested in
+#. Train a model following :ref:`Training a model`
+#. Heavily alter the :file:`dose_instruction_parser/di_parser` code to process the output in the way you want.
 

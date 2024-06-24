@@ -26,15 +26,26 @@ dependencies = [
     "word2number",
     "inflect",
     "pyspellchecker<=0.5.5",
-    "pandas",
+    "numpy==1.26.4",
+    "pandas>=2.1.2",
     "enlighten>=1.12.4"
 ]
 requires-python = ">=3.9"
 
 [project.optional-dependencies]
-dev = ["colorama", "ipython", "python-dotenv", "pytest", "pytest-cov", "pytest-md-report",
-        "sphinx", "sphinx-autobuild", "sphinx-copybutton", "sphinx_rtd_theme",
-        "bumpver"]
+dev = [
+    "colorama", 
+    "ipython",
+    "python-dotenv",
+    "pytest",
+    "pytest-cov",
+    "pytest-md-report",
+    "sphinx",
+    "sphinx-autobuild",
+    "sphinx-copybutton",
+    "sphinx_rtd_theme",
+    "bumpver"
+]
 
 [project.urls]
 #"Homepage" = ""

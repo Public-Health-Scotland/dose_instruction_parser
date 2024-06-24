@@ -20,18 +20,17 @@ and Prescribing Team. The tool has drawn heavily upon the
 `parsigs <https://github.com/royashcenazi/parsigs>`_ projects, adapted and extended
 to apply to the prescribing information free text held by Public Health Scotland.
 
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    doc_pages/installation.rst
-   doc_pages/quickstart.rst
    doc_pages/overview.rst
    doc_pages/parsing_dis.rst
    doc_pages/developing_di_parser.rst
    doc_pages/training_model.rst
    doc_pages/adapting_code.rst
+   di_parser module reference <modules/di_parser/modules.rst>
 
 Indices and tables
 ==================
