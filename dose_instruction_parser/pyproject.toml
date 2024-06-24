@@ -26,7 +26,7 @@ dependencies = [
     "word2number",
     "inflect",
     "pyspellchecker<=0.5.5",
-    "numpy<=2",
+    "numpy==1.26.4",
     "pandas>=2.1.2",
     "enlighten>=1.12.4"
 ]
