@@ -90,6 +90,10 @@ which outputs tagged dose instructions in :file:`.json` format. An example of a 
       ]
    }
 
+The numbers alongside each entity refer to the start and end positions of the entity in the text (where numbers start counting from 0). 
+For example, for "1 tab in the morning", the the **FORM** entity is recorded as :program:`[2,5,"FORM"]` which corresponds to the 2nd up to but not
+including the 5th character in the text, e.g. "tab".
+
 Cross check tagging
 '''''''''''''''''''
 
@@ -142,8 +146,7 @@ things to note about the contents:
   in evaluating training performance. Available measures are precision, recall and 
   `F-score <https://en.wikipedia.org/wiki/F-score>`_ (the harmonic mean of precision and recall). 
 
-Model training logs will be saved to a :file:`logs`` folder within your :program:`DI_FILEPATH`. Training typically
-takes a few hours.  
+Model training logs will be saved to a :file:`logs`` folder within your :program:`DI_FILEPATH`.
 
 Model performance
 ^^^^^^^^^^^^^^^^^
