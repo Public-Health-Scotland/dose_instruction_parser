@@ -101,7 +101,7 @@ The :program:`inputID` value helps to keep track of which outputs correspond to 
 
 You may want to provide your own values for :program:`inputID`. To do this, provide input dose instructions as a :file:`.csv` file with columns 
 
-* :program:`rowid` specifying the input ID
+* :program:`inputID` specifying the input ID
 * :program:`di` specifying the dose instruction
 
 For example, using :file:`test.csv` with the following contents:
@@ -109,7 +109,7 @@ For example, using :file:`test.csv` with the following contents:
 .. csv-table:: Sample input
    :header-rows: 1
     
-    rowid,di
+    inputID,di
     eDRIS/XXXX-XXXX/example/001,daily 2 caps
     eDRIS/XXXX-XXXX/example/002,daily 0.2ml
     eDRIS/XXXX-XXXX/example/003,two mane + two nocte

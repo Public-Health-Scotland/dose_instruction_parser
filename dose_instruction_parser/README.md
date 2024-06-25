@@ -180,13 +180,13 @@ The `inputID` value helps to keep track of which outputs correspond to which inp
 
 You may want to provide your own values for `inputID`. To do this, provide input dose instructions as a **.csv** file with columns 
 
-* `rowid` specifying the input ID
+* `inputID` specifying the input ID
 * `di` specifying the dose instruction
 
 For example, using `test.csv` with the following contents:
 
 ```
-rowid,di
+inputID,di
 eDRIS/XXXX-XXXX/example/001,daily 2 caps
 eDRIS/XXXX-XXXX/example/002,daily 0.2ml
 eDRIS/XXXX-XXXX/example/003,two mane + two nocte

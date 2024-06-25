@@ -64,12 +64,12 @@ def main():
             dis = di_info["di"].to_list()
             if args.parallel == 'True':
                 logging.info("Using multiprocessing")
-                out = dip.parse_many_mp(dis, di_info["rowid"].to_list())
+                out = dip.parse_many_mp(dis, di_info["inputID"].to_list())
             elif args.parallel == 'False':  
-                out = dip.parse_many(dis, di_info["rowid"].to_list())
+                out = dip.parse_many(dis, di_info["inputID"].to_list())
             elif args.parallel == 'async':
                 logging.info("Using asynchronous processing")
-                out = dip.parse_many_async(dis, di_info["rowid"].to_list())
+                out = dip.parse_many_async(dis, di_info["inputID"].to_list())
         else: 
             logging.error(f"Input file {args.infile} must be .txt or .csv")    
             
@@ -125,8 +125,8 @@ def check_setup(infile, outfile):
         if ifext == ".csv":
             # Check col names are correct
             cols = pd.read_csv(infile, nrows=1).columns.tolist()
-            assert set(cols) == set(["rowid", "di"]), \
-                f"Input .csv file must have columns 'rowid' and 'di'. Detected columns: {cols}."
+            assert set(cols) == set(["inputID", "di"]), \
+                f"Input .csv file must have columns 'inputID' and 'di'. Detected columns: {cols}."
     # Output
     if outfile is None:
         ofext = None
