@@ -154,7 +154,7 @@ def write_out(dis, out, outfile):
             logging.info("Converting output to dataframe")
             df = pd.DataFrame(out)
             logging.info(f"Saving out to {outfile}")
-            df.to_csv(outfile)
+            df.to_csv(outfile, index=False)
 
 class StreamToLogger(object):
     """
