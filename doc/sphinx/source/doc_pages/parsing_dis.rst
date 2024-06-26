@@ -123,7 +123,15 @@ For example, using :file:`test.csv` with the following contents:
     eDRIS/XXXX-XXXX/example/011,one to be taken twice a day  if sleepy do not drive/use machines. avoid alcohol. swallow whole.
     eDRIS/XXXX-XXXX/example/012,1 tab take as required
     eDRIS/XXXX-XXXX/example/013,take one daily for allergy
-    eDRIS/XXXX-XXXX/example/014,one daily when required
+    eDRIS/XXXX-XXXX/example/014,2x5ml spoonfuls with meals
+    eDRIS/XXXX-XXXX/example/015,one per month
+    eDRIS/XXXX-XXXX/example/016,1 cappful every four weeks
+    eDRIS/XXXX-XXXX/example/017,take two every 4-6hrs for pain
+    eDRIS/XXXX-XXXX/example/018,up to qid prn
+    eDRIS/XXXX-XXXX/example/019,one or two tabs dissolved in a glass of water at night
+    eDRIS/XXXX-XXXX/example/020,bid-tid
+    eDRIS/XXXX-XXXX/example/021,change every 2 weeks
+    eDRIS/XXXX-XXXX/example/022,take every fortnight
 
 yields the corresponding output
 
@@ -145,7 +153,15 @@ yields the corresponding output
     eDRIS/XXXX-XXXX/example/011,one to be taken twice a day  if sleepy do not drive/use machines. avoid alcohol. swallow whole.,,1.0,1.0,2.0,2.0,Day,,,,False,False
     eDRIS/XXXX-XXXX/example/012,1 tab take as required,tablet,1.0,1.0,,,,,,,True,False
     eDRIS/XXXX-XXXX/example/013,take one daily for allergy,,1.0,1.0,1.0,1.0,Day,,,,False,False
-    eDRIS/XXXX-XXXX/example/014,one daily when required,,1.0,1.0,1.0,1.0,Day,,,,True,False
+    eDRIS/XXXX-XXXX/example/014,2x5ml spoonfuls with meals,ml,10.0,10.0,3.0,3.0,Day,,,,False,False
+    eDRIS/XXXX-XXXX/example/015,one per month,,1.0,1.0,1.0,1.0,Month,,,,False,False
+    eDRIS/XXXX-XXXX/example/016,1 cappful every four weeks,capful,1.0,1.0,1.0,1.0,Month,,,,False,False
+    eDRIS/XXXX-XXXX/example/017,take two every 4-6hrs for pain,,2.0,2.0,1.0,1.0,4 Hour,,,,True,False
+    eDRIS/XXXX-XXXX/example/018,up to qid prn,,,,0.0,4.0,Day,,,,True,False
+    eDRIS/XXXX-XXXX/example/019,one or two tabs dissolved in a glass of water at night,tablet,1.0,2.0,1.0,1.0,Day,,,,False,False
+    eDRIS/XXXX-XXXX/example/020,bid-tid,,,,2.0,3.0,Day,,,,False,False
+    eDRIS/XXXX-XXXX/example/021,change every 2 weeks,,,,1.0,1.0,2 Week,,,,False,False
+    eDRIS/XXXX-XXXX/example/022,take every fortnight,,,,1.0,1.0,2 Week,,,,False,False
 
 .. note::
 
