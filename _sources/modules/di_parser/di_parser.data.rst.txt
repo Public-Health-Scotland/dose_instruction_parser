@@ -1,0 +1,10 @@
+di\_parser.data package
+=======================
+
+Module contents
+---------------
+
+.. automodule:: di_parser.data
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,61 @@
+di\_parser.tests package
+========================
+
+Submodules
+----------
+
+di\_parser.tests.conftest module
+--------------------------------
+
+.. automodule:: di_parser.tests.conftest
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+di\_parser.tests.test\_dosage module
+------------------------------------
+
+.. automodule:: di_parser.tests.test_dosage
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+di\_parser.tests.test\_duration module
+--------------------------------------
+
+.. automodule:: di_parser.tests.test_duration
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+di\_parser.tests.test\_frequency module
+---------------------------------------
+
+.. automodule:: di_parser.tests.test_frequency
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+di\_parser.tests.test\_parser module
+------------------------------------
+
+.. automodule:: di_parser.tests.test_parser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+di\_parser.tests.test\_prepare module
+-------------------------------------
+
+.. automodule:: di_parser.tests.test_prepare
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: di_parser.tests
+   :members:
+   :undoc-members:
+   :show-inheritance:

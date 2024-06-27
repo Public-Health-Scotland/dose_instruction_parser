@@ -1,0 +1,62 @@
+di\_parser package
+==================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   di_parser.data
+   di_parser.tests
+
+Submodules
+----------
+
+di\_parser.di\_dosage module
+----------------------------
+
+.. automodule:: di_parser.di_dosage
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+di\_parser.di\_duration module
+------------------------------
+
+.. automodule:: di_parser.di_duration
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+di\_parser.di\_frequency module
+-------------------------------
+
+.. automodule:: di_parser.di_frequency
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+di\_parser.di\_prepare module
+-----------------------------
+
+.. automodule:: di_parser.di_prepare
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+di\_parser.parser module
+------------------------
+
+.. automodule:: di_parser.parser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: di_parser
+   :members:
+   :undoc-members:
+   :show-inheritance:
