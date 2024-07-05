@@ -6,9 +6,9 @@
 		<source>/home/runner/work/dose_instruction_parser/dose_instruction_parser/dose_instruction_parser</source>
 	</sources>
 	<packages>
-		<package name="di_parser" line-rate="0.9325" branch-rate="0.9234" complexity="0">
+		<package name="dose_instruction_parser" line-rate="0.9325" branch-rate="0.9234" complexity="0">
 			<classes>
-				<class name="di_dosage.py" filename="di_parser/di_dosage.py" complexity="0" line-rate="0.9194" branch-rate="0.8929">
+				<class name="di_dosage.py" filename="dose_instruction_parser/di_dosage.py" complexity="0" line-rate="0.9194" branch-rate="0.8929">
 					<methods/>
 					<lines>
 						<line number="1" hits="1"/>
@@ -75,7 +75,7 @@
 						<line number="153" hits="1"/>
 					</lines>
 				</class>
-				<class name="di_duration.py" filename="di_parser/di_duration.py" complexity="0" line-rate="0.8261" branch-rate="0.8">
+				<class name="di_duration.py" filename="dose_instruction_parser/di_duration.py" complexity="0" line-rate="0.8261" branch-rate="0.8">
 					<methods/>
 					<lines>
 						<line number="1" hits="1"/>
@@ -103,7 +103,7 @@
 						<line number="43" hits="1"/>
 					</lines>
 				</class>
-				<class name="di_frequency.py" filename="di_parser/di_frequency.py" complexity="0" line-rate="0.927" branch-rate="0.9281">
+				<class name="di_frequency.py" filename="dose_instruction_parser/di_frequency.py" complexity="0" line-rate="0.927" branch-rate="0.9281">
 					<methods/>
 					<lines>
 						<line number="1" hits="1"/>
@@ -341,7 +341,7 @@
 						<line number="498" hits="1"/>
 					</lines>
 				</class>
-				<class name="di_prepare.py" filename="di_parser/di_prepare.py" complexity="0" line-rate="0.9878" branch-rate="1">
+				<class name="di_prepare.py" filename="dose_instruction_parser/di_prepare.py" complexity="0" line-rate="0.9878" branch-rate="1">
 					<methods/>
 					<lines>
 						<line number="1" hits="1"/>
@@ -430,9 +430,9 @@
 				</class>
 			</classes>
 		</package>
-		<package name="di_parser.tests" line-rate="1" branch-rate="1" complexity="0">
+		<package name="dose_instruction_parser.tests" line-rate="1" branch-rate="1" complexity="0">
 			<classes>
-				<class name="conftest.py" filename="di_parser/tests/conftest.py" complexity="0" line-rate="1" branch-rate="1">
+				<class name="conftest.py" filename="dose_instruction_parser/tests/conftest.py" complexity="0" line-rate="1" branch-rate="1">
 					<methods/>
 					<lines>
 						<line number="1" hits="1"/>
@@ -442,7 +442,7 @@
 						<line number="11" hits="1"/>
 					</lines>
 				</class>
-				<class name="test_dosage.py" filename="di_parser/tests/test_dosage.py" complexity="0" line-rate="1" branch-rate="1">
+				<class name="test_dosage.py" filename="dose_instruction_parser/tests/test_dosage.py" complexity="0" line-rate="1" branch-rate="1">
 					<methods/>
 					<lines>
 						<line number="1" hits="1"/>
@@ -465,7 +465,7 @@
 						<line number="55" hits="1"/>
 					</lines>
 				</class>
-				<class name="test_duration.py" filename="di_parser/tests/test_duration.py" complexity="0" line-rate="1" branch-rate="1">
+				<class name="test_duration.py" filename="dose_instruction_parser/tests/test_duration.py" complexity="0" line-rate="1" branch-rate="1">
 					<methods/>
 					<lines>
 						<line number="1" hits="1"/>
@@ -475,7 +475,7 @@
 						<line number="12" hits="1"/>
 					</lines>
 				</class>
-				<class name="test_frequency.py" filename="di_parser/tests/test_frequency.py" complexity="0" line-rate="1" branch-rate="1">
+				<class name="test_frequency.py" filename="dose_instruction_parser/tests/test_frequency.py" complexity="0" line-rate="1" branch-rate="1">
 					<methods/>
 					<lines>
 						<line number="1" hits="1"/>
@@ -513,7 +513,7 @@
 						<line number="120" hits="1"/>
 					</lines>
 				</class>
-				<class name="test_prepare.py" filename="di_parser/tests/test_prepare.py" complexity="0" line-rate="1" branch-rate="1">
+				<class name="test_prepare.py" filename="dose_instruction_parser/tests/test_prepare.py" complexity="0" line-rate="1" branch-rate="1">
 					<methods/>
 					<lines>
 						<line number="1" hits="1"/>
