@@ -14,7 +14,7 @@ Basic install
 
     conda create -n di                        # setup new conda env
     conda activate di                         # activate
-    pip install dose_instruction_parser       # install di_parser from PyPI
+    pip install dose_instruction_parser       # install dose_instruction_parser from PyPI
     parse_dose_instructions -h                # get help on parsing dose instructions
 
 

@@ -104,10 +104,10 @@ Project layout
    ┃ ┃ ┣ 📂source
    ┃ ┃ ┃ ┣ 📂doc_pages
    ┃ ┃ ┃ ┣ 📂modules
-   ┃ ┃ ┃ ┃ ┗ 📂di_parser
+   ┃ ┃ ┃ ┃ ┗ 📂dose_instruction_parser
    ┃ ┃ ┃ ┣ 📂_static
    ┣ 📂dose_instruction_parser   # package for parsing dose instructions
-   ┃ ┣ 📂di_parser
+   ┃ ┣ 📂dose_instruction_parser
    ┃ ┃ ┣ 📂data
    ┃ ┃ ┣ 📂tests
    ┣ 📂model                     # code for creating NER model

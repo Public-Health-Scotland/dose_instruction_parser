@@ -1,5 +1,5 @@
 import pytest
-from di_parser import di_duration
+from dose_instruction_parser import di_duration
 
 @pytest.mark.parametrize("before, after", [
     ("for 5 weeks", (5.0, 5.0, "Week")),

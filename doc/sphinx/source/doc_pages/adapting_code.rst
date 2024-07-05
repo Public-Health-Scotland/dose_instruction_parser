@@ -3,7 +3,7 @@
 Adapting the code to similar tasks
 ==================================
 
-The :program:`en_edris9` model and :program:`di_parser` package have been tailored to the problem of parsing free text dose instructions from prescriptions. 
+The :program:`en_edris9` model and :program:`dose_instruction_parser` package have been tailored to the problem of parsing free text dose instructions from prescriptions. 
 However, the code can be used as a starting point to solve similar problems.
 
 Parsing dose instructions for specific drugs or conditions
@@ -45,7 +45,7 @@ Changing this output requires three main steps:
 
 #. Create new training data tagged with all the named entities you are interested in. You can add new entities here e.g. "AS_REQUIRED" and "AS_DIRECTED" were new entities surplus to those in :program:`en_med7`
 #. Make sure that :code:`overwrite_ents = True` in the :code:`\[components.ner\]` section of :file:`model/config/config.cfg`, then train a new model following :ref:`Training a model`
-#. Modify :file:`dose_instruction_parser/di_parser` code to process the new entities into the output you desire. This process is more or less involved depending on the complexity of the entities. You can use the existing entities as a guide.
+#. Modify :file:`dose_instruction_parser/dose_instruction_parser` code to process the new entities into the output you desire. This process is more or less involved depending on the complexity of the entities. You can use the existing entities as a guide.
 
 .. warning::
     Note that you should include training data which is fully representative of the data you
@@ -65,5 +65,5 @@ This is a more involved version of the above. Broadly, you will need to
 
 #. Create tagged training data with all the named entities you are interested in
 #. Train a model following :ref:`Training a model`
-#. Heavily alter the :file:`dose_instruction_parser/di_parser` code to process the output in the way you want.
+#. Heavily alter the :file:`dose_instruction_parser/dose_instruction_parser` code to process the output in the way you want.
 

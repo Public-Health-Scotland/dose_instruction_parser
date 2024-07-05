@@ -1,12 +1,12 @@
 [paths]
 source =
-   di_parser
+   dose_instruction_parser
 
 [run]
 branch = true
 parallel = true
 source =
-    di_parser
+    dose_instruction_parser
 
 [report]
 omit = 

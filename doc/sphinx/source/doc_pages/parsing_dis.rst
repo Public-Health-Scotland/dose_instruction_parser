@@ -175,7 +175,7 @@ For more adaptable usage you can load the package into Python and use it within 
 .. code:: ipython 
 
     In [1]: import pandas as pd
-   ...: from di_parser import parser
+   ...: from dose_instruction_parser import parser
 
     In [2]: # Create parser
     ...: p = parser.DIParser("en_edris9")

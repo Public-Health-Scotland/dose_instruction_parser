@@ -21,7 +21,7 @@ Current version: "2023.1001-alpha"
 
 ```
 📦dose_instruction_parser
- ┣ 📂di_parser                  # source code
+ ┣ 📂dose_instruction_parser                  # source code
  ┃ ┣ 📂data                     
  ┃ ┃ ┣ 📜keep_words.txt         # key words which won't be spellchecked
  ┃ ┃ ┣ 📜replace_words.csv      # key words to replace 
@@ -58,7 +58,7 @@ Current version: "2023.1001-alpha"
 ```bash
 conda create -n di                        # setup new conda env
 conda activate di                         # activate
-pip install dose_instruction_parser       # install di_parser from PyPI
+pip install dose_instruction_parser       # install dose_instruction_parser from PyPI
 parse_dose_instructions -h                # get help on parsing dose instructions
 ```
 
@@ -248,7 +248,7 @@ For more adaptable usage you can load the package into Python and use it within 
 
 ```python
 In [1]: import pandas as pd
-   ...: from di_parser import parser
+   ...: from dose_instruction_parser import parser
 
 In [2]: # Create parser
    ...: p = parser.DIParser("en_edris9")

@@ -14,7 +14,7 @@ To convert named entities to the desired structured output we take a rule-based 
 for parsing dose instructions.
 
 There are different modules in the :mod:`dose_instruction_parser` package which deal with different entities. Some of the named entities (ROUTE, DRUG, STRENGTH) are not processed here because this
-is information which is separately stored for prescriptions so we don't need to extract it from the dose instructions. The :program:`DIParser` class in :mod:`di_parser.parser` 
+is information which is separately stored for prescriptions so we don't need to extract it from the dose instructions. The :program:`DIParser` class in :mod:`dose_instruction_parser.parser` 
 is the culmination of all the pre-processing, NER and rule-based post-processing.
 
 Best practice workflow
@@ -26,7 +26,7 @@ Best practice workflow
 * Check the outcome using :program:`parse_dose_instructions` on the command line, or by importing the local :mod:`dose_instruction_parser` package and running from python 
 * Add comments for other developers
 * Add docstrings for code users
-* Make sure you update any tests in :file:`parse_dose_instructions/di_parser/tests`
+* Make sure you update any tests in :file:`parse_dose_instructions/dose_instruction_parser/tests`
 * Consider updating the documentation
 * Commit and push changes to Github
 * Open a pull request for your branch
@@ -37,11 +37,11 @@ Tips and tricks
 
 * Try using an IPython prompt to explore the code in its present state
   (type `ipython` in the Terminal to bring up the prompt). Then for example
-  to test the :mod:`di_parser.di_frequency.get_frequency_info` function
+  to test the :mod:`dose_instruction_parser.di_frequency.get_frequency_info` function
 
   .. code:: python
 
-    >>> from di_parser.di_frequency import get_frequency_info
+    >>> from dose_instruction_parser.di_frequency import get_frequency_info
     >>> get_frequency_info("twice daily")
 
     (2.0, 2.0, 'Day')
@@ -52,7 +52,7 @@ Tips and tricks
 
   .. code:: python
 
-    >>> from di_parser import parser
+    >>> from dose_instruction_parser import parser
     >>> p = parser.DIParser("en_edris9")
     >>> # Make some changes to the parser module
     >>> p = parser.DIParser("en_edris9") # changes won't have loaded

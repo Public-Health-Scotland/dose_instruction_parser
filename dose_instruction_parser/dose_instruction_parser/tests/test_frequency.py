@@ -1,6 +1,6 @@
 import pytest
-from di_parser import di_frequency
-from di_parser.tests.conftest import DIS_SMALL
+from dose_instruction_parser import di_frequency
+from dose_instruction_parser.tests.conftest import DIS_SMALL
 
 @pytest.mark.parametrize("before, after", [
     ("five tabletts", None),
