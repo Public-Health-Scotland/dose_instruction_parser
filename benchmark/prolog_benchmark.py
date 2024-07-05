@@ -1,14 +1,14 @@
 """ 
 Benchmarking against the prolog test examples
 
-Step 1: Read in prolog test examples and reformat for di_parser
-Step 2: Run di_parser on all the examples 
+Step 1: Read in prolog test examples and reformat for dose_instruction_parser
+Step 2: Run dose_instruction_parser on all the examples 
 Step 3: Calculate test score
 """
 import pandas as pd
 import re
 import warnings
-from dose_instruction_parser.dose_instruction_parser import di_parser as dip
+from dose_instruction_parser.dose_instruction_parser import dose_instruction_parser as dip
 
 from contextlib import contextmanager
 from timeit import default_timer
@@ -21,7 +21,7 @@ def elapsed_timer():
     end = default_timer()
     elapser = lambda: end-start
 
-## Step 1: Read in prolog test examples and reformat for di_parser
+## Step 1: Read in prolog test examples and reformat for dose_instruction_parser
 
 with open("benchmark/new_test.pl", "r") as lex:
     lines = lex.readlines()
@@ -73,19 +73,19 @@ def parse_lex_line(line):
 parsed_lines = [parse_lex_line(line) for line in lines]
 parsed_lines_df = pd.DataFrame(parsed_lines, columns = ["input", "desired_output"])
 
-## Step 2: Run di_parser on all the examples
+## Step 2: Run dose_instruction_parser on all the examples
 model_path = f"{os.getenv('DI_FILEPATH')}/models/"
-di_parser = dip.DIParser(model_name=f"{model_path}/original/model-best")
+dose_instruction_parser = dip.DIParser(model_name=f"{model_path}/original/model-best")
 
-def apply_di_parser(x):
+def apply_dose_instruction_parser(x):
     try:
-        return di_parser.parse(x)
+        return dose_instruction_parser.parse(x)
     except:
         return None
 
 with elapsed_timer() as elapsed:    
-    parsed_lines_df["di_parser_output"] = parsed_lines_df["input"]\
-        .transform(apply_di_parser)
+    parsed_lines_df["dose_instruction_parser_output"] = parsed_lines_df["input"]\
+        .transform(apply_dose_instruction_parser)
 
 def compare_numbers(left, right):
     if (left is None) and (right is None):
@@ -129,7 +129,7 @@ def compare_structured_dis(input, di_1, di_2):
     if len(di_2) != 1:
         warnings.warn(f"Multiple dose instructions detected for di: {input}. Skipping instance.")
         return 0
-    # Output from di_parser is stored in a list
+    # Output from dose_instruction_parser is stored in a list
     di_2 = di_2[0]
     # Form
     attrs = di_1.__annotations__.keys()
@@ -147,7 +147,7 @@ def compare_structured_dis(input, di_1, di_2):
 parsed_lines_df["mismatch"] = parsed_lines_df.apply( 
     lambda x: compare_structured_dis(input = x["input"], 
                                     di_1 = x["desired_output"],
-                                    di_2 = x["di_parser_output"]), axis=1
+                                    di_2 = x["dose_instruction_parser_output"]), axis=1
                                     )
 
 mismatch_counts = parsed_lines_df["mismatch"].value_counts()
@@ -172,5 +172,5 @@ print("Prolog test match: 66% with time 18s")
 for index, row in parsed_lines_df[parsed_lines_df["mismatch"]!=0].iterrows():
     print(row["input"])
     print(row["desired_output"])
-    print(row["di_parser_output"])
+    print(row["dose_instruction_parser_output"])
     print("\n")

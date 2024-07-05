@@ -4,7 +4,7 @@ import logging
 import os
 from dotenv import load_dotenv
 
-from dose_instruction_parser.dose_instruction_parser import di_parser as dip
+from dose_instruction_parser.dose_instruction_parser import dose_instruction_parser as dip
 
 load_dotenv(dotenv_path="secrets.env")
 
@@ -16,13 +16,13 @@ checkfile = f"{os.getenv('DI_FILEPATH')}/data/for tagging/dose_instructions_3_rp
 checklines = [line for line in open(checkfile)]
 
 model_path = f"{os.getenv('DI_FILEPATH')}/models/"
-di_parser = dip.DIParser(model_name=f"{model_path}/original/model-best")
+dose_instruction_parser = dip.DIParser(model_name=f"{model_path}/original/model-best")
 model = spacy.load(f"{model_path}/original/model-best")
 
 with open("benchmark/di_checking.txt", "w+") as outfile:
     for line in checklines:
         try:
-            di = di_parser.parse(line)
+            di = dose_instruction_parser.parse(line)
             ents = dip._get_model_entities_from_text(line, model)
             outfile.write( line + "\n\t" + str(ents) + "\n\t" + str(di) + "\n\n")
         except Exception as e:

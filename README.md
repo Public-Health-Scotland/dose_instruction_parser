@@ -64,7 +64,7 @@ StructuredDI(inputID=None, text='125mg three times daily', form='mg', dosageMin=
 > Code in the `model` folder was used to generate a model for **1.** called `edris9`. This is based on the [med7](https://www.sciencedirect.com/science/article/abs/pii/S0933365721000798) [model](https://huggingface.co/kormilitzin/en_core_med7_lg/tree/main), further trained using examples specific to the prescribing information system data held by Public Health Scotland. Due to information governance, the `edris9` model is not public. Please contact [phs.edris@phs.scot](mailto:phs.edris@phs.scot) if you wish to use the model.
 
 > [!IMPORTANT]
-> The code for the `di_parser` package is based on the [`parsigs`](https://github.com/royashcenazi/parsigs) package. We recommend you have a look at this package if you are not using NHS prescribing data and/or are interested in different structural output. 
+> The code for the `dose_instruction_parser` package is based on the [`parsigs`](https://github.com/royashcenazi/parsigs) package. We recommend you have a look at this package if you are not using NHS prescribing data and/or are interested in different structural output. 
 
 ## Contents
 
@@ -85,10 +85,10 @@ StructuredDI(inputID=None, text='125mg three times daily', form='mg', dosageMin=
  ┃ ┃ ┣ 📂source
  ┃ ┃ ┃ ┣ 📂doc_pages
  ┃ ┃ ┃ ┣ 📂modules
- ┃ ┃ ┃ ┃ ┗ 📂di_parser
+ ┃ ┃ ┃ ┃ ┗ 📂dose_instruction_parser
  ┃ ┃ ┃ ┣ 📂_static
  ┣ 📂dose_instruction_parser   # package for parsing dose instructions
- ┃ ┣ 📂di_parser
+ ┃ ┣ 📂dose_instruction_parser
  ┃ ┃ ┣ 📂data
  ┃ ┃ ┣ 📂tests
  ┣ 📂model                     # code for creating NER model
@@ -120,7 +120,7 @@ If you are an analyst wishing to develop the model or code, see below.
 ```bash
 conda create -n di                        # setup new conda env
 conda activate di                         # activate
-pip install dose_instruction_parser       # install di_parser from PyPI
+pip install dose_instruction_parser       # install dose_instruction_parser from PyPI
 parse_dose_instructions -h                # get help on parsing dose instructions
 ```
 
