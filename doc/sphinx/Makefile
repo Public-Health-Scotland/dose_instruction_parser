@@ -23,6 +23,6 @@ clean:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	@if test $@ != "clean"; then \
-		sphinx-apidoc -o "$(SOURCEDIR)/modules/di_parser" "../../dose_instruction_parser/di_parser/" ;\
+		sphinx-apidoc -o "$(SOURCEDIR)/modules/dose_instruction_parser" "../../dose_instruction_parser/dose_instruction_parser/" ;\
 	fi
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

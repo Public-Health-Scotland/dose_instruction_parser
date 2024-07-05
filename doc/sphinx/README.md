@@ -29,7 +29,7 @@ This runs the `Makefile` and produces the documentation in the `build/index/html
 
 * The `Makefile` sets compilation options such as the source for the documentation (`SOURCEDIR`) and location to build to (`BUILDDIR`)
 * Commands under "`clean`" are run when `make clean` is executed. Note this includes setting up the GitHub pages git worktree
-* [`sphinx-apidoc`](https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html) is used to automatically generate documentation for public functions in the `di_parser` package
+* [`sphinx-apidoc`](https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html) is used to automatically generate documentation for public functions in the `dose_instruction_parser` package
 
 ### Adding to the documentation
 
@@ -53,7 +53,7 @@ This runs the `Makefile` and produces the documentation in the `build/index/html
       doc_pages/overview.rst
   +  doc_pages/your_new_file.rst         # New file added here 
       doc_pages/parsing_dis.rst
-      doc_pages/developing_di_parser.rst
+      doc_pages/developing_dose_instruction_parser.rst
       doc_pages/training_model.rst
       doc_pages/adapting_code.rst
    ```

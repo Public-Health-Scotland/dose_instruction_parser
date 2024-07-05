@@ -6,16 +6,16 @@ Training a new named entity recogniser model
 Pre-processing
 ~~~~~~~~~~~~~~
 
-Pre-processing functions can be found in the :mod:`di_parser.di_prepare` module.
+Pre-processing functions can be found in the :mod:`dose_instruction_parser.di_prepare` module.
 Several operations are performed on the input text to get it ready for 
 the NER model:
 
 #. All parentheses are replaced with a blank space
 #. Hyphens ("-") and slashes ("/" and "\") and replaced with a blank space
 #. Certain keywords are replaced with alternatives e.g. "qad" -> "every other day". 
-   These combinations are listed in :mod:`di_parser.data.replace_words`
+   These combinations are listed in :mod:`dose_instruction_parser.data.replace_words`
 #. Spelling is corrected using the `pyspellchecker <https://pypi.org/project/pyspellchecker/>`_ package.
-   Certain keywords are not corrected. These are listed in :mod:`di_parser.data.keep_words`
+   Certain keywords are not corrected. These are listed in :mod:`dose_instruction_parser.data.keep_words`
 #. Number-words are converted to numbers using the `word2number <https://pypi.org/project/word2number/>`_ package,
    e.g. "two" -> "2"; "half" -> "0.5".
 #. Blank spaces are added around numbers 

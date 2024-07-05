@@ -1,4 +1,4 @@
-.. di_parser documentation master file, created by
+.. dose_instruction_parser documentation master file, created by
    sphinx-quickstart on Fri Mar  1 11:49:16 2024.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -27,10 +27,10 @@ to apply to the prescribing information free text held by Public Health Scotland
    doc_pages/installation.rst
    doc_pages/overview.rst
    doc_pages/parsing_dis.rst
-   doc_pages/developing_di_parser.rst
+   doc_pages/developing_dose_instruction_parser.rst
    doc_pages/training_model.rst
    doc_pages/adapting_code.rst
-   di_parser module reference <modules/di_parser/modules.rst>
+   dose_instruction_parser module reference <modules/dose_instruction_parser/modules.rst>
 
 Indices and tables
 ==================

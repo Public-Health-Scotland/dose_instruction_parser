@@ -6,7 +6,7 @@
 import os
 import sys
 print(sys.executable)
-sys.path.insert(0, os.path.abspath('../../dose_instruction_parser/di_parser'))
+sys.path.insert(0, os.path.abspath('../../dose_instruction_parser/dose_instruction_parser'))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
