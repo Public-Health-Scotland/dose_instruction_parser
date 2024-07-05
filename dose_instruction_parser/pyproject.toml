@@ -52,12 +52,12 @@ dev = [
 #"Bug Tracker" = ""
 
 [project.scripts]
-parse_dose_instructions = "di_parser.__main__:main"
+parse_dose_instructions = "dose_instruction_parser.__main__:main"
 
 [tool.pytest.ini_options]
-pythonpath = ["di_parser"]
-testpaths = ["di_parser/tests"]
-norecursedirs = ["di_parser/data", "build"]
+pythonpath = ["dose_instruction_parser"]
+testpaths = ["dose_instruction_parser/tests"]
+norecursedirs = ["dose_instruction_parser/data", "build"]
 md_report = true
 md_report_verbose = 0
 md_report_color = "auto"
@@ -81,7 +81,7 @@ push = true
     'current_version = "{version}"',
     'version = "{version}"'
 ]
-"di_parser/__init__.py" = [
+"dose_instruction_parser/__init__.py" = [
     '^__version__ = "{version}"$',
 ]
 "README.md" = [

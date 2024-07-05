@@ -1,5 +1,5 @@
 # MANIFEST.in 
 
 include README.md
-include di_parser/data/keep_words.txt
-include di_parser/data/replace_words.csv
+include dose_instruction_parser/data/keep_words.txt
+include dose_instruction_parser/data/replace_words.csv

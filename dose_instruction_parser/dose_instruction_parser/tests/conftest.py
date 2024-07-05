@@ -1,7 +1,7 @@
 import pytest
 from spacy import load
 
-from di_parser.parser import StructuredDI
+from dose_instruction_parser.parser import StructuredDI
 
 DIS_SMALL = ("take 2 tablets twice daily",
             "one puff morning and night",

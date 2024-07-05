@@ -1,5 +1,5 @@
 import pytest
-from di_parser import di_prepare
+from dose_instruction_parser import di_prepare
 
 @pytest.mark.parametrize("misspelt, corrected", [
     ("five tabletts", "five tablets"),

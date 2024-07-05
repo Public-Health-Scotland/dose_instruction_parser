@@ -1,8 +1,8 @@
 import pytest
 from spacy import load
 
-from di_parser import parser
-from di_parser.tests.conftest import (
+from dose_instruction_parser import parser
+from dose_instruction_parser.tests.conftest import (
     DIS_SMALL, OUTPUT_DIS_SMALL
 )
 
