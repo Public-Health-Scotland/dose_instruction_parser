@@ -7,6 +7,7 @@ on:
 permissions:
   id-token: write
   contents: write  # Required to push changes to the repository
+  deployments: write  # Required for GitHub deployments
 
 jobs:
   release:
@@ -51,10 +52,40 @@ jobs:
         python -m build
       working-directory: dose_instruction_parser
 
-    - name: Publish
+    - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         password: ${{ secrets.PYPI_API_TOKEN }}
         packages_dir: dose_instruction_parser/dist
       env:
         TWINE_USERNAME: "__token__"
+
+    - name: Create GitHub deployment
+      id: create_deployment
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const { context, github } = require('@actions/github');
+          const ref = context.ref; // Tag name
+          const environment = 'production'; // or any other environment name
+
+          const response = await github.repos.createDeployment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: ref,
+            required_contexts: [], // Bypass status checks
+            environment: environment,
+            description: 'Deployment triggered by GitHub Actions',
+            transient_environment: false,
+            production_environment: true
+          });
+
+          return response.data.id;
+        result-encoding: string
+        result-format: raw
+
+    - name: Mark deployment as successful
+      if: success()
+      uses: actions/github-script@v6
+      with:
+        script: |
