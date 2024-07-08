@@ -27,7 +27,7 @@ jobs:
     - name: Bump version
       run: |
         NEW_VERSION=${{ github.event.release.tag_name }}
-        bumpver update --new-version $NEW_VERSION
+        bumpver update --set-version $NEW_VERSION
       working-directory: dose_instruction_parser
 
     - name: Commit version bump
