@@ -65,7 +65,6 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          const { context, github } = require('@actions/github');
           const ref = context.ref; // Tag name
           const environment = 'production'; // or any other environment name
 
@@ -89,3 +88,7 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
+          const deployment_id = ${{ steps.create_deployment.outputs.result }};
+          
+          await github.repos.createDeploymentStatus({
+           
