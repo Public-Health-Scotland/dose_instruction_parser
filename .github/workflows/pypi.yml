@@ -13,6 +13,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0  # Ensure the full history is fetched so bumpver can work correctly
+        ref: ${{ github.event.release.target_commitish }}
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -39,7 +40,7 @@ jobs:
         git add dose_instruction_parser/README.md
         git commit -m "Bump version to $NEW_VERSION"
         BRANCH_NAME=${GITHUB_REF#refs/heads/}
-        git push origin HEAD:$BRANCH_NAME
+        git push origin HEAD:${GITHUB_REF#refs/heads/}
 
     - name: Build package
       run: |
