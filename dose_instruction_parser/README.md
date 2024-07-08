@@ -1,6 +1,6 @@
 # `dose_instruction_parser`: Dose instructions free text parser for Public Health Scotland
 
-Current version: "2024.1017-alpha"
+Current version: "2024.1018-alpha"
 
 📓 Documentation can be found at https://public-health-scotland.github.io/dose_instruction_parser/
 📦 Package is available on PyPI at https://pypi.org/project/dose-instruction-parser/
