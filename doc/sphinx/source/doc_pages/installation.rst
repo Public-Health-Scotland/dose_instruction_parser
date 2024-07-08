@@ -6,16 +6,16 @@ Installation
 Basic install
 -------------
 
-.. warning::
+.. note::
 
-    This package is 🚧 not yet available 🚧 on PyPI. This functionality is coming soon!
+    This package is available on PyPI at https://pypi.org/project/dose-instruction-parser/
 
 .. code:: bash
 
-    conda create -n di                        # setup new conda env
-    conda activate di                         # activate
-    pip install dose_instruction_parser       # install dose_instruction_parser from PyPI
-    parse_dose_instructions -h                # get help on parsing dose instructions
+    conda create -n di                                  # setup new conda env
+    conda activate di                                   # activate
+    python -m pip install dose_instruction_parser       # install dose_instruction_parser from PyPI
+    parse_dose_instructions -h                          # get help on parsing dose instructions
 
 
 (Optional) Install the :program:`en_edris9` model. Contact `phs.edris@phs.scot <mailto:phs.edris@phs.scot>`_ for access.

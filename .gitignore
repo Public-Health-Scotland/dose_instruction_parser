@@ -1,5 +1,6 @@
 # Egg info #
 dose_instruction_parser/dose_instruction_parser.egg-info/*
+dose_instruction_parser/dose_instruction_parser_test.egg-info/*
 
 # Build #
 dose_instruction_parser/build/*
