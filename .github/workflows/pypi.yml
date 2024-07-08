@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout default branch
       uses: actions/checkout@v3
       with:
         fetch-depth: 0  # Ensure the full history is fetched so bumpver can work correctly
-        ref: ${{ github.event.release.target_commitish }}
+        ref: main  # Adjust if your default branch is different
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -39,8 +39,7 @@ jobs:
         git add dose_instruction_parser/dose_instruction_parser/__init__.py
         git add dose_instruction_parser/README.md
         git commit -m "Bump version to $NEW_VERSION"
-        BRANCH_NAME=${GITHUB_REF#refs/heads/}
-        git push origin HEAD:${GITHUB_REF#refs/heads/}
+        git push origin HEAD:main  # Push to the main branch
 
     - name: Build package
       run: |
