@@ -2,6 +2,7 @@
   <img src="doc/sphinx/source/_static/phs-logo.png" height=100>
 </div><br>
 
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Public-Health-Scotland/dose_instruction_parser)](https://github.com/Public-Health-Scotland/dose_instruction_parser/releases/latest)
 ![Build status](https://github.com/Public-Health-Scotland/dose_instruction_parser/actions/workflows/tests.yml/badge.svg)
 ![Code Coverage](https://img.shields.io/badge/Code%20Coverage-94%25-success?style=flat)
 [![GitHub issues](https://img.shields.io/github/issues/Public-Health-Scotland/dose_instruction_parser)](https://github.com/Public-Health-Scotland/dose_instruction_parser/issues)
