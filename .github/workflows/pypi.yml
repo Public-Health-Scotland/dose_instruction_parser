@@ -43,6 +43,7 @@ jobs:
         git add dose_instruction_parser/dose_instruction_parser/__init__.py
         git add dose_instruction_parser/README.md
         git commit -m "Bump version to $NEW_VERSION"
+        git pull --rebase origin main  # Pull the latest changes
         git push origin HEAD:main  # Push to the main branch
 
     - name: Build package
