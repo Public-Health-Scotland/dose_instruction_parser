@@ -12,6 +12,7 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    environment: release
 
     steps:
     - name: Checkout default branch
@@ -60,36 +61,4 @@ jobs:
       env:
         TWINE_USERNAME: "__token__"
 
-    - name: Create GitHub deployment
-      id: create_deployment
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const ref = github.context.ref; // Tag name
-          const environment = 'production'; // or any other environment name
-
-          const response = await github.repos.createDeployment({
-            owner: github.context.repo.owner,
-            repo: github.context.repo.repo,
-            ref: ref,
-            required_contexts: [], // Bypass status checks
-            environment: environment,
-            description: 'Deployment triggered by GitHub Actions',
-            transient_environment: false,
-            production_environment: true
-          });
-
-          return response.data.id;
-        result-encoding: string
-        result-format: raw
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Mark deployment as successful
-      if: success()
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const deployment_id = ${{ steps.create_deployment.outputs.result }};
-          
-          await github.repos.createDeploymentStatus({
            
