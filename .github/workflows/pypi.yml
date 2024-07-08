@@ -38,7 +38,8 @@ jobs:
         git add dose_instruction_parser/dose_instruction_parser/__init__.py
         git add dose_instruction_parser/README.md
         git commit -m "Bump version to $NEW_VERSION"
-        git push
+        BRANCH_NAME=${GITHUB_REF#refs/heads/}
+        git push origin HEAD:$BRANCH_NAME
 
     - name: Build package
       run: |
