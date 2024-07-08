@@ -10,10 +10,11 @@
 # 💊📝 Dose instructions parser 💊📝
 
 > [!WARNING]
-> This project is a 🚧 work in progress 🚧. We do not recommend you use the code at this stage. Please contact [phs.edris@phs.scot](mailto:phs.edris@phs.scot) with any queries. 
+> This project is a 🚧 work in progress 🚧, please use the code with caution. Please contact [phs.edris@phs.scot](mailto:phs.edris@phs.scot) with any queries. 
 
 > [!NOTE]
 > 📓 Documentation can be found at https://public-health-scotland.github.io/dose_instruction_parser/
+> 📦 `dose_instruction_parser` package is available on PyPI at https://pypi.org/project/dose-instruction-parser/
 
 
 This repository contains code for parsing *dose instructions*. These are short pieces of 
@@ -111,17 +112,15 @@ If you are a PHS analyst and just want to parse dose instructions you can do thi
 If you are an analyst wishing to develop the model or code, see below.
 
 ### 💊 I just want to parse dose instructions
-> [!WARNING]
-> This package is 🚧 not yet available 🚧 on PyPI. This functionality is coming soon!
 
 > [!IMPORTANT]
 > This requires a model (e.g. `edris9`) to be installed
 
 ```bash
-conda create -n di                        # setup new conda env
-conda activate di                         # activate
-pip install dose_instruction_parser       # install dose_instruction_parser from PyPI
-parse_dose_instructions -h                # get help on parsing dose instructions
+conda create -n di                                  # setup new conda env
+conda activate di                                   # activate
+python -m pip install dose_instruction_parser       # install dose_instruction_parser from PyPI
+parse_dose_instructions -h                          # get help on parsing dose instructions
 ```
 
 ### ⏳ I want to develop a model

@@ -3,6 +3,7 @@
 Current version: "2024.1002-alpha"
 
 📓 Documentation can be found at https://public-health-scotland.github.io/dose_instruction_parser/
+📦 Package is available on PyPI at https://pypi.org/project/dose-instruction-parser/
 
 * The `dose_instruction_parser` package is for parsing free text dose instructions which accompany NHS prescriptions.
 * It draws upon the [`parsigs`](https://pypi.org/project/parsigs/) package, adapting and expanding the code to the context of data held by Public Health Scotland.
@@ -52,14 +53,11 @@ Current version: "2024.1002-alpha"
 
 ### Basic setup
 
-> [!WARNING]
-> This package is 🚧 not yet available 🚧 on PyPI. This functionality is coming soon!
-
 ```bash
-conda create -n di                        # setup new conda env
-conda activate di                         # activate
-pip install dose_instruction_parser       # install dose_instruction_parser from PyPI
-parse_dose_instructions -h                # get help on parsing dose instructions
+conda create -n di                              # setup new conda env
+conda activate di                               # activate
+python -m pip install dose_instruction_parser   # install dose_instruction_parser from PyPI
+parse_dose_instructions -h                      # get help on parsing dose instructions
 ```
 
 (Optional) Install the `en_edris9` model. Contact [phs.edris@phs.scot](mailto:phs.edris@phs.scot) for access.
