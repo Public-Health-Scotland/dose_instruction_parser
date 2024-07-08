@@ -4,6 +4,10 @@ on:
   release:
     types: [published]
 
+permissions:
+  id-token: write
+  contents: write  # Required to push changes to the repository
+
 jobs:
   release:
     runs-on: ubuntu-latest
