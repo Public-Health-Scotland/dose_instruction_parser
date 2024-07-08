@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dose_instruction_parser"
-version = "2024.1018-alpha"
+version = "2024.1019-alpha"
 authors = [
     { name = "Rosalyn Pearson",     email = "rosalyn.pearson@phs.scot"},
     { name = "Nathalie Thureau",    email = "nathalie.thureau@phs.scot"},
@@ -65,7 +65,7 @@ md_report_color = "auto"
 # Bump version
 
 [tool.bumpver]
-current_version = "2024.1018-alpha"
+current_version = "2024.1019-alpha"
 version_pattern = "YYYY.BUILD[-TAG]"
 commit_message = "bump version {old_version} -> {new_version}"
 tag_message = "{new_version}"
