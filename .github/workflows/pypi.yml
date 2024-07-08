@@ -68,7 +68,7 @@ jobs:
           const ref = context.ref; // Tag name
           const environment = 'production'; // or any other environment name
 
-          const response = await github.repos.createDeployment({
+          const response = await octokit.repos.createDeployment({
             owner: context.repo.owner,
             repo: context.repo.repo,
             ref: ref,
@@ -90,5 +90,4 @@ jobs:
         script: |
           const deployment_id = ${{ steps.create_deployment.outputs.result }};
           
-          await github.repos.createDeploymentStatus({
-           
+          await oct
