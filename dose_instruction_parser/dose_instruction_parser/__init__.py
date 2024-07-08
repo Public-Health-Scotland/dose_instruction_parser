@@ -1,1 +1,1 @@
-__version__ = "2024.1019-alpha"
+__version__ = "2024.1020-alpha"
