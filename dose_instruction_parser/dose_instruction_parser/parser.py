@@ -92,11 +92,11 @@ def _parse_di(di: str, model: spacy.Language, input_id=None, pbar=None):
         return _create_structured_dis(di, model_output, input_id)
     except Exception:
         print(f"Error when parsing {di}: {Exception}")
-        return StructuredDI(inputID=input_id, text=di, 
+        return [StructuredDI(inputID=input_id, text=di, 
                             form=None, dosageMin=None, dosageMax=None, 
                             frequencyMin=None, frequencyMax=None, frequencyType=None,
                             durationMin=None, durationMax=None, durationType=None,
-                            asRequired=None, asDirected=None)
+                            asRequired=None, asDirected=None)]
 
 def _parse_dis(di_lst, model: spacy.Language, rowid_lst=None): # pragma: no cover
     """
