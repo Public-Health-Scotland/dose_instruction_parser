@@ -89,7 +89,7 @@ jobs:
         git add coverage/*
         git add README.md
         git commit -m "Updated coverage files"
-        git pull -X ours
+        git pull --rebase origin main  # Pull the latest changes
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:

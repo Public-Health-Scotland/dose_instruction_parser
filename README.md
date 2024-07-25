@@ -6,6 +6,7 @@
 ![Code Coverage](https://img.shields.io/badge/Code%20Coverage-94%25-success?style=flat)
 [![GitHub issues](https://img.shields.io/github/issues/Public-Health-Scotland/dose_instruction_parser)](https://github.com/Public-Health-Scotland/dose_instruction_parser/issues)
 [![GitHub last commit](https://img.shields.io/github/last-commit/Public-Health-Scotland/dose_instruction_parser)](https://github.com/Public-Health-Scotland/dose_instruction_parser/commits/main)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Public-Health-Scotland/dose_instruction_parser)](https://github.com/Public-Health-Scotland/dose_instruction_parser/releases/latest)
 
 # 💊📝 Dose instructions parser 💊📝
 
@@ -14,6 +15,7 @@
 
 > [!NOTE]
 > 📓 Documentation can be found at https://public-health-scotland.github.io/dose_instruction_parser/
+> 
 > 📦 `dose_instruction_parser` package is available on PyPI at https://pypi.org/project/dose-instruction-parser/
 
 
