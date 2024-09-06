@@ -10,7 +10,8 @@ authors = [
     { name = "Nathalie Thureau",    email = "nathalie.thureau@phs.scot"},
     { name = "Mark Macartney",      email = "mark.macartney@phs.scot"},
     { name = "John Reid",           email = "john.reid5@phs.scot"},
-    { name = "Johanna Jokio",       email = "johanna.jokio@phs.scot"}
+    { name = "Johanna Jokio",       email = "johanna.jokio@phs.scot"},
+    { name = "David Bailey",        email = "david.bailey@phs.scot"}
 ]
 description = "Tool for parsing free text prescription dose instructions into structured output"
 readme = "README.md"
