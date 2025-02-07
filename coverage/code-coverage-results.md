@@ -2,8 +2,8 @@
 
 Package | Line Rate | Branch Rate | Health
 -------- | --------- | ----------- | ------
-dose_instruction_parser | 93% | 92% | ✔
+dose_instruction_parser | 93% | 91% | ✔
 dose_instruction_parser.tests | 100% | 100% | ✔
-**Summary** | **94%** (457 / 484) | **94%** (239 / 255) | ✔
+**Summary** | **94%** (457 / 484) | **91%** (154 / 170) | ✔
 
 _Minimum allowed line rate is `60%`_
