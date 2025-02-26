@@ -1,0 +1,62 @@
+dose\_instruction\_parser package
+=================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   dose_instruction_parser.data
+   dose_instruction_parser.tests
+
+Submodules
+----------
+
+dose\_instruction\_parser.di\_dosage module
+-------------------------------------------
+
+.. automodule:: dose_instruction_parser.di_dosage
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+dose\_instruction\_parser.di\_duration module
+---------------------------------------------
+
+.. automodule:: dose_instruction_parser.di_duration
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+dose\_instruction\_parser.di\_frequency module
+----------------------------------------------
+
+.. automodule:: dose_instruction_parser.di_frequency
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+dose\_instruction\_parser.di\_prepare module
+--------------------------------------------
+
+.. automodule:: dose_instruction_parser.di_prepare
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+dose\_instruction\_parser.parser module
+---------------------------------------
+
+.. automodule:: dose_instruction_parser.parser
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: dose_instruction_parser
+   :members:
+   :show-inheritance:
+   :undoc-members:

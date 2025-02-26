@@ -1,0 +1,525 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dose_instruction_parser package &mdash; dose_instruction_parser 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=46e60e98" />
+
+  
+    <link rel="shortcut icon" href="../../_static/favicon_phs.ico"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="dose_instruction_parser.data package" href="dose_instruction_parser.data.html" />
+    <link rel="prev" title="dose_instruction_parser" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/phs-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../doc_pages/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_pages/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_pages/parsing_dis.html">Parsing dose instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_pages/training_model.html">Training a new named entity recogniser model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_pages/adapting_code.html">Adapting the code to similar tasks</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">dose_instruction_parser module reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">dose_instruction_parser package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-dose_instruction_parser.di_dosage">dose_instruction_parser.di_dosage module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-dose_instruction_parser.di_duration">dose_instruction_parser.di_duration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-dose_instruction_parser.di_frequency">dose_instruction_parser.di_frequency module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-dose_instruction_parser.di_prepare">dose_instruction_parser.di_prepare module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-dose_instruction_parser.parser">dose_instruction_parser.parser module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-dose_instruction_parser">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">dose_instruction_parser</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">dose_instruction_parser</a></li>
+      <li class="breadcrumb-item active">dose_instruction_parser package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/modules/dose_instruction_parser/dose_instruction_parser.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="modules.html" class="btn btn-neutral float-left" title="dose_instruction_parser" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dose_instruction_parser.data.html" class="btn btn-neutral float-right" title="dose_instruction_parser.data package" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dose-instruction-parser-package">
+<h1>dose_instruction_parser package<a class="headerlink" href="#dose-instruction-parser-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dose_instruction_parser.data.html">dose_instruction_parser.data package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dose_instruction_parser.data.html#module-dose_instruction_parser.data">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dose_instruction_parser.tests.html">dose_instruction_parser.tests package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dose_instruction_parser.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dose_instruction_parser.tests.html#module-dose_instruction_parser.tests.conftest">dose_instruction_parser.tests.conftest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dose_instruction_parser.tests.html#module-dose_instruction_parser.tests.test_dosage">dose_instruction_parser.tests.test_dosage module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_dosage.test_dosage_info"><code class="docutils literal notranslate"><span class="pre">test_dosage_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_dosage.test_get_continuous_dose"><code class="docutils literal notranslate"><span class="pre">test_get_continuous_dose()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_dosage.test_get_form_from_dosage_tag"><code class="docutils literal notranslate"><span class="pre">test_get_form_from_dosage_tag()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_dosage.test_is_str_float"><code class="docutils literal notranslate"><span class="pre">test_is_str_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_dosage.test_to_singular"><code class="docutils literal notranslate"><span class="pre">test_to_singular()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dose_instruction_parser.tests.html#module-dose_instruction_parser.tests.test_duration">dose_instruction_parser.tests.test_duration module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_duration.test_get_duration_info"><code class="docutils literal notranslate"><span class="pre">test_get_duration_info()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dose_instruction_parser.tests.html#module-dose_instruction_parser.tests.test_frequency">dose_instruction_parser.tests.test_frequency module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_frequency.test_add_frequency_multiple_units"><code class="docutils literal notranslate"><span class="pre">test_add_frequency_multiple_units()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_frequency.test_check_explicit_range"><code class="docutils literal notranslate"><span class="pre">test_check_explicit_range()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_frequency.test_check_min_max_amount"><code class="docutils literal notranslate"><span class="pre">test_check_min_max_amount()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_frequency.test_check_range_from_list"><code class="docutils literal notranslate"><span class="pre">test_check_range_from_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_frequency.test_get_bounding_num"><code class="docutils literal notranslate"><span class="pre">test_get_bounding_num()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_frequency.test_get_frequency_info"><code class="docutils literal notranslate"><span class="pre">test_get_frequency_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_frequency.test_get_frequency_type"><code class="docutils literal notranslate"><span class="pre">test_get_frequency_type()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_frequency.test_get_hourly_adjusted_frequency"><code class="docutils literal notranslate"><span class="pre">test_get_hourly_adjusted_frequency()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_frequency.test_get_latin_frequency"><code class="docutils literal notranslate"><span class="pre">test_get_latin_frequency()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_frequency.test_get_number_of_times"><code class="docutils literal notranslate"><span class="pre">test_get_number_of_times()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dose_instruction_parser.tests.html#module-dose_instruction_parser.tests.test_parser">dose_instruction_parser.tests.test_parser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_parser.test_combine_split_dis"><code class="docutils literal notranslate"><span class="pre">test_combine_split_dis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_parser.test_create_structured_di"><code class="docutils literal notranslate"><span class="pre">test_create_structured_di()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_parser.test_create_structured_dis"><code class="docutils literal notranslate"><span class="pre">test_create_structured_dis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_parser.test_get_model_entities"><code class="docutils literal notranslate"><span class="pre">test_get_model_entities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_parser.test_get_model_entities_from_text"><code class="docutils literal notranslate"><span class="pre">test_get_model_entities_from_text()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_parser.test_parse_di"><code class="docutils literal notranslate"><span class="pre">test_parse_di()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_parser.test_parser"><code class="docutils literal notranslate"><span class="pre">test_parser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_parser.test_split_entities_for_multiple_instructions"><code class="docutils literal notranslate"><span class="pre">test_split_entities_for_multiple_instructions()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dose_instruction_parser.tests.html#module-dose_instruction_parser.tests.test_prepare">dose_instruction_parser.tests.test_prepare module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_prepare.test_autocorrect"><code class="docutils literal notranslate"><span class="pre">test_autocorrect()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_prepare.test_convert_fract_to_num"><code class="docutils literal notranslate"><span class="pre">test_convert_fract_to_num()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_prepare.test_convert_words_to_numbers"><code class="docutils literal notranslate"><span class="pre">test_convert_words_to_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_prepare.test_pad_hyphens_and_slashes"><code class="docutils literal notranslate"><span class="pre">test_pad_hyphens_and_slashes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_prepare.test_pad_numbers"><code class="docutils literal notranslate"><span class="pre">test_pad_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_prepare.test_pre_process"><code class="docutils literal notranslate"><span class="pre">test_pre_process()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_prepare.test_remove_parentheses"><code class="docutils literal notranslate"><span class="pre">test_remove_parentheses()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dose_instruction_parser.tests.html#module-dose_instruction_parser.tests">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-dose_instruction_parser.di_dosage">
+<span id="dose-instruction-parser-di-dosage-module"></span><h2>dose_instruction_parser.di_dosage module<a class="headerlink" href="#module-dose_instruction_parser.di_dosage" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="dose_instruction_parser.di_dosage.get_dosage_info">
+<span class="sig-prename descclassname"><span class="pre">dose_instruction_parser.di_dosage.</span></span><span class="sig-name descname"><span class="pre">get_dosage_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dose_instruction_parser/di_dosage.html#get_dosage_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dose_instruction_parser.di_dosage.get_dosage_info" title="Link to this definition"></a></dt>
+<dd><p>Get information about dosage given a dosage entity text</p>
+<dl class="simple">
+<dt>Input:</dt><dd><dl class="simple">
+<dt>text: str</dt><dd><p>A dosage entity text
+e.g. “2x10ml”, “2-3”, “max 4”</p>
+</dd>
+</dl>
+</dd>
+<dt>Output:</dt><dd><dl class="simple">
+<dt>_min: float</dt><dd><p>The minimum dosage
+e.g. 20.0, 2.0, 0.0</p>
+</dd>
+<dt>_max: float</dt><dd><p>The maximum dosage
+e.g. 20.0, 3.0, 4.0</p>
+</dd>
+<dt>form: str</dt><dd><p>The form of dosage if present
+e.g. “ml”, None, None</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-dose_instruction_parser.di_duration">
+<span id="dose-instruction-parser-di-duration-module"></span><h2>dose_instruction_parser.di_duration module<a class="headerlink" href="#module-dose_instruction_parser.di_duration" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="dose_instruction_parser.di_duration.get_duration_info">
+<span class="sig-prename descclassname"><span class="pre">dose_instruction_parser.di_duration.</span></span><span class="sig-name descname"><span class="pre">get_duration_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dose_instruction_parser/di_duration.html#get_duration_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dose_instruction_parser.di_duration.get_duration_info" title="Link to this definition"></a></dt>
+<dd><p>Get information about duration given a duration entity text</p>
+<dl class="simple">
+<dt>Input:</dt><dd><dl class="simple">
+<dt>text: str</dt><dd><p>A duration entity text
+e.g. “for 5 weeks”, “for up to a year”, “for 2 - 3 months”</p>
+</dd>
+</dl>
+</dd>
+<dt>Output:</dt><dd><dl class="simple">
+<dt>_min: float</dt><dd><p>The minimum duration
+e.g. 5.0, 0.0, 2.0</p>
+</dd>
+<dt>_max: float</dt><dd><p>The maximum duration
+e.g. 5.0, 1.0, 3.0</p>
+</dd>
+<dt>durtype: str</dt><dd><p>The duration type
+e.g. “Week”, “Year”, “Month”</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-dose_instruction_parser.di_frequency">
+<span id="dose-instruction-parser-di-frequency-module"></span><h2>dose_instruction_parser.di_frequency module<a class="headerlink" href="#module-dose_instruction_parser.di_frequency" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="dose_instruction_parser.di_frequency.get_frequency_info">
+<span class="sig-prename descclassname"><span class="pre">dose_instruction_parser.di_frequency.</span></span><span class="sig-name descname"><span class="pre">get_frequency_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dose_instruction_parser/di_frequency.html#get_frequency_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dose_instruction_parser.di_frequency.get_frequency_info" title="Link to this definition"></a></dt>
+<dd><p>Get information about frequency given a frequency entity text</p>
+<dl class="simple">
+<dt>Input:</dt><dd><dl class="simple">
+<dt>text: str</dt><dd><p>A frequency entity text
+e.g. “daily”, “with meals and at bedtime”, “2 to 5 times a week”</p>
+</dd>
+</dl>
+</dd>
+<dt>Output:</dt><dd><dl class="simple">
+<dt>_min: float</dt><dd><p>The minimum number of times per freqtype
+e.g. 1.0, 4.0, 2.0</p>
+</dd>
+<dt>_max: float</dt><dd><p>The maximum number of times per freqtype
+e.g. 1.0, 4.0, 5.0</p>
+</dd>
+<dt>freqtype: str</dt><dd><p>The frequency type
+e.g. “Day”, “Day”, “Week”</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dose_instruction_parser.di_frequency.get_frequency_type">
+<span class="sig-prename descclassname"><span class="pre">dose_instruction_parser.di_frequency.</span></span><span class="sig-name descname"><span class="pre">get_frequency_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frequency</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dose_instruction_parser/di_frequency.html#get_frequency_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dose_instruction_parser.di_frequency.get_frequency_type" title="Link to this definition"></a></dt>
+<dd><p>Gets the frequency type from a frequency string</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><dl class="simple">
+<dt>frequency: str</dt><dd><p>A string for dose instruction frequency
+e.g. “daily”</p>
+</dd>
+</dl>
+</dd>
+<dt>Outputs:</dt><dd><dl class="simple">
+<dt>frequency type: str</dt><dd><p>The type of frequency associated with the dose instruction
+e.g. “Day”</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-dose_instruction_parser.di_prepare">
+<span id="dose-instruction-parser-di-prepare-module"></span><h2>dose_instruction_parser.di_prepare module<a class="headerlink" href="#module-dose_instruction_parser.di_prepare" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="dose_instruction_parser.di_prepare.pre_process">
+<span class="sig-prename descclassname"><span class="pre">dose_instruction_parser.di_prepare.</span></span><span class="sig-name descname"><span class="pre">pre_process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">di</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dose_instruction_parser/di_prepare.html#pre_process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dose_instruction_parser.di_prepare.pre_process" title="Link to this definition"></a></dt>
+<dd><p>Pre-processes a dose instruction before it is sent to the model</p>
+<dl class="simple">
+<dt>Input:</dt><dd><dl class="simple">
+<dt>di: str</dt><dd><p>Dose instruction
+e.g. “take two tabs MORNING and nghit”</p>
+</dd>
+</dl>
+</dd>
+<dt>Output:</dt><dd><dl class="simple">
+<dt>str</dt><dd><p>Pre-processed dose instruction
+e.g. “take 2 tablets morning and night”</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-dose_instruction_parser.parser">
+<span id="dose-instruction-parser-parser-module"></span><h2>dose_instruction_parser.parser module<a class="headerlink" href="#module-dose_instruction_parser.parser" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.DIParser">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dose_instruction_parser.parser.</span></span><span class="sig-name descname"><span class="pre">DIParser</span></span><a class="reference internal" href="../../_modules/dose_instruction_parser/parser.html#DIParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dose_instruction_parser.parser.DIParser" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Dose instruction parser class</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.DIParser.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dose_instruction_parser/parser.html#DIParser.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dose_instruction_parser.parser.DIParser.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.DIParser.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">di</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dose_instruction_parser/parser.html#DIParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dose_instruction_parser.parser.DIParser.parse" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>di</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.DIParser.parse_many">
+<span class="sig-name descname"><span class="pre">parse_many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rowids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dose_instruction_parser/parser.html#DIParser.parse_many"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dose_instruction_parser.parser.DIParser.parse_many" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dis</strong> (<em>list</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.DIParser.parse_many_async">
+<span class="sig-name descname"><span class="pre">parse_many_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rowids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dose_instruction_parser/parser.html#DIParser.parse_many_async"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dose_instruction_parser.parser.DIParser.parse_many_async" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dis</strong> (<em>list</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.DIParser.parse_many_mp">
+<span class="sig-name descname"><span class="pre">parse_many_mp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rowids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dose_instruction_parser/parser.html#DIParser.parse_many_mp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dose_instruction_parser.parser.DIParser.parse_many_mp" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dis</strong> (<em>list</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.StructuredDI">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dose_instruction_parser.parser.</span></span><span class="sig-name descname"><span class="pre">StructuredDI</span></span><a class="reference internal" href="../../_modules/dose_instruction_parser/parser.html#StructuredDI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dose_instruction_parser.parser.StructuredDI" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A structured dose instruction</p>
+<section id="attributes">
+<h3>Attributes:<a class="headerlink" href="#attributes" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>inputID: str</dt><dd><p>ID corresponding to input dose instruction.
+Ensures multiple StructuredDIs coming from the same original
+dose instruction are linkable</p>
+</dd>
+<dt>text: str</dt><dd><p>The free text before parsing</p>
+</dd>
+<dt>form: str</dt><dd><p>The form of drug (e.g. “tablet”, “patch”, “injection”)</p>
+</dd>
+<dt>dosageMin: float</dt><dd><p>The minimum dosage</p>
+</dd>
+<dt>dosageMax: float</dt><dd><p>The maximum dosage</p>
+</dd>
+<dt>frequencyMin: float</dt><dd><p>The minimum frequency</p>
+</dd>
+<dt>frequencyMax: float</dt><dd><p>The maximum frequency</p>
+</dd>
+<dt>frequencyType<span class="classifier">str</span></dt><dd><p>The type of frequency for the dosage (e.g. Hour, Day, Week, Month).</p>
+</dd>
+<dt>durationMin: float</dt><dd><p>The minimum duration of treatment</p>
+</dd>
+<dt>durationMax: float</dt><dd><p>The maximum duration of treatment</p>
+</dd>
+<dt>durationType: str</dt><dd><p>The type of duration for dosage (e.g. Day, Week, Month)</p>
+</dd>
+<dt>asRequired<span class="classifier">bool</span></dt><dd><p>Whether to take as required / as needed</p>
+</dd>
+<dt>asDirected: bool</dt><dd><p>Whether to take as directed</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.StructuredDI.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">form</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dosageMin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dosageMax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequencyMin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequencyMax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequencyType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">durationMin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">durationMax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">durationType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asRequired</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asDirected</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dose_instruction_parser.parser.StructuredDI.__init__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputID</strong> (<em>str</em>)</p></li>
+<li><p><strong>text</strong> (<em>str</em>)</p></li>
+<li><p><strong>form</strong> (<em>str</em>)</p></li>
+<li><p><strong>dosageMin</strong> (<em>float</em>)</p></li>
+<li><p><strong>dosageMax</strong> (<em>float</em>)</p></li>
+<li><p><strong>frequencyMin</strong> (<em>float</em>)</p></li>
+<li><p><strong>frequencyMax</strong> (<em>float</em>)</p></li>
+<li><p><strong>frequencyType</strong> (<em>str</em>)</p></li>
+<li><p><strong>durationMin</strong> (<em>float</em>)</p></li>
+<li><p><strong>durationMax</strong> (<em>float</em>)</p></li>
+<li><p><strong>durationType</strong> (<em>str</em>)</p></li>
+<li><p><strong>asRequired</strong> (<em>bool</em>)</p></li>
+<li><p><strong>asDirected</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.StructuredDI.asDirected">
+<span class="sig-name descname"><span class="pre">asDirected</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#dose_instruction_parser.parser.StructuredDI.asDirected" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.StructuredDI.asRequired">
+<span class="sig-name descname"><span class="pre">asRequired</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#dose_instruction_parser.parser.StructuredDI.asRequired" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.StructuredDI.dosageMax">
+<span class="sig-name descname"><span class="pre">dosageMax</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#dose_instruction_parser.parser.StructuredDI.dosageMax" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.StructuredDI.dosageMin">
+<span class="sig-name descname"><span class="pre">dosageMin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#dose_instruction_parser.parser.StructuredDI.dosageMin" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.StructuredDI.durationMax">
+<span class="sig-name descname"><span class="pre">durationMax</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#dose_instruction_parser.parser.StructuredDI.durationMax" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.StructuredDI.durationMin">
+<span class="sig-name descname"><span class="pre">durationMin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#dose_instruction_parser.parser.StructuredDI.durationMin" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.StructuredDI.durationType">
+<span class="sig-name descname"><span class="pre">durationType</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#dose_instruction_parser.parser.StructuredDI.durationType" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.StructuredDI.form">
+<span class="sig-name descname"><span class="pre">form</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#dose_instruction_parser.parser.StructuredDI.form" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.StructuredDI.frequencyMax">
+<span class="sig-name descname"><span class="pre">frequencyMax</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#dose_instruction_parser.parser.StructuredDI.frequencyMax" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.StructuredDI.frequencyMin">
+<span class="sig-name descname"><span class="pre">frequencyMin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#dose_instruction_parser.parser.StructuredDI.frequencyMin" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.StructuredDI.frequencyType">
+<span class="sig-name descname"><span class="pre">frequencyType</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#dose_instruction_parser.parser.StructuredDI.frequencyType" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.StructuredDI.inputID">
+<span class="sig-name descname"><span class="pre">inputID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#dose_instruction_parser.parser.StructuredDI.inputID" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.StructuredDI.text">
+<span class="sig-name descname"><span class="pre">text</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#dose_instruction_parser.parser.StructuredDI.text" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dose_instruction_parser.parser.background">
+<span class="sig-prename descclassname"><span class="pre">dose_instruction_parser.parser.</span></span><span class="sig-name descname"><span class="pre">background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/dose_instruction_parser/parser.html#background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dose_instruction_parser.parser.background" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-dose_instruction_parser">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-dose_instruction_parser" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="dose_instruction_parser" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dose_instruction_parser.data.html" class="btn btn-neutral float-right" title="dose_instruction_parser.data package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rosalyn Pearson, Nathalie Thureau, Mark Macartney, John Reid, Johanna Jokio.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

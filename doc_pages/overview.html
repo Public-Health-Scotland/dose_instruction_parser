@@ -1,0 +1,507 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Overview &mdash; dose_instruction_parser 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=46e60e98" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon_phs.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Parsing dose instructions" href="parsing_dis.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/phs-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#background">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#methods">Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#project-layout">Project layout</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="parsing_dis.html">Parsing dose instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="training_model.html">Training a new named entity recogniser model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adapting_code.html">Adapting the code to similar tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/dose_instruction_parser/modules.html">dose_instruction_parser module reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">dose_instruction_parser</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Overview</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/doc_pages/overview.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="parsing_dis.html" class="btn btn-neutral float-right" title="Parsing dose instructions" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="overview">
+<span id="id1"></span><h1>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h1>
+<p>This is the documentation for a tool developed at Public Health Scotland to parse
+prescription dose instructions.</p>
+<section id="background">
+<h2>Background<a class="headerlink" href="#background" title="Link to this heading"></a></h2>
+<p>Dose instructions are pieces of free text that
+accompany a prescription, for example “Take 1 tablet every 3 hours” or
+“2 puffs daily via acuhaler”.</p>
+<p>Because the dose instructions are free text there are many ways of phrasing the
+same core information and this means it is difficult to use them for analysis when
+there are a lot of different instructions to process. Additionally, free text can
+include patient-identifiable information like names, emails and addresses.</p>
+<p>By processing the dose instructions we can convert the free text into a structured
+output - i.e. a series of columns with different information in them pulled from the
+text. This output is more suitable for analysis and also greatly reduces the chance
+of patient-identifiable information being present.</p>
+<p>This tool allows you to parse free text dose instructions to the following structured
+fields:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>inputID</p></td>
+<td><p>ID passed in with dose instruction for bookkeeping</p></td>
+</tr>
+<tr class="row-odd"><td><p>text</p></td>
+<td><p>The original free text dose instruction (can be later removed)</p></td>
+</tr>
+<tr class="row-even"><td><p>form</p></td>
+<td><p>The form of drug e.g. “tablet”, “patch”, “injection”</p></td>
+</tr>
+<tr class="row-odd"><td><p>dosageMin</p></td>
+<td><p>The minimum dosage</p></td>
+</tr>
+<tr class="row-even"><td><p>dosageMax</p></td>
+<td><p>The maximum dosage</p></td>
+</tr>
+<tr class="row-odd"><td><p>frequencyMin</p></td>
+<td><p>The minimum frequency</p></td>
+</tr>
+<tr class="row-even"><td><p>frequencyMax</p></td>
+<td><p>The maximum frequency</p></td>
+</tr>
+<tr class="row-odd"><td><p>frequencyType</p></td>
+<td><p>The type of frequency for the dosage e.g. “Hour”, “Day”, “2 Week”</p></td>
+</tr>
+<tr class="row-even"><td><p>durationMin</p></td>
+<td><p>The minimum duration of treatment</p></td>
+</tr>
+<tr class="row-odd"><td><p>durationMax</p></td>
+<td><p>The maximum duration of treatment</p></td>
+</tr>
+<tr class="row-even"><td><p>durationType</p></td>
+<td><p>The type of duration for dosage e.g. “Day”, “Week”</p></td>
+</tr>
+<tr class="row-odd"><td><p>asRequired</p></td>
+<td><p>True/False: Whether to take as required / as needed</p></td>
+</tr>
+<tr class="row-even"><td><p>asDirected</p></td>
+<td><p>True/False: Whether to take as directed</p></td>
+</tr>
+</tbody>
+</table>
+<p>Here is a piece of sample output:</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Sample output</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>inputID</p></th>
+<th class="head"><p>text</p></th>
+<th class="head"><p>form</p></th>
+<th class="head"><p>dosageMin</p></th>
+<th class="head"><p>dosageMax</p></th>
+<th class="head"><p>frequencyMin</p></th>
+<th class="head"><p>frequencyMax</p></th>
+<th class="head"><p>frequencyType</p></th>
+<th class="head"><p>durationMin</p></th>
+<th class="head"><p>durationMax</p></th>
+<th class="head"><p>durationType</p></th>
+<th class="head"><p>asRequired</p></th>
+<th class="head"><p>asDirected</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>eDRIS/XXXX-XXXX/example/001</p></td>
+<td><p>daily 2 caps as directed</p></td>
+<td><p>capsule</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>eDRIS/XXXX-XXXX/example/002</p></td>
+<td><p>daily 0.2ml</p></td>
+<td><p>ml</p></td>
+<td><p>0.2</p></td>
+<td><p>0.2</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>eDRIS/XXXX-XXXX/example/003</p></td>
+<td><p>two mane + two nocte</p></td>
+<td></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>eDRIS/XXXX-XXXX/example/004</p></td>
+<td><p>2 tabs twice daily</p></td>
+<td><p>tablet</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>eDRIS/XXXX-XXXX/example/005</p></td>
+<td><p>take one in the morning and take two at night as directed</p></td>
+<td></td>
+<td><p>3.0</p></td>
+<td><p>3.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>eDRIS/XXXX-XXXX/example/006</p></td>
+<td><p>1 tablet(s) three times daily for pain/inflammation</p></td>
+<td><p>tablet</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>3.0</p></td>
+<td><p>3.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>eDRIS/XXXX-XXXX/example/007</p></td>
+<td><p>two puffs at night</p></td>
+<td><p>puff</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>eDRIS/XXXX-XXXX/example/008</p></td>
+<td><p>0.6mls daily</p></td>
+<td><p>ml</p></td>
+<td><p>0.6</p></td>
+<td><p>0.6</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>eDRIS/XXXX-XXXX/example/009</p></td>
+<td><p>to be applied tds prn</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>3.0</p></td>
+<td><p>3.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>True</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>9</p></td>
+<td><p>eDRIS/XXXX-XXXX/example/010</p></td>
+<td><p>take 1 tablet for 3 weeks then take 3 tablets for 4 weeks</p></td>
+<td><p>tablet</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>3.0</p></td>
+<td><p>3.0</p></td>
+<td><p>Week</p></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>eDRIS/XXXX-XXXX/example/010</p></td>
+<td><p>take 1 tablet for 3 weeks then take 3 tablets for 4 weeks</p></td>
+<td><p>tablet</p></td>
+<td><p>3.0</p></td>
+<td><p>3.0</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>4.0</p></td>
+<td><p>4.0</p></td>
+<td><p>Week</p></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>11</p></td>
+<td><p>eDRIS/XXXX-XXXX/example/011</p></td>
+<td><p>one to be taken twice a day  if sleepy do not drive/use machines. avoid alcohol. swallow whole.</p></td>
+<td></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>12</p></td>
+<td><p>eDRIS/XXXX-XXXX/example/012</p></td>
+<td><p>1 tab take as required</p></td>
+<td><p>tablet</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>True</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>13</p></td>
+<td><p>eDRIS/XXXX-XXXX/example/013</p></td>
+<td><p>take one daily for allergy</p></td>
+<td></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>14</p></td>
+<td><p>eDRIS/XXXX-XXXX/example/014</p></td>
+<td><p>one daily when required</p></td>
+<td></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>True</p></td>
+<td><p>False</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h2>
+<p>The parsing process consists of three main stages:</p>
+<ol class="arabic simple">
+<li><p>Pre-process the dose instruction to clean up the free text</p></li>
+<li><p>Use a machine learning Named Entity Recogniser (NER) model to associate key phrases
+in the text with “entities” of interest such as “DOSAGE” and “DURATION”</p></li>
+<li><p>Apply rules to each key phrase to extract structured information</p></li>
+</ol>
+<p>As an example, consider the dose instruction “one/two tabs bid prn”.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Stage</p></th>
+<th class="head"><p>Output</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><ol class="arabic simple">
+<li><p>Pre-process</p></li>
+</ol>
+</td>
+<td><p>1 / 2 tablets bid prn</p></td>
+</tr>
+<tr class="row-odd"><td><ol class="arabic simple" start="2">
+<li><p>NER</p></li>
+</ol>
+</td>
+<td><p>DOSAGE: “1 / 2”, FORM: “tablets”, FREQUENCY: “bid”, AS_REQUIRED: “prn”</p></td>
+</tr>
+<tr class="row-even"><td><ol class="arabic simple" start="3">
+<li><p>Rules</p></li>
+</ol>
+</td>
+<td><p>StructuredDI(text=’one/two tabs bid prn’, form=’tablet’, dosageMin=1.0, dosageMax=2.0, frequencyMin=2.0, frequencyMax=2.0, frequencyType=’Day’, durationMin=None, durationMax=None, durationType=None, asRequired=True, asDirected=False)</p></td>
+</tr>
+</tbody>
+</table>
+<p>The whole process is carried out by the <a class="reference internal" href="../modules/dose_instruction_parser/dose_instruction_parser.html#module-dose_instruction_parser" title="dose_instruction_parser"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dose_instruction_parser</span></code></a> package, available on <a class="reference external" href="https://pypi.org/">PyPI</a>.
+See <a class="reference internal" href="installation.html#installation"><span class="std std-ref">Installation</span></a> and <a class="reference internal" href="parsing_dis.html#parsing-dose-instructions"><span class="std std-ref">Parsing dose instructions</span></a> for information on how to get going.</p>
+</section>
+<section id="project-layout">
+<h2>Project layout<a class="headerlink" href="#project-layout" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>📦dose_instructions_parser
+┣ 📂.github
+┃ ┣ 📂workflows
+┣ 📂coverage                  # code coverage information
+┣ 📂doc                       # documentation
+┃ ┣ 📂examples                # -- example scripts
+┃ ┗ 📂sphinx                  # -- source behind github pages docs
+┃ ┃ ┣ 📂source
+┃ ┃ ┃ ┣ 📂doc_pages
+┃ ┃ ┃ ┣ 📂modules
+┃ ┃ ┃ ┃ ┗ 📂dose_instruction_parser
+┃ ┃ ┃ ┣ 📂_static
+┣ 📂dose_instruction_parser   # package for parsing dose instructions
+┃ ┣ 📂dose_instruction_parser
+┃ ┃ ┣ 📂data
+┃ ┃ ┣ 📂tests
+┣ 📂model                     # code for creating NER model
+┃ ┣ 📂config                  # -- model configuration
+┃ ┣ 📂data                    # -- processed .spacy data created here
+┃ ┣ 📂preprocess              # -- code for pre-processing training
+┃ ┃ ┣ 📂processed             # ---- intermediate processing carried out here
+┃ ┃ ┣ 📂tagged                # ---- put tagged .json training data here
+┗ ┗ 📂setup                   # -- script for setting up conda for model development
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="parsing_dis.html" class="btn btn-neutral float-right" title="Parsing dose instructions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rosalyn Pearson, Nathalie Thureau, Mark Macartney, John Reid, Johanna Jokio.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

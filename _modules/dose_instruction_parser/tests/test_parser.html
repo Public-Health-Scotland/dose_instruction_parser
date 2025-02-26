@@ -1,0 +1,231 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dose_instruction_parser.tests.test_parser &mdash; dose_instruction_parser 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=46e60e98" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/favicon_phs.ico"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/phs-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_pages/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_pages/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_pages/parsing_dis.html">Parsing dose instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_pages/training_model.html">Training a new named entity recogniser model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_pages/adapting_code.html">Adapting the code to similar tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/dose_instruction_parser/modules.html">dose_instruction_parser module reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">dose_instruction_parser</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dose_instruction_parser.tests.test_parser</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dose_instruction_parser.tests.test_parser</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spacy</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dose_instruction_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">parser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dose_instruction_parser.tests.conftest</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DIS_SMALL</span><span class="p">,</span> <span class="n">OUTPUT_DIS_SMALL</span>
+<span class="p">)</span>
+
+<span class="c1"># NB requires en_edris9 model to be loaded so these tests</span>
+<span class="c1"># aren&#39;t deployed in GitHub actions</span>
+<span class="n">DEFAULT_MODEL_NAME</span> <span class="o">=</span> <span class="s2">&quot;en_edris9&quot;</span>
+<span class="n">DEFAULT_MODEL</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="n">DEFAULT_MODEL_NAME</span><span class="p">)</span>
+
+<div class="viewcode-block" id="test_parser">
+<a class="viewcode-back" href="../../../modules/dose_instruction_parser/dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_parser.test_parser">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_parser</span><span class="p">():</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">DIParser</span><span class="p">(</span><span class="n">DEFAULT_MODEL_NAME</span><span class="p">)</span>
+    <span class="n">parsed_dis</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">parse_many</span><span class="p">(</span><span class="n">DIS_SMALL</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">parsed_dis</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">DIS_SMALL</span><span class="p">),</span> \
+        <span class="s2">&quot;Length of input dose instructions doesn&#39;t match output&quot;</span>
+    <span class="k">assert</span> <span class="n">parsed_dis</span> <span class="o">==</span> <span class="n">OUTPUT_DIS_SMALL</span><span class="p">,</span> \
+        <span class="s2">&quot;Test output doesn&#39;t match expected&quot;</span></div>
+
+
+<div class="viewcode-block" id="test_get_model_entities">
+<a class="viewcode-back" href="../../../modules/dose_instruction_parser/dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_parser.test_get_model_entities">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_get_model_entities</span><span class="p">():</span>
+    <span class="n">model_output</span> <span class="o">=</span> <span class="n">DEFAULT_MODEL</span><span class="p">(</span><span class="s2">&quot;take 2 tablets daily&quot;</span><span class="p">)</span>
+    <span class="n">ents</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">_get_model_entities</span><span class="p">(</span><span class="n">model_output</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">ents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span> \
+        <span class="ow">and</span> <span class="n">ents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;tablets&quot;</span> \
+            <span class="ow">and</span> <span class="n">ents</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;daily&quot;</span><span class="p">,</span> \
+        <span class="s2">&quot;Model entities not as expected&quot;</span></div>
+
+
+<div class="viewcode-block" id="test_get_model_entities_from_text">
+<a class="viewcode-back" href="../../../modules/dose_instruction_parser/dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_parser.test_get_model_entities_from_text">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_get_model_entities_from_text</span><span class="p">():</span>
+    <span class="n">ents</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">_get_model_entities_from_text</span><span class="p">(</span>
+        <span class="s2">&quot;take 2 tablets daily&quot;</span><span class="p">,</span> <span class="n">DEFAULT_MODEL</span>
+        <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">ents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span> \
+        <span class="ow">and</span> <span class="n">ents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;tablets&quot;</span> \
+            <span class="ow">and</span> <span class="n">ents</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;daily&quot;</span><span class="p">,</span> \
+        <span class="s2">&quot;Model entities not as expected&quot;</span></div>
+
+
+<div class="viewcode-block" id="test_parse_di">
+<a class="viewcode-back" href="../../../modules/dose_instruction_parser/dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_parser.test_parse_di">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_parse_di</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">di</span><span class="p">,</span> <span class="n">expected</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">DIS_SMALL</span><span class="p">,</span> <span class="n">OUTPUT_DIS_SMALL</span><span class="p">):</span>
+        <span class="n">expected</span><span class="o">.</span><span class="n">inputID</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">parser</span><span class="o">.</span><span class="n">_parse_di</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">DEFAULT_MODEL</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="n">expected</span><span class="p">],</span> \
+            <span class="s2">&quot;Parse single dose instruction doesn&#39;t match expected&quot;</span></div>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;text, instr_num&quot;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;take 1 tablet daily for 3 days then 2 daily for 4 weeks&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;3 puffs bd for 1 week followed by 2 puffs for 2 weeks then 1 puff thereafter&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;take morning, noon and night, max 8 in 24h&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="c1">#    (&quot;2 5ml spoonfuls daily total daily dose 10ml&quot;, 1)</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_split_entities_for_multiple_instructions</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">instr_num</span><span class="p">):</span>
+    <span class="n">ents</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">_get_model_entities_from_text</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">,</span>
+        <span class="n">DEFAULT_MODEL</span>
+    <span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">_split_entities_for_multiple_instructions</span><span class="p">(</span><span class="n">ents</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">==</span> <span class="n">instr_num</span><span class="p">,</span> \
+        <span class="sa">f</span><span class="s2">&quot;Should be </span><span class="si">{</span><span class="n">instr_num</span><span class="si">}</span><span class="s2"> separate instructions detected&quot;</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;di_1, di_2, combined&quot;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="c1"># Adding frequency types</span>
+    <span class="p">({</span><span class="s2">&quot;DOSAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;FREQUENCY&quot;</span><span class="p">:</span> <span class="s2">&quot;in the morning&quot;</span><span class="p">,</span> <span class="s2">&quot;FORM&quot;</span><span class="p">:</span> <span class="s2">&quot;tablet&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;DURATION&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;AS_REQUIRED&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;AS_DIRECTED&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;DOSAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;FREQUENCY&quot;</span><span class="p">:</span> <span class="s2">&quot;in the evening&quot;</span><span class="p">,</span> <span class="s2">&quot;FORM&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> 
+            <span class="s2">&quot;DURATION&quot;</span><span class="p">:</span> <span class="s2">&quot;for 3 weeks&quot;</span><span class="p">,</span> <span class="s2">&quot;AS_REQUIRED&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;AS_DIRECTED&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;DOSAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;FREQUENCY&quot;</span><span class="p">:</span> <span class="s2">&quot;in the morning and in the evening&quot;</span><span class="p">,</span> <span class="s2">&quot;FORM&quot;</span><span class="p">:</span> <span class="s2">&quot;tablet&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;DURATION&quot;</span><span class="p">:</span> <span class="s2">&quot;for 3 weeks&quot;</span><span class="p">,</span> <span class="s2">&quot;AS_REQUIRED&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;AS_DIRECTED&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+    <span class="p">),</span>
+    <span class="c1"># Adding dosages</span>
+    <span class="p">({</span><span class="s2">&quot;DOSAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;FREQUENCY&quot;</span><span class="p">:</span> <span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="s2">&quot;FORM&quot;</span><span class="p">:</span> <span class="s2">&quot;tablet&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;DURATION&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;AS_REQUIRED&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;AS_DIRECTED&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;DOSAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;FREQUENCY&quot;</span><span class="p">:</span> <span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="s2">&quot;FORM&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> 
+            <span class="s2">&quot;DURATION&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;AS_REQUIRED&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;AS_DIRECTED&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;DOSAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;1 and 3&quot;</span><span class="p">,</span> <span class="s2">&quot;FREQUENCY&quot;</span><span class="p">:</span> <span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="s2">&quot;FORM&quot;</span><span class="p">:</span> <span class="s2">&quot;tablet&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;DURATION&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;AS_REQUIRED&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;AS_DIRECTED&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_combine_split_dis</span><span class="p">(</span><span class="n">di_1</span><span class="p">,</span> <span class="n">di_2</span><span class="p">,</span> <span class="n">combined</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">parser</span><span class="o">.</span><span class="n">_combine_split_dis</span><span class="p">([</span><span class="n">di_1</span><span class="p">,</span> <span class="n">di_2</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="n">combined</span><span class="p">],</span> \
+        <span class="s2">&quot;Split dose instructions not combined correctly&quot;</span>
+
+<div class="viewcode-block" id="test_create_structured_di">
+<a class="viewcode-back" href="../../../modules/dose_instruction_parser/dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_parser.test_create_structured_di">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_create_structured_di</span><span class="p">():</span>
+    <span class="n">free_text</span> <span class="o">=</span> <span class="s2">&quot;1 tablet a day and 3 tablets a day prn for 1 month&quot;</span>
+    <span class="n">model_entities</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;DOSAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;1 and 3&quot;</span><span class="p">,</span> <span class="s2">&quot;FREQUENCY&quot;</span><span class="p">:</span> <span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="s2">&quot;FORM&quot;</span><span class="p">:</span> <span class="s2">&quot;tablet&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;DURATION&quot;</span><span class="p">:</span> <span class="s2">&quot;1 month&quot;</span><span class="p">,</span> <span class="s2">&quot;AS_REQUIRED&quot;</span><span class="p">:</span> <span class="s2">&quot;prn&quot;</span><span class="p">,</span> <span class="s2">&quot;AS_DIRECTED&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+    <span class="n">expected_di</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">StructuredDI</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">free_text</span><span class="p">,</span> <span class="s2">&quot;tablet&quot;</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span>
+                        <span class="s2">&quot;Day&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;Month&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">str_di</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">_create_structured_di</span><span class="p">(</span><span class="n">free_text</span><span class="p">,</span> <span class="n">model_entities</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">str_di</span> <span class="o">==</span> <span class="n">expected_di</span><span class="p">,</span> \
+        <span class="s2">&quot;Structured di not created as expected&quot;</span></div>
+
+
+<div class="viewcode-block" id="test_create_structured_dis">
+<a class="viewcode-back" href="../../../modules/dose_instruction_parser/dose_instruction_parser.tests.html#dose_instruction_parser.tests.test_parser.test_create_structured_dis">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_create_structured_dis</span><span class="p">():</span>
+    <span class="n">free_text</span> <span class="o">=</span> <span class="s2">&quot;2 - 3 5 ml spoonfuls with meals and at bedtime for 3 weeks as dir, </span><span class="se">\</span>
+<span class="s2">        then reduce down to 1 5 ml spoonful bd&quot;</span>
+    <span class="n">model_output</span> <span class="o">=</span> <span class="n">DEFAULT_MODEL</span><span class="p">(</span><span class="n">free_text</span><span class="p">)</span>
+    <span class="n">exp_dis</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">StructuredDI</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">free_text</span><span class="p">,</span> <span class="s2">&quot;ml&quot;</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="s2">&quot;Day&quot;</span><span class="p">,</span>
+            <span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="s2">&quot;Week&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">StructuredDI</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">free_text</span><span class="p">,</span> <span class="s2">&quot;ml&quot;</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="s2">&quot;Day&quot;</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="k">assert</span> <span class="n">parser</span><span class="o">.</span><span class="n">_create_structured_dis</span><span class="p">(</span><span class="n">free_text</span><span class="p">,</span> <span class="n">model_output</span><span class="p">)</span> <span class="o">==</span> <span class="n">exp_dis</span><span class="p">,</span> \
+        <span class="s2">&quot;Structured dis don&#39;t match expected&quot;</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rosalyn Pearson, Nathalie Thureau, Mark Macartney, John Reid, Johanna Jokio.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

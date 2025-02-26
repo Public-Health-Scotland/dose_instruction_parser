@@ -1,0 +1,717 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parsing dose instructions &mdash; dose_instruction_parser 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=46e60e98" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon_phs.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Training a new named entity recogniser model" href="training_model.html" />
+    <link rel="prev" title="Overview" href="overview.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/phs-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Parsing dose instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#a-single-instruction">A single instruction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multiple-dose-instructions">Multiple dose instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#providing-input-ids">Providing input IDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage-from-python">Usage from Python</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="training_model.html">Training a new named entity recogniser model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adapting_code.html">Adapting the code to similar tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/dose_instruction_parser/modules.html">dose_instruction_parser module reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">dose_instruction_parser</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Parsing dose instructions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/doc_pages/parsing_dis.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="overview.html" class="btn btn-neutral float-left" title="Overview" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="training_model.html" class="btn btn-neutral float-right" title="Training a new named entity recogniser model" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="parsing-dose-instructions">
+<span id="id1"></span><h1>Parsing dose instructions<a class="headerlink" href="#parsing-dose-instructions" title="Link to this heading"></a></h1>
+<p>Follow the <a class="reference internal" href="installation.html#installation"><span class="std std-ref">Installation</span></a> instructions, then get started using the command line:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Run <strong class="program">parse_dose_instructions -h</strong> on the command line to get help on parsing dose instructions</p>
+</div>
+<p>In the following examples we assume the model <strong class="program">en_edris9</strong> is installed. You can provide your own path to an alternative model with the same nine entities.</p>
+<section id="a-single-instruction">
+<h2>A single instruction<a class="headerlink" href="#a-single-instruction" title="Link to this heading"></a></h2>
+<p>A single dose instruction can be supplied using the <strong class="program">-di</strong> argument.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>di-dev<span class="o">)</span>$<span class="w"> </span>parse_dose_instructions<span class="w"> </span>-di<span class="w"> </span><span class="s2">&quot;take one tablet daily&quot;</span><span class="w"> </span>-mod<span class="w"> </span>en_edris9
+
+Logging<span class="w"> </span>to<span class="w"> </span><span class="nb">command</span><span class="w"> </span>line.<span class="w"> </span>Use<span class="w"> </span>the<span class="w"> </span>--logfile<span class="w"> </span>argument<span class="w"> </span>to<span class="w"> </span><span class="nb">set</span><span class="w"> </span>a<span class="w"> </span>log<span class="w"> </span>file<span class="w"> </span>instead.
+<span class="m">2024</span>-05-28<span class="w"> </span><span class="m">07</span>:45:49,803<span class="w"> </span>Checking<span class="w"> </span>input<span class="w"> </span>and<span class="w"> </span>output<span class="w"> </span>files
+<span class="m">2024</span>-05-28<span class="w"> </span><span class="m">07</span>:45:49,803<span class="w"> </span>Setting<span class="w"> </span>up<span class="w"> </span>parser
+<span class="m">2024</span>-05-28<span class="w"> </span><span class="m">07</span>:46:34,205<span class="w"> </span>Parsing<span class="w"> </span>single<span class="w"> </span>dose<span class="w"> </span>instruction
+
+StructuredDI<span class="o">(</span><span class="nv">inputID</span><span class="o">=</span>None,<span class="w"> </span><span class="nv">text</span><span class="o">=</span><span class="s1">&#39;take one tablet daily&#39;</span>,<span class="w"> </span><span class="nv">form</span><span class="o">=</span><span class="s1">&#39;tablet&#39;</span>,<span class="w"> </span><span class="nv">dosageMin</span><span class="o">=</span><span class="m">1</span>.0,<span class="w"> </span><span class="nv">dosageMax</span><span class="o">=</span><span class="m">1</span>.0,<span class="w"> </span><span class="nv">frequencyMin</span><span class="o">=</span><span class="m">1</span>.0,<span class="w"> </span><span class="nv">frequencyMax</span><span class="o">=</span><span class="m">1</span>.0,<span class="w"> </span><span class="nv">frequencyType</span><span class="o">=</span><span class="s1">&#39;Day&#39;</span>,<span class="w"> </span><span class="nv">durationMin</span><span class="o">=</span>None,<span class="w"> </span><span class="nv">durationMax</span><span class="o">=</span>None,<span class="w"> </span><span class="nv">durationType</span><span class="o">=</span>None,<span class="w"> </span><span class="nv">asRequired</span><span class="o">=</span>False,<span class="w"> </span><span class="nv">asDirected</span><span class="o">=</span>False<span class="o">)</span>
+</pre></div>
+</div>
+</section>
+<section id="multiple-dose-instructions">
+<h2>Multiple dose instructions<a class="headerlink" href="#multiple-dose-instructions" title="Link to this heading"></a></h2>
+<p>Multiple dose instructions can be supplied from file using the <strong class="program">-f</strong> argument, where each line in the text file supplied is a dose instruction.
+For example, if the file <code class="file docutils literal notranslate"><span class="pre">multiple_dis.txt</span></code> contains the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>daily<span class="w"> </span><span class="m">2</span><span class="w"> </span>tabs
+once<span class="w"> </span>daily<span class="w"> </span>when<span class="w"> </span>required
+</pre></div>
+</div>
+<p>then you will get the corresponding output:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Logging<span class="w"> </span>to<span class="w"> </span><span class="nb">command</span><span class="w"> </span>line.<span class="w"> </span>Use<span class="w"> </span>the<span class="w"> </span>--logfile<span class="w"> </span>argument<span class="w"> </span>to<span class="w"> </span><span class="nb">set</span><span class="w"> </span>a<span class="w"> </span>log<span class="w"> </span>file<span class="w"> </span>instead.
+<span class="m">2024</span>-05-28<span class="w"> </span><span class="m">07</span>:47:56,270<span class="w"> </span>Checking<span class="w"> </span>input<span class="w"> </span>and<span class="w"> </span>output<span class="w"> </span>files
+<span class="m">2024</span>-05-28<span class="w"> </span><span class="m">07</span>:47:56,282<span class="w"> </span>Setting<span class="w"> </span>up<span class="w"> </span>parser
+<span class="m">2024</span>-05-28<span class="w"> </span><span class="m">07</span>:48:18,003<span class="w"> </span>Parsing<span class="w"> </span>multiple<span class="w"> </span>dose<span class="w"> </span>instructions
+Parsing<span class="w"> </span>dose<span class="w"> </span>instructions
+Parsed<span class="w"> </span><span class="m">100</span>%<span class="p">|</span>██████████████████████████████████████<span class="p">|</span><span class="w"> </span><span class="m">2</span>/2<span class="w"> </span><span class="o">[</span><span class="m">00</span>:00&lt;<span class="m">00</span>:00,<span class="w"> </span><span class="m">79</span>.78<span class="w"> </span>instructions/s<span class="o">]</span>
+
+StructuredDI<span class="o">(</span><span class="nv">inputID</span><span class="o">=</span><span class="m">0</span>,<span class="w"> </span><span class="nv">text</span><span class="o">=</span><span class="s1">&#39;daily 2 tabs&#39;</span>,<span class="w"> </span><span class="nv">form</span><span class="o">=</span><span class="s1">&#39;tablet&#39;</span>,<span class="w"> </span><span class="nv">dosageMin</span><span class="o">=</span><span class="m">2</span>.0,<span class="w"> </span><span class="nv">dosageMax</span><span class="o">=</span><span class="m">2</span>.0,<span class="w"> </span><span class="nv">frequencyMin</span><span class="o">=</span><span class="m">1</span>.0,<span class="w"> </span><span class="nv">frequencyMax</span><span class="o">=</span><span class="m">1</span>.0,<span class="w"> </span><span class="nv">frequencyType</span><span class="o">=</span><span class="s1">&#39;Day&#39;</span>,<span class="w"> </span><span class="nv">durationMin</span><span class="o">=</span>None,<span class="w"> </span><span class="nv">durationMax</span><span class="o">=</span>None,<span class="w"> </span><span class="nv">durationType</span><span class="o">=</span>None,<span class="w"> </span><span class="nv">asRequired</span><span class="o">=</span>False,<span class="w"> </span><span class="nv">asDirected</span><span class="o">=</span>False<span class="o">)</span>
+StructuredDI<span class="o">(</span><span class="nv">inputID</span><span class="o">=</span><span class="m">1</span>,<span class="w"> </span><span class="nv">text</span><span class="o">=</span><span class="s1">&#39;once daily when required&#39;</span>,<span class="w"> </span><span class="nv">form</span><span class="o">=</span>None,<span class="w"> </span><span class="nv">dosageMin</span><span class="o">=</span>None,<span class="w"> </span><span class="nv">dosageMax</span><span class="o">=</span>None,<span class="w"> </span><span class="nv">frequencyMin</span><span class="o">=</span><span class="m">1</span>.0,<span class="w"> </span><span class="nv">frequencyMax</span><span class="o">=</span><span class="m">1</span>.0,<span class="w"> </span><span class="nv">frequencyType</span><span class="o">=</span><span class="s1">&#39;Day&#39;</span>,<span class="w"> </span><span class="nv">durationMin</span><span class="o">=</span>None,<span class="w"> </span><span class="nv">durationMax</span><span class="o">=</span>None,<span class="w"> </span><span class="nv">durationType</span><span class="o">=</span>None,<span class="w"> </span><span class="nv">asRequired</span><span class="o">=</span>True,<span class="w"> </span><span class="nv">asDirected</span><span class="o">=</span>False<span class="o">)</span>
+</pre></div>
+</div>
+<p>Where you have a lot of examples to parse you may want to send the output to a file rather than
+the command line. To do this, specify the output file location with the <strong class="program">-o</strong> argument.
+If this has <code class="file docutils literal notranslate"><span class="pre">.txt</span></code> extension the results will be presented line by line like they
+would on the command line. If this has <code class="file docutils literal notranslate"><span class="pre">.csv</span></code> extension the results will be cast to a
+data frame with one entry per row.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>di-dev<span class="o">)</span>$<span class="w"> </span>parse_dose_instructions<span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;multiple_dis.txt&quot;</span><span class="w"> </span>-mod<span class="w"> </span>en_edris9<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;out_dis.csv&quot;</span>
+</pre></div>
+</div>
+<p>The contents of <code class="file docutils literal notranslate"><span class="pre">out_dis.csv</span></code> is as follows:</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Sample output</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>inputID</p></th>
+<th class="head"><p>text</p></th>
+<th class="head"><p>form</p></th>
+<th class="head"><p>dosageMin</p></th>
+<th class="head"><p>dosageMax</p></th>
+<th class="head"><p>frequencyMin</p></th>
+<th class="head"><p>frequencyMax</p></th>
+<th class="head"><p>frequencyType</p></th>
+<th class="head"><p>durationMin</p></th>
+<th class="head"><p>durationMax</p></th>
+<th class="head"><p>durationType</p></th>
+<th class="head"><p>asRequired</p></th>
+<th class="head"><p>asDirected</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>daily 2 tabs</p></td>
+<td><p>tablet</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>once daily when required</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>True</p></td>
+<td><p>False</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Sometimes a dose instruction really contains more than one instruction within it.
+In this case the output will be split into multiple outputs, one corresponding
+to each part of the instruction. For example,
+“Take two tablets twice daily for one week then one tablet once daily for two weeks”</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ parse_dose_instructions -di &quot;Take two tablets twice daily for one week then one tablet once daily for two weeks&quot;
+
+Logging to command line. Use the --logfile argument to set a log file instead.
+2024-06-21 08:35:41,765 Checking input and output files
+2024-06-21 08:35:41,765 Setting up parser
+2024-06-21 08:35:59,572 Parsing single dose instruction
+
+StructuredDI(inputID=None, text=&#39;Take two tablets twice daily for one week then one tablet once daily for two weeks&#39;, form=&#39;tablet&#39;, dosageMin=2.0, dosageMax=2.0,  frequencyMin=2.0, frequencyMax=2.0, frequencyType=&#39;Day&#39;, durationMin=1.0, durationMax=1.0, durationType=&#39;Week&#39;, asRequired=False, asDirected=False)
+StructuredDI(inputID=None, text=&#39;Take two tablets twice daily for one week then one tablet once daily for two weeks&#39;, form=&#39;tablet&#39;, dosageMin=1.0, dosageMax=1.0, frequencyMin=1.0, frequencyMax=1.0, frequencyType=&#39;Day&#39;, durationMin=2.0, durationMax=2.0, durationType=&#39;Week&#39;, asRequired=False, asDirected=False)
+</pre></div>
+</div>
+</div>
+</section>
+<section id="providing-input-ids">
+<h2>Providing input IDs<a class="headerlink" href="#providing-input-ids" title="Link to this heading"></a></h2>
+<p>The <strong class="program">inputID</strong> value helps to keep track of which outputs correspond to which inputs. The default behaviour is:</p>
+<ul class="simple">
+<li><p>For a single dose instruction, set <strong class="program">inputID=None</strong></p></li>
+<li><p>For multiple dose instructions, number each instruction starting from 0 by the order they appear in the input file</p></li>
+</ul>
+<p>You may want to provide your own values for <strong class="program">inputID</strong>. To do this, provide input dose instructions as a <code class="file docutils literal notranslate"><span class="pre">.csv</span></code> file with columns</p>
+<ul class="simple">
+<li><p><strong class="program">inputID</strong> specifying the input ID</p></li>
+<li><p><strong class="program">di</strong> specifying the dose instruction</p></li>
+</ul>
+<p>For example, using <code class="file docutils literal notranslate"><span class="pre">test.csv</span></code> with the following contents:</p>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">Sample input</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>inputID</p></th>
+<th class="head"><p>di</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/001</p></td>
+<td><p>daily 2 caps</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/002</p></td>
+<td><p>daily 0.2ml</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/003</p></td>
+<td><p>two mane + two nocte</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/004</p></td>
+<td><p>2 tabs twice daily increased to 2 tabs three times daily during exacerbation chest symptoms</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/005</p></td>
+<td><p>take one in the morning and take two at night as directed</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/006</p></td>
+<td><p>1 tablet(s) three times daily for pain/inflammation</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/007</p></td>
+<td><p>two puffs at night</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/008</p></td>
+<td><p>0.6mls daily</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/009</p></td>
+<td><p>to be applied tds-qds</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/010</p></td>
+<td><p>take 1 tablet for 3 weeks then take 3 tablets for 4 weeks</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/011</p></td>
+<td><p>one to be taken twice a day  if sleepy do not drive/use machines. avoid alcohol. swallow whole.</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/012</p></td>
+<td><p>1 tab take as required</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/013</p></td>
+<td><p>take one daily for allergy</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/014</p></td>
+<td><p>2x5ml spoonfuls with meals</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/015</p></td>
+<td><p>one per month</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/016</p></td>
+<td><p>1 cappful every four weeks</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/017</p></td>
+<td><p>take two every 4-6hrs for pain</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/018</p></td>
+<td><p>up to qid prn</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/019</p></td>
+<td><p>one or two tabs dissolved in a glass of water at night</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/020</p></td>
+<td><p>bid-tid</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/021</p></td>
+<td><p>change every 2 weeks</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/022</p></td>
+<td><p>take every fortnight</p></td>
+</tr>
+</tbody>
+</table>
+<p>yields the corresponding output</p>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">Sample output</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>inputID</p></th>
+<th class="head"><p>text</p></th>
+<th class="head"><p>form</p></th>
+<th class="head"><p>dosageMin</p></th>
+<th class="head"><p>dosageMax</p></th>
+<th class="head"><p>frequencyMin</p></th>
+<th class="head"><p>frequencyMax</p></th>
+<th class="head"><p>frequencyType</p></th>
+<th class="head"><p>durationMin</p></th>
+<th class="head"><p>durationMax</p></th>
+<th class="head"><p>durationType</p></th>
+<th class="head"><p>asRequired</p></th>
+<th class="head"><p>asDirected</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/001</p></td>
+<td><p>daily 2 caps</p></td>
+<td><p>capsule</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/002</p></td>
+<td><p>daily 0.2ml</p></td>
+<td><p>ml</p></td>
+<td><p>0.2</p></td>
+<td><p>0.2</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/003</p></td>
+<td><p>two mane + two nocte</p></td>
+<td></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/004</p></td>
+<td><p>2 tabs twice daily increased to 2 tabs three times daily during exacerbation chest symptoms</p></td>
+<td><p>tablet</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>5.0</p></td>
+<td><p>5.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/005</p></td>
+<td><p>take one in the morning and take two at night as directed</p></td>
+<td></td>
+<td><p>3.0</p></td>
+<td><p>3.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/006</p></td>
+<td><p>1 tablet(s) three times daily for pain/inflammation</p></td>
+<td><p>tablet</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>3.0</p></td>
+<td><p>3.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/007</p></td>
+<td><p>two puffs at night</p></td>
+<td><p>puff</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/008</p></td>
+<td><p>0.6mls daily</p></td>
+<td><p>ml</p></td>
+<td><p>0.6</p></td>
+<td><p>0.6</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/009</p></td>
+<td><p>to be applied tds-qds</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>3.0</p></td>
+<td><p>3.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/010</p></td>
+<td><p>take 1 tablet for 3 weeks then take 3 tablets for 4 weeks</p></td>
+<td><p>tablet</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>3.0</p></td>
+<td><p>3.0</p></td>
+<td><p>Week</p></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/010</p></td>
+<td><p>take 1 tablet for 3 weeks then take 3 tablets for 4 weeks</p></td>
+<td><p>tablet</p></td>
+<td><p>3.0</p></td>
+<td><p>3.0</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>4.0</p></td>
+<td><p>4.0</p></td>
+<td><p>Week</p></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/011</p></td>
+<td><p>one to be taken twice a day  if sleepy do not drive/use machines. avoid alcohol. swallow whole.</p></td>
+<td></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/012</p></td>
+<td><p>1 tab take as required</p></td>
+<td><p>tablet</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>True</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/013</p></td>
+<td><p>take one daily for allergy</p></td>
+<td></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/014</p></td>
+<td><p>2x5ml spoonfuls with meals</p></td>
+<td><p>ml</p></td>
+<td><p>10.0</p></td>
+<td><p>10.0</p></td>
+<td><p>3.0</p></td>
+<td><p>3.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/015</p></td>
+<td><p>one per month</p></td>
+<td></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Month</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/016</p></td>
+<td><p>1 cappful every four weeks</p></td>
+<td><p>capful</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Month</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/017</p></td>
+<td><p>take two every 4-6hrs for pain</p></td>
+<td></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>4 Hour</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>True</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/018</p></td>
+<td><p>up to qid prn</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>0.0</p></td>
+<td><p>4.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>True</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/019</p></td>
+<td><p>one or two tabs dissolved in a glass of water at night</p></td>
+<td><p>tablet</p></td>
+<td><p>1.0</p></td>
+<td><p>2.0</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/020</p></td>
+<td><p>bid-tid</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2.0</p></td>
+<td><p>3.0</p></td>
+<td><p>Day</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>eDRIS/XXXX-XXXX/example/021</p></td>
+<td><p>change every 2 weeks</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>2 Week</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>eDRIS/XXXX-XXXX/example/022</p></td>
+<td><p>take every fortnight</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>2 Week</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In this example, <cite>eDRIS/XXXX-XXXX/example/010</cite> has been split up into two dose instructions</p>
+</div>
+</section>
+<section id="usage-from-python">
+<h2>Usage from Python<a class="headerlink" href="#usage-from-python" title="Link to this heading"></a></h2>
+<p>For more adaptable usage you can load the package into Python and use it within a script or on the Python prompt. For example, using <a class="reference external" href="https://pypi.org/project/ipython/">iPython</a>:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span> <span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="o">...</span><span class="p">:</span> <span class="kn">from</span><span class="w"> </span><span class="nn">dose_instruction_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">parser</span>
+
+ <span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="c1"># Create parser</span>
+ <span class="o">...</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">DIParser</span><span class="p">(</span><span class="s2">&quot;en_edris9&quot;</span><span class="p">)</span>
+
+ <span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="c1"># Parse one dose instruction</span>
+ <span class="o">...</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;Take 2 tablets morning and night&quot;</span><span class="p">)</span>
+ <span class="n">Out</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="p">[</span><span class="n">StructuredDI</span><span class="p">(</span><span class="n">inputID</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Take 2 tablets morning and night&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="s1">&#39;tablet&#39;</span><span class="p">,</span> <span class="n">dosageMin</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">dosageMax</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">frequencyMin</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">frequencyMax</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">frequencyType</span><span class="o">=</span><span class="s1">&#39;Day&#39;</span><span class="p">,</span> <span class="n">durationMin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">durationMax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">durationType</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asRequired</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asDirected</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span>
+
+ <span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="c1"># Parse many dose instructions</span>
+ <span class="o">...</span><span class="p">:</span> <span class="n">parsed_dis</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">parse_many</span><span class="p">([</span>
+ <span class="o">...</span><span class="p">:</span>     <span class="s2">&quot;take one tablet daily&quot;</span><span class="p">,</span>
+ <span class="o">...</span><span class="p">:</span>     <span class="s2">&quot;two puffs prn&quot;</span><span class="p">,</span>
+ <span class="o">...</span><span class="p">:</span>     <span class="s2">&quot;one cap after meals for three weeks&quot;</span><span class="p">,</span>
+ <span class="o">...</span><span class="p">:</span>     <span class="s2">&quot;4 caplets tid&quot;</span>
+ <span class="o">...</span><span class="p">:</span> <span class="p">])</span>
+
+ <span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="nb">print</span><span class="p">(</span><span class="n">parsed_dis</span><span class="p">)</span>
+ <span class="p">[</span><span class="n">StructuredDI</span><span class="p">(</span><span class="n">inputID</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;take one tablet daily&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="s1">&#39;tablet&#39;</span><span class="p">,</span> <span class="n">dosageMin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dosageMax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">frequencyMin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">frequencyMax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">frequencyType</span><span class="o">=</span><span class="s1">&#39;Day&#39;</span><span class="p">,</span> <span class="n">durationMin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">durationMax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">durationType</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asRequired</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asDirected</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">StructuredDI</span><span class="p">(</span><span class="n">inputID</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;two puffs prn&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="s1">&#39;puff&#39;</span><span class="p">,</span> <span class="n">dosageMin</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">dosageMax</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">frequencyMin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frequencyMax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frequencyType</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">durationMin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">durationMax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">durationType</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asRequired</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">asDirected</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">StructuredDI</span><span class="p">(</span><span class="n">inputID</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;one cap after meals for three weeks&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="s1">&#39;capsule&#39;</span><span class="p">,</span> <span class="n">dosageMin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dosageMax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">frequencyMin</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">frequencyMax</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">frequencyType</span><span class="o">=</span><span class="s1">&#39;Day&#39;</span><span class="p">,</span> <span class="n">durationMin</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">durationMax</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">durationType</span><span class="o">=</span><span class="s1">&#39;Week&#39;</span><span class="p">,</span> <span class="n">asRequired</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asDirected</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">StructuredDI</span><span class="p">(</span><span class="n">inputID</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;4 caplets tid&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="s1">&#39;carpet&#39;</span><span class="p">,</span> <span class="n">dosageMin</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">dosageMax</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">frequencyMin</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">frequencyMax</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">frequencyType</span><span class="o">=</span><span class="s1">&#39;Day&#39;</span><span class="p">,</span> <span class="n">durationMin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">durationMax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">durationType</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asRequired</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asDirected</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span>
+
+ <span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="c1"># Convert output to pandas dataframe</span>
+ <span class="o">...</span><span class="p">:</span> <span class="n">di_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">parsed_dis</span><span class="p">)</span>
+
+ <span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="nb">print</span><span class="p">(</span><span class="n">di_df</span><span class="p">)</span>
+ <span class="n">inputID</span>                                 <span class="n">text</span>     <span class="n">form</span>  <span class="n">dosageMin</span>  <span class="n">dosageMax</span>  <span class="n">frequencyMin</span>  <span class="n">frequencyMax</span> <span class="n">frequencyType</span>  <span class="n">durationMin</span>  <span class="n">durationMax</span> <span class="n">durationType</span>  <span class="n">asRequired</span>  <span class="n">asDirected</span>
+     <span class="mi">0</span>                <span class="n">take</span> <span class="n">one</span> <span class="n">tablet</span> <span class="n">daily</span>   <span class="n">tablet</span>        <span class="mf">1.0</span>        <span class="mf">1.0</span>           <span class="mf">1.0</span>           <span class="mf">1.0</span>           <span class="n">Day</span>          <span class="n">NaN</span>          <span class="n">NaN</span>         <span class="kc">None</span>       <span class="kc">False</span>       <span class="kc">False</span>
+     <span class="mi">1</span>                        <span class="n">two</span> <span class="n">puffs</span> <span class="n">prn</span>     <span class="n">puff</span>        <span class="mf">2.0</span>        <span class="mf">2.0</span>           <span class="n">NaN</span>           <span class="n">NaN</span>          <span class="kc">None</span>          <span class="n">NaN</span>          <span class="n">NaN</span>         <span class="kc">None</span>        <span class="kc">True</span>       <span class="kc">False</span>
+     <span class="mi">2</span>  <span class="n">one</span> <span class="n">cap</span> <span class="n">after</span> <span class="n">meals</span> <span class="k">for</span> <span class="n">three</span> <span class="n">weeks</span>  <span class="n">capsule</span>        <span class="mf">1.0</span>        <span class="mf">1.0</span>           <span class="mf">3.0</span>           <span class="mf">3.0</span>           <span class="n">Day</span>          <span class="mf">3.0</span>          <span class="mf">3.0</span>         <span class="n">Week</span>       <span class="kc">False</span>       <span class="kc">False</span>
+     <span class="mi">3</span>                        <span class="mi">4</span> <span class="n">caplets</span> <span class="n">tid</span>   <span class="n">carpet</span>        <span class="mf">4.0</span>        <span class="mf">4.0</span>           <span class="mf">3.0</span>           <span class="mf">3.0</span>           <span class="n">Day</span>          <span class="n">NaN</span>          <span class="n">NaN</span>         <span class="kc">None</span>       <span class="kc">False</span>       <span class="kc">False</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="overview.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="training_model.html" class="btn btn-neutral float-right" title="Training a new named entity recogniser model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rosalyn Pearson, Nathalie Thureau, Mark Macartney, John Reid, Johanna Jokio.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

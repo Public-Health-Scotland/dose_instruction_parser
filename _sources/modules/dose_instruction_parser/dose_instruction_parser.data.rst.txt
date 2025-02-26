@@ -1,0 +1,10 @@
+dose\_instruction\_parser.data package
+======================================
+
+Module contents
+---------------
+
+.. automodule:: dose_instruction_parser.data
+   :members:
+   :show-inheritance:
+   :undoc-members:

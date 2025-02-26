@@ -1,0 +1,289 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Training a new named entity recogniser model &mdash; dose_instruction_parser 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=46e60e98" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon_phs.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Adapting the code to similar tasks" href="adapting_code.html" />
+    <link rel="prev" title="Parsing dose instructions" href="parsing_dis.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/phs-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parsing_dis.html">Parsing dose instructions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Training a new named entity recogniser model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pre-processing">Pre-processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#named-entity-recognition-ner">Named Entity Recognition (NER)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#preparing-for-training">Preparing for training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#training">Training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-performance">Model performance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adapting-the-model-or-training-your-own">Adapting the model or training your own</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="adapting_code.html">Adapting the code to similar tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/dose_instruction_parser/modules.html">dose_instruction_parser module reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">dose_instruction_parser</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Training a new named entity recogniser model</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/doc_pages/training_model.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="parsing_dis.html" class="btn btn-neutral float-left" title="Parsing dose instructions" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="adapting_code.html" class="btn btn-neutral float-right" title="Adapting the code to similar tasks" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="training-a-new-named-entity-recogniser-model">
+<span id="training-a-model"></span><h1>Training a new named entity recogniser model<a class="headerlink" href="#training-a-new-named-entity-recogniser-model" title="Link to this heading"></a></h1>
+<section id="pre-processing">
+<h2>Pre-processing<a class="headerlink" href="#pre-processing" title="Link to this heading"></a></h2>
+<p>Pre-processing functions can be found in the <a class="reference internal" href="../modules/dose_instruction_parser/dose_instruction_parser.html#module-dose_instruction_parser.di_prepare" title="dose_instruction_parser.di_prepare"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dose_instruction_parser.di_prepare</span></code></a> module.
+Several operations are performed on the input text to get it ready for
+the NER model:</p>
+<ol class="arabic simple">
+<li><p>All parentheses are replaced with a blank space</p></li>
+<li><p>Hyphens (“-”) and slashes (“/” and “&quot;) and replaced with a blank space</p></li>
+<li><p>Certain keywords are replaced with alternatives e.g. “qad” -&gt; “every other day”.
+These combinations are listed in <code class="xref py py-mod docutils literal notranslate"><span class="pre">dose_instruction_parser.data.replace_words</span></code></p></li>
+<li><p>Spelling is corrected using the <a class="reference external" href="https://pypi.org/project/pyspellchecker/">pyspellchecker</a> package.
+Certain keywords are not corrected. These are listed in <code class="xref py py-mod docutils literal notranslate"><span class="pre">dose_instruction_parser.data.keep_words</span></code></p></li>
+<li><p>Number-words are converted to numbers using the <a class="reference external" href="https://pypi.org/project/word2number/">word2number</a> package,
+e.g. “two” -&gt; “2”; “half” -&gt; “0.5”.</p></li>
+<li><p>Blank spaces are added around numbers
+e.g. “2x30ml” -&gt; “ 2 x 30 ml”</p></li>
+<li><p>Extra spaces between words are removed</p></li>
+<li><p>Leading and trailing whitespace is removed</p></li>
+</ol>
+<p>For example, pre-processing would have the following results:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>Output</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>take two tabs MORNING and nghit</p></td>
+<td><p>take 2 tablets morning and night</p></td>
+</tr>
+<tr class="row-odd"><td><p>half cap qh</p></td>
+<td><p>0.5 capsule every hour</p></td>
+</tr>
+<tr class="row-even"><td><p>two puff(s)</p></td>
+<td><p>2 puff</p></td>
+</tr>
+<tr class="row-odd"><td><p>one/two with meals</p></td>
+<td><p>1 / 2 with meals</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="named-entity-recognition-ner">
+<h2>Named Entity Recognition (NER)<a class="headerlink" href="#named-entity-recognition-ner" title="Link to this heading"></a></h2>
+<p>The next step in processing is to identify parts of the instruction
+associated with each named entity. This is done using a neural network,
+which is a type of machine learning
+model. The neural network is implemented via the <a class="reference external" href="https://spacy.io/">spacy</a> package.</p>
+<p>At Public Health Scotland we have trained a model called <strong class="program">en_edris9</strong> to do NER. Due to data
+protection concerns the model is not currently publicly available. Please contact the eDRIS team
+on <a class="reference external" href="mailto:phs&#46;edris&#37;&#52;&#48;phs&#46;scot">phs<span>&#46;</span>edris<span>&#64;</span>phs<span>&#46;</span>scot</a> to enquire about access.</p>
+<p>In the <strong class="program">en_edris9</strong> model there are nine named entities:</p>
+<ul class="simple">
+<li><p>DOSAGE</p></li>
+<li><p>FORM</p></li>
+<li><p>ROUTE</p></li>
+<li><p>DRUG</p></li>
+<li><p>STRENGTH</p></li>
+<li><p>FREQUENCY</p></li>
+<li><p>DURATION</p></li>
+<li><p>AS_REQUIRED</p></li>
+<li><p>AS_DIRECTED</p></li>
+</ul>
+<p><strong class="program">en_edris9</strong> was based on the <a class="reference external" href="https://github.com/kormilitzin/med7">med 7</a> model with the addition of
+two entities: “AS_REQUIRED” and “AS_DIRECTED”.</p>
+<section id="preparing-for-training">
+<h3>Preparing for training<a class="headerlink" href="#preparing-for-training" title="Link to this heading"></a></h3>
+<p>The code used to prepare and train the model can be found in the <strong>model</strong> folder. To generate <strong class="program">en_edris9</strong>,
+the <strong class="program">en_med7</strong> model was further trained on approximately 7,000 gold-standard tagged dose instructions.
+Each instruction was separately tagged by two eDRIS analysts, and any tagged instructions which didn’t match
+identically were manually resolved by the team. This was to ensure high quality input data.</p>
+<p>There are three steps to prepare raw examples of dose instructions for training:</p>
+<ol class="arabic simple">
+<li><p>Tag entities by hand</p></li>
+<li><p>Optional: cross check tagging if each example has been tagged twice by different people</p></li>
+<li><p>Convert tagged examples to <code class="file docutils literal notranslate"><span class="pre">.spacy</span></code> format</p></li>
+</ol>
+<section id="tag-entities-by-hand">
+<h4>Tag entities by hand<a class="headerlink" href="#tag-entities-by-hand" title="Link to this heading"></a></h4>
+<p>The tagging process was carried out using the desktop version of <a class="reference external" href="https://github.com/tecoholic/ner-annotator">NER Annotator for Spacy</a>,
+which outputs tagged dose instructions in <code class="file docutils literal notranslate"><span class="pre">.json</span></code> format. An example of a <code class="file docutils literal notranslate"><span class="pre">.json</span></code> file with just two tagged dose instructions is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;classes&quot;</span><span class="p">:[</span><span class="s2">&quot;DOSE&quot;</span><span class="p">,</span><span class="s2">&quot;FORM&quot;</span><span class="p">,</span><span class="s2">&quot;FREQUENCY&quot;</span><span class="p">,</span><span class="s2">&quot;DURATION&quot;</span><span class="p">,</span><span class="s2">&quot;ROUTE&quot;</span><span class="p">,</span><span class="s2">&quot;DRUG&quot;</span><span class="p">,</span><span class="s2">&quot;STRENGTH&quot;</span><span class="p">,</span><span class="s2">&quot;AS_DIRECTED&quot;</span><span class="p">,</span><span class="s2">&quot;AS_REQUIRED&quot;</span><span class="p">],</span>
+<span class="s2">&quot;annotations&quot;</span><span class="p">:[</span>
+   <span class="p">[</span><span class="s2">&quot;1 tab in the morning&quot;</span><span class="p">,{</span><span class="s2">&quot;entities&quot;</span><span class="p">:[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;DOSE&quot;</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s2">&quot;FORM&quot;</span><span class="p">],[</span><span class="mi">6</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="s2">&quot;FREQUENCY&quot;</span><span class="p">]]}],</span>
+   <span class="p">[</span><span class="s2">&quot;1 cap 4 times daily&quot;</span><span class="p">,{</span><span class="s2">&quot;entities&quot;</span><span class="p">:[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;DOSE&quot;</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s2">&quot;FORM&quot;</span><span class="p">],[</span><span class="mi">6</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span><span class="s2">&quot;FREQUENCY&quot;</span><span class="p">]]}]</span>
+   <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The numbers alongside each entity refer to the start and end positions of the entity in the text (where numbers start counting from 0).
+For example, for “1 tab in the morning”, the the <strong>FORM</strong> entity is recorded as <strong class="program">[2,5,&quot;FORM&quot;]</strong> which corresponds to the 2nd up to but not
+including the 5th character in the text, e.g. “tab”.</p>
+</section>
+<section id="cross-check-tagging">
+<h4>Cross check tagging<a class="headerlink" href="#cross-check-tagging" title="Link to this heading"></a></h4>
+<p>Cross-checking tagging is done using the <code class="file docutils literal notranslate"><span class="pre">1-json_to_dat.py</span></code> script in <code class="file docutils literal notranslate"><span class="pre">model/preprocess/</span></code>. Tagged examples
+must first be copied to <code class="file docutils literal notranslate"><span class="pre">model/preprocess/tagged/</span></code>, and must be in .json format. The script
+outputs two <code class="file docutils literal notranslate"><span class="pre">.dat</span></code> files to <code class="file docutils literal notranslate"><span class="pre">model/preprocess/processed</span></code>:</p>
+<ul class="simple">
+<li><p><code class="file docutils literal notranslate"><span class="pre">crosschecked_data_{time}.dat</span></code> are examples where both taggers agree on all tags</p></li>
+<li><p><code class="file docutils literal notranslate"><span class="pre">conflicting_data_{time}.dat</span></code> are examples where taggers disagree on one or more tags</p></li>
+</ul>
+<p>You must then manually open up <code class="file docutils literal notranslate"><span class="pre">conflicting_data_{time}.dat</span></code> and resolve any conflicts, before
+saving out as <code class="file docutils literal notranslate"><span class="pre">resolved_data_{time}.dat</span></code>.</p>
+</section>
+<section id="convert-tagged-examples-to-spacy-format">
+<h4>Convert tagged examples to .spacy format<a class="headerlink" href="#convert-tagged-examples-to-spacy-format" title="Link to this heading"></a></h4>
+<p>The crosschecked and resolved data are converted to <code class="file docutils literal notranslate"><span class="pre">.spacy</span></code> format by <code class="file docutils literal notranslate"><span class="pre">2-dat_to_spacy.py</span></code>.
+The instances are shuffled and split into train; test; dev data with a 8:1:1 split. This can be changed
+by editing the file. Data are saved out to <code class="file docutils literal notranslate"><span class="pre">model/data</span></code> in <code class="file docutils literal notranslate"><span class="pre">.spacy</span></code> format.</p>
+</section>
+</section>
+<section id="training">
+<h3>Training<a class="headerlink" href="#training" title="Link to this heading"></a></h3>
+<p>Before training the model you need to define a <strong class="program">DI_FILEPATH`</strong> environment variable, which is the
+file path you will save and load models from. You should save this variable in a <code class="file docutils literal notranslate"><span class="pre">secrets.env</span></code> file
+in the <code class="file docutils literal notranslate"><span class="pre">dose_instructions_ner</span></code> folder. The contents of <code class="file docutils literal notranslate"><span class="pre">secrets.env</span></code> should be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">DI_FILEPATH</span><span class="o">=</span><span class="s2">&quot;/path/to/folder/&quot;</span>
+</pre></div>
+</div>
+<p>You can train the model by opening a Terminal and running:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">model</span>
+<span class="o">./</span><span class="n">train_model</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+<p>You will be taken through interactive steps in the Terminal to set the model name.
+The model parameters are defined in <code class="file docutils literal notranslate"><span class="pre">model/config/config.cfg</span></code>, which is a <a class="reference external" href="https://spacy.io/usage/training/#config">spacy
+configuration file</a>. There are a few important
+things to note about the contents:</p>
+<ul class="simple">
+<li><p>The path to the training data is set under <strong>[paths]</strong></p></li>
+<li><p>The <strong class="program">en_med7</strong> model is used as a starting point for training. This is set
+using the <strong>source</strong> parameters under <strong>[components]</strong> and also in <strong>[initialize.before_init]</strong>.</p></li>
+<li><p>The hyperparameters for the neural network are set under <strong>[training.optimizer]</strong>.
+The <a class="reference external" href="https://arxiv.org/abs/1412.6980">Adam</a> optimiser is the default.</p></li>
+<li><p><strong>[training.score_weights]</strong> details the relative importance of different measure
+in evaluating training performance. Available measures are precision, recall and
+<a class="reference external" href="https://en.wikipedia.org/wiki/F-score">F-score</a> (the harmonic mean of precision and recall).</p></li>
+</ul>
+<p>Model training logs will be saved to a <code class="file docutils literal notranslate"><span class="pre">logs`</span></code> folder within your <strong class="program">DI_FILEPATH</strong>.</p>
+</section>
+<section id="model-performance">
+<h3>Model performance<a class="headerlink" href="#model-performance" title="Link to this heading"></a></h3>
+<p>You can evaluate the performance of a model by running the <code class="file docutils literal notranslate"><span class="pre">evaluate_model.sh</span></code> script
+in a Terminal from within the <code class="file docutils literal notranslate"><span class="pre">model</span></code> folder. You can either provide the name of the model
+you with to evaluate or the location</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">evaluate_model</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+<p>This will produce a log in the <code class="file docutils literal notranslate"><span class="pre">logs</span></code> folder within <strong class="program">DI_FILEPATH</strong>.</p>
+</section>
+<section id="adapting-the-model-or-training-your-own">
+<h3>Adapting the model or training your own<a class="headerlink" href="#adapting-the-model-or-training-your-own" title="Link to this heading"></a></h3>
+<p>You can adapt the model by training it again using additional training examples. To do this you need to install the <strong class="program">en_edris9</strong> model and amend the configuration file
+so that the starting model is <strong class="program">en_edris9</strong> rather than <strong class="program">en_med7</strong>.</p>
+<p>To train your own model you can follow similar steps, starting from any of <strong class="program">en_med7</strong>, <strong class="program">en_edris9</strong> or a standard language model like <strong class="program">en_core_web_sm</strong>. Refer to <a class="reference external" href="https://spacy.io/usage">spacy</a>
+documentation for more information.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="parsing_dis.html" class="btn btn-neutral float-left" title="Parsing dose instructions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="adapting_code.html" class="btn btn-neutral float-right" title="Adapting the code to similar tasks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rosalyn Pearson, Nathalie Thureau, Mark Macartney, John Reid, Johanna Jokio.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

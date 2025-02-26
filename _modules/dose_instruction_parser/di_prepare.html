@@ -1,0 +1,320 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dose_instruction_parser.di_prepare &mdash; dose_instruction_parser 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=46e60e98" />
+
+  
+    <link rel="shortcut icon" href="../../_static/favicon_phs.ico"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/phs-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_pages/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_pages/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_pages/parsing_dis.html">Parsing dose instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_pages/training_model.html">Training a new named entity recogniser model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_pages/adapting_code.html">Adapting the code to similar tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/dose_instruction_parser/modules.html">dose_instruction_parser module reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">dose_instruction_parser</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dose_instruction_parser.di_prepare</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dose_instruction_parser.di_prepare</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spellchecker</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpellChecker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">word2number</span><span class="w"> </span><span class="kn">import</span> <span class="n">w2n</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_spell_checker</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function to create a spellchecker.SpellChecker()</span>
+<span class="sd">    Words in the keep_words.txt file will not be spellchecked</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sc</span> <span class="o">=</span> <span class="n">SpellChecker</span><span class="p">()</span>
+    <span class="n">keep_words_frequency</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> 
+                                        <span class="s2">&quot;./data/keep_words.txt&quot;</span><span class="p">)</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">word_frequency</span><span class="o">.</span><span class="n">load_text_file</span><span class="p">(</span><span class="n">keep_words_frequency</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sc</span>
+
+<span class="n">spell_checker</span> <span class="o">=</span> <span class="n">_create_spell_checker</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatmap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">iterables</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function to map a given function onto an iterable and</span>
+<span class="sd">    return the outputs in a list</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">        func: </span>
+<span class="sd">            Function to map across iterable</span>
+<span class="sd">        iterable:  </span>
+<span class="sd">            Iterable to map func across</span>
+<span class="sd">    Output:</span>
+<span class="sd">        list:</span>
+<span class="sd">            List of outputs generated by action of func on each iterable element</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">iterables</span><span class="p">)))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_autocorrect</span><span class="p">(</span><span class="n">di</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to autocorrect a dose instruction before sending it</span>
+<span class="sd">    to the NER model for tagging. </span>
+
+<span class="sd">    Input:</span>
+<span class="sd">        di: str</span>
+<span class="sd">            dose instruction for spellchecking</span>
+<span class="sd">            e.g. &quot;2 tabletts twice a dya&quot;</span>
+<span class="sd">    Output:</span>
+<span class="sd">        str</span>
+<span class="sd">            autocorrected dose instruction</span>
+<span class="sd">            e.g. &quot;2 tablets twice a day&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">di</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">corrected_words</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">di</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+        <span class="c1"># checking if the word is only letters</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[a-zA-Z]+$&quot;</span><span class="p">,</span> <span class="n">word</span><span class="p">)</span> <span class="ow">or</span> <span class="n">spell_checker</span><span class="o">.</span><span class="n">known</span><span class="p">([</span><span class="n">word</span><span class="p">]):</span>
+            <span class="n">corrected_words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">corrected_word</span> <span class="o">=</span> <span class="n">spell_checker</span><span class="o">.</span><span class="n">correction</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+            <span class="n">corrected_words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">corrected_word</span><span class="p">)</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">corrected_words</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">di</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_remove_parentheses</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes parentheses</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">        s: str</span>
+<span class="sd">            String to remove parentheses</span>
+<span class="sd">            e.g. &quot;tablet(s)&quot;</span>
+<span class="sd">    Output:</span>
+<span class="sd">        str</span>
+<span class="sd">            String with parentheses removed</span>
+<span class="sd">            e.g. &quot;tablet s &quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\(&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> 
+    <span class="n">s</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\)&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> 
+    <span class="k">return</span> <span class="n">s</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_pad_hyphens_and_slashes</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pads hyphens with spaces</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">        s: str</span>
+<span class="sd">            String to pad hyphens </span>
+<span class="sd">            e.g. &quot;four-six&quot;</span>
+<span class="sd">    Output:</span>
+<span class="sd">        str</span>
+<span class="sd">            String with hyphens padded</span>
+<span class="sd">            e.g. &quot;four - six&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\-&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39; - &#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39; \ &#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\/&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39; / &#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="c1"># Pad . in middle of words e.g. &quot;hello.there&quot; -&gt; &quot;hello . there&quot;</span>
+    <span class="c1"># but don&#39;t pad e.g. &quot;0.5&quot; or &quot;end. start&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(?&lt;=[A-Za-z])\.(?=[A-Za-z])&#39;</span><span class="p">,</span> <span class="s1">&#39; . &#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_pad_numbers</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add spaces around numbers</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">        s: str</span>
+<span class="sd">            String to pad numbers</span>
+<span class="sd">            e.g. &quot;2x20ml or 3 tablets at 8am&quot;</span>
+<span class="sd">    Output:</span>
+<span class="sd">        str</span>
+<span class="sd">            String with numbers padded</span>
+<span class="sd">            e.g. &quot; 2 x 20 ml or  3  tablets at  8 am&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\d+(\.\d+)?)&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39; \1 &#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_words_to_numbers</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes a sentence and converts any number words to numbers</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">        sentence: str</span>
+<span class="sd">            Sentence to convert</span>
+<span class="sd">            e.g. &quot;take half a tablet every two days&quot;</span>
+<span class="sd">    Output:</span>
+<span class="sd">        str</span>
+<span class="sd">            Converted sentence</span>
+<span class="sd">            e.g. &quot;take 0.5 a tablet every 2 days&quot; </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">sentence</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">output_words</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+        <span class="n">word</span> <span class="o">=</span> <span class="n">_convert_fract_to_num</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">output_words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">w2n</span><span class="o">.</span><span class="n">word_to_num</span><span class="p">(</span><span class="n">word</span><span class="p">)))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">output_words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_words</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_fract_to_num</span><span class="p">(</span><span class="n">word</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes a word and converts it to a numeric fraction if possible</span>
+
+<span class="sd">    Input: </span>
+<span class="sd">        word: str</span>
+<span class="sd">        e.g. &quot;half&quot;</span>
+<span class="sd">    Output:</span>
+<span class="sd">        str</span>
+<span class="sd">            Converted word</span>
+<span class="sd">            e.g. &quot;0.5&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">frac_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;half&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5&quot;</span><span class="p">,</span>  <span class="s2">&quot;quarter&quot;</span><span class="p">:</span> <span class="s2">&quot;0.25&quot;</span><span class="p">}</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_frac</span><span class="p">(</span><span class="n">_word</span><span class="p">):</span>
+        <span class="n">nums</span> <span class="o">=</span> <span class="n">_word</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">_word</span> <span class="ow">and</span> <span class="n">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">and</span> <span class="n">nums</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">frac_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">frac_dict</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">is_frac</span><span class="p">(</span><span class="n">word</span><span class="p">):</span>
+        <span class="n">num</span><span class="p">,</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">/</span> <span class="nb">int</span><span class="p">(</span><span class="n">denom</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">word</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+<div class="viewcode-block" id="pre_process">
+<a class="viewcode-back" href="../../modules/dose_instruction_parser/dose_instruction_parser.html#dose_instruction_parser.di_prepare.pre_process">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pre_process</span><span class="p">(</span><span class="n">di</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pre-processes a dose instruction before it is sent to the model </span>
+
+<span class="sd">    Input:</span>
+<span class="sd">        di: str</span>
+<span class="sd">            Dose instruction</span>
+<span class="sd">            e.g. &quot;take two tabs MORNING and nghit&quot;</span>
+<span class="sd">    Output:</span>
+<span class="sd">        str</span>
+<span class="sd">            Pre-processed dose instruction</span>
+<span class="sd">            e.g. &quot;take 2 tablets morning and night&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">_remove_parentheses</span><span class="p">(</span><span class="n">di</span><span class="p">)</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">_pad_hyphens_and_slashes</span><span class="p">(</span><span class="n">di</span><span class="p">)</span>
+    <span class="c1"># get words to replace</span>
+    <span class="n">output_words</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">di</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">replace_words</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">replace_words_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> 
+                                    <span class="s2">&quot;./data/replace_words.csv&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">replace_words_path</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">csvfile</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+            <span class="n">replace_words</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Before&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;After&quot;</span><span class="p">]</span>
+    <span class="c1"># replace words        </span>
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">replace_words</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">word</span><span class="p">,</span><span class="n">replace_words</span><span class="p">[</span><span class="n">word</span><span class="p">])</span>
+        <span class="n">output_words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_words</span><span class="p">)</span>
+    <span class="c1"># rest of preprocessing</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">_autocorrect</span><span class="p">(</span><span class="n">di</span><span class="p">)</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">_convert_words_to_numbers</span><span class="p">(</span><span class="n">di</span><span class="p">)</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">_pad_numbers</span><span class="p">(</span><span class="n">di</span><span class="p">)</span>
+    <span class="c1"># remove extra spaces between words</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\s+&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">di</span><span class="p">)</span>
+    <span class="c1"># remove leading and trailing whitespace</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\A\s+&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">di</span><span class="p">)</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\s+\Z&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span> <span class="p">,</span> <span class="n">di</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">di</span></div>
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rosalyn Pearson, Nathalie Thureau, Mark Macartney, John Reid, Johanna Jokio.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,614 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dose_instruction_parser.di_frequency &mdash; dose_instruction_parser 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=46e60e98" />
+
+  
+    <link rel="shortcut icon" href="../../_static/favicon_phs.ico"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/phs-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_pages/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_pages/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_pages/parsing_dis.html">Parsing dose instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_pages/training_model.html">Training a new named entity recogniser model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_pages/adapting_code.html">Adapting the code to similar tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/dose_instruction_parser/modules.html">dose_instruction_parser module reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">dose_instruction_parser</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dose_instruction_parser.di_frequency</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dose_instruction_parser.di_frequency</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">compress</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="c1"># Regex expression to search for numbers in text</span>
+<span class="n">re_digit</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\d*\.?\d+&quot;</span>
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_Frequency</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A structured frequency </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    frequencyType: str</span>
+<span class="sd">        The type of frequency for the dosage (e.g. Hour, Day, Week, Month)</span>
+<span class="sd">    frequency: int</span>
+<span class="sd">        The number of times per frequencyType that the dose is taken</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">frequencyType</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">frequency</span><span class="p">:</span> <span class="nb">int</span>
+
+<span class="n">latin_frequency_types</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;qd&quot;</span><span class="p">:</span> <span class="n">_Frequency</span><span class="p">(</span><span class="s2">&quot;Day&quot;</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">),</span> <span class="s2">&quot;qds&quot;</span><span class="p">:</span> <span class="n">_Frequency</span><span class="p">(</span><span class="s2">&quot;Day&quot;</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">),</span>
+                        <span class="s2">&quot;bid&quot;</span><span class="p">:</span> <span class="n">_Frequency</span><span class="p">(</span><span class="s2">&quot;Day&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="s2">&quot;b/d&quot;</span><span class="p">:</span> <span class="n">_Frequency</span><span class="p">(</span><span class="s2">&quot;Day&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span>
+                        <span class="s2">&quot;bd&quot;</span><span class="p">:</span> <span class="n">_Frequency</span><span class="p">(</span><span class="s2">&quot;Day&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="s2">&quot;tid&quot;</span><span class="p">:</span> <span class="n">_Frequency</span><span class="p">(</span><span class="s2">&quot;Day&quot;</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">),</span> 
+                        <span class="s2">&quot;qid&quot;</span><span class="p">:</span> <span class="n">_Frequency</span><span class="p">(</span><span class="s2">&quot;Day&quot;</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">),</span> <span class="s2">&quot;tds&quot;</span><span class="p">:</span> <span class="n">_Frequency</span><span class="p">(</span><span class="s2">&quot;Day&quot;</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_latin_frequency</span><span class="p">(</span><span class="n">frequency</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        frequency: str</span>
+<span class="sd">            A string for dose instruction frequency</span>
+<span class="sd">    Outputs:</span>
+<span class="sd">        None</span>
+<span class="sd">            If frequency doesn&#39;t contain a latin frequency type from </span>
+<span class="sd">            latin_frequency_types, e.g. &quot;qid&quot;</span>
+<span class="sd">        _Frequency object</span>
+<span class="sd">            If frequency does contain a latin frequency type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">latin_freq</span> <span class="ow">in</span> <span class="n">latin_frequency_types</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">latin_freq</span> <span class="ow">in</span> <span class="n">frequency</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">latin_frequency_types</span><span class="p">[</span><span class="n">latin_freq</span><span class="p">]</span>
+
+<span class="n">frequency_numbers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;second&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;third&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;fourth&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;fifth&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                    <span class="s2">&quot;sixth&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;seventh&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;eighth&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;ninth&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">}</span>
+
+<span class="n">freqtype_conversion</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;7 Day&quot;</span><span class="p">:</span> <span class="s2">&quot;Week&quot;</span><span class="p">,</span> <span class="s2">&quot;24 Hour&quot;</span><span class="p">:</span> <span class="s2">&quot;Day&quot;</span><span class="p">,</span> <span class="s2">&quot;48 Hour&quot;</span><span class="p">:</span> <span class="s2">&quot;2 Day&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;14 Day&quot;</span><span class="p">:</span> <span class="s2">&quot;2 Week&quot;</span><span class="p">,</span> <span class="s2">&quot;4 Week&quot;</span> <span class="p">:</span> <span class="s2">&quot;Month&quot;</span><span class="p">}</span>
+
+<div class="viewcode-block" id="get_frequency_type">
+<a class="viewcode-back" href="../../modules/dose_instruction_parser/dose_instruction_parser.html#dose_instruction_parser.di_frequency.get_frequency_type">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_frequency_type</span><span class="p">(</span><span class="n">frequency</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets the frequency type from a frequency string</span>
+<span class="sd">    </span>
+<span class="sd">    Inputs:</span>
+<span class="sd">        frequency: str</span>
+<span class="sd">            A string for dose instruction frequency</span>
+<span class="sd">            e.g. &quot;daily&quot;</span>
+<span class="sd">    Outputs:</span>
+<span class="sd">        frequency type: str</span>
+<span class="sd">            The type of frequency associated with the dose instruction</span>
+<span class="sd">            e.g. &quot;Day&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">freq_type</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">frequency</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">frequency</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;hour&quot;</span><span class="p">,</span> <span class="s2">&quot;hr&quot;</span><span class="p">))</span> <span class="o">|</span> \
+        <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\dh$&quot;</span><span class="p">,</span> <span class="n">frequency</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">freq_type</span> <span class="o">=</span> <span class="s2">&quot;Hour&quot;</span>
+    <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">frequency</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;week&quot;</span><span class="p">,</span> <span class="s2">&quot;wk&quot;</span><span class="p">,</span> <span class="s2">&quot;monday&quot;</span><span class="p">,</span>
+                                        <span class="s2">&quot;tuesday&quot;</span><span class="p">,</span> <span class="s2">&quot;wednesday&quot;</span><span class="p">,</span> <span class="s2">&quot;thursday&quot;</span><span class="p">,</span>
+                                        <span class="s2">&quot;friday&quot;</span><span class="p">,</span> <span class="s2">&quot;saturday&quot;</span><span class="p">,</span> <span class="s2">&quot;sunday&quot;</span><span class="p">,</span> 
+                                        <span class="s2">&quot;tue&quot;</span><span class="p">,</span> <span class="s2">&quot;wed&quot;</span><span class="p">,</span> <span class="s2">&quot;thu&quot;</span><span class="p">,</span> <span class="s2">&quot;fri&quot;</span><span class="p">,</span> <span class="s2">&quot;sat&quot;</span><span class="p">,</span> <span class="s2">&quot;sun&quot;</span><span class="p">)):</span>
+        <span class="n">freq_type</span> <span class="o">=</span> <span class="s2">&quot;Week&quot;</span>
+    <span class="k">elif</span> <span class="s2">&quot;fortnight&quot;</span> <span class="ow">in</span> <span class="n">frequency</span><span class="p">:</span>
+        <span class="n">freq_type</span> <span class="o">=</span> <span class="s2">&quot;2 Week&quot;</span>
+    <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">frequency</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;month&quot;</span><span class="p">,</span> <span class="s2">&quot;mnth&quot;</span><span class="p">,</span> <span class="s2">&quot;mon &quot;</span><span class="p">)):</span>
+        <span class="n">freq_type</span> <span class="o">=</span> <span class="s2">&quot;Month&quot;</span>
+    <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">frequency</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;yr&quot;</span><span class="p">)):</span>
+        <span class="n">freq_type</span> <span class="o">=</span> <span class="s2">&quot;Year&quot;</span>
+    <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">frequency</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
+            <span class="p">(</span><span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="s2">&quot;daily&quot;</span><span class="p">,</span> <span class="s2">&quot;b/d&quot;</span><span class="p">,</span> <span class="s2">&quot;bd&quot;</span><span class="p">,</span> <span class="s2">&quot;night&quot;</span><span class="p">,</span> <span class="s2">&quot;morning&quot;</span><span class="p">,</span> <span class="s2">&quot;evening&quot;</span><span class="p">,</span> <span class="s2">&quot;noon&quot;</span><span class="p">,</span> <span class="s2">&quot;bedtime&quot;</span><span class="p">,</span> <span class="s2">&quot;bed&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;breakfast&quot;</span><span class="p">,</span> <span class="s2">&quot;tea&quot;</span><span class="p">,</span> <span class="s2">&quot;lunch&quot;</span><span class="p">,</span> <span class="s2">&quot;dinner&quot;</span><span class="p">,</span> <span class="s2">&quot;meal&quot;</span><span class="p">,</span> <span class="s2">&quot;nocte&quot;</span><span class="p">,</span> <span class="s2">&quot;mane&quot;</span><span class="p">,</span> <span class="s2">&quot;feed&quot;</span><span class="p">,</span> <span class="s2">&quot;am&quot;</span><span class="p">,</span> <span class="s2">&quot;pm&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tds&quot;</span><span class="p">,</span> <span class="s2">&quot;qds&quot;</span><span class="p">)):</span>
+        <span class="n">freq_type</span> <span class="o">=</span> <span class="s2">&quot;Day&quot;</span>
+    <span class="n">latin_freq</span> <span class="o">=</span> <span class="n">_get_latin_frequency</span><span class="p">(</span><span class="n">frequency</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">latin_freq</span><span class="p">:</span>
+        <span class="n">freq_type</span> <span class="o">=</span> <span class="n">latin_freq</span><span class="o">.</span><span class="n">frequencyType</span>
+    <span class="c1"># Check for multiple units of frequency type e.g. every 2 days</span>
+    <span class="n">freq_type</span> <span class="o">=</span> <span class="n">_add_frequency_multiple_units</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="n">freq_type</span><span class="p">)</span>
+    <span class="c1"># Convert e.g. &quot;24 Hour&quot; -&gt; &quot;Day&quot;</span>
+    <span class="k">if</span> <span class="n">freq_type</span> <span class="ow">in</span> <span class="n">freqtype_conversion</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">freq_type</span> <span class="o">=</span> <span class="n">freqtype_conversion</span><span class="p">[</span><span class="n">freq_type</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">freq_type</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_frequency_multiple_units</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="n">freq_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if frequency type is for multiples of frequency unit</span>
+<span class="sd">    e.g. &quot;every 2 hours&quot; or &quot;alternate days&quot;</span>
+
+<span class="sd">    Inputs:</span>
+<span class="sd">    -------</span>
+<span class="sd">        frequency: str</span>
+<span class="sd">            Frequency NER text</span>
+<span class="sd">            e.g. &quot;every 6 hours&quot;, &quot;alternate days&quot;</span>
+<span class="sd">        freq_type: str (None)</span>
+<span class="sd">            Current frequency type identified</span>
+<span class="sd">            e.g. &quot;Hour&quot;, &quot;Day&quot;</span>
+<span class="sd">    Outputs:</span>
+<span class="sd">        freq_type with multiples added</span>
+<span class="sd">        e.g. &quot;6 Hour&quot;, &quot;2 Day&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">frequency</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;alternate&quot;</span><span class="p">,</span> <span class="s2">&quot;every other&quot;</span><span class="p">)):</span>
+        <span class="n">freq_type</span> <span class="o">=</span> <span class="s2">&quot;2 &quot;</span> <span class="o">+</span> <span class="n">freq_type</span> 
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">frequency</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;every&quot;</span><span class="p">,</span> <span class="s2">&quot;hrly&quot;</span><span class="p">,</span> <span class="s2">&quot;hourly&quot;</span><span class="p">)):</span>
+        <span class="n">nums</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">re_digit</span><span class="p">,</span> <span class="n">frequency</span><span class="p">)</span>
+        <span class="c1"># Deal with words like third, fifth etc.</span>
+        <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">frequency</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">frequency_numbers</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">nums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">frequency_numbers</span><span class="p">[</span><span class="n">word</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">freq_type</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;More than one number for every x time unit. Using lowest unit.&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">freq_type</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">freq_type</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">freq_type</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_number_of_times</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets the number of times a dose must be taken per frequencyType</span>
+<span class="sd">    Only use if no range of times is present</span>
+
+<span class="sd">    Inputs:</span>
+<span class="sd">        frequency: str</span>
+<span class="sd">            A string for dose instruction frequency</span>
+<span class="sd">            e.g. &quot;daily&quot;</span>
+<span class="sd">    Outputs:</span>
+<span class="sd">        number of times: float   </span>
+<span class="sd">            The number of times per frequencyType the dose is taken</span>
+<span class="sd">            e.g. 1.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">frequency</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">frequency</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">frequency</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;am&quot;</span><span class="p">,</span> <span class="s2">&quot;pm&quot;</span><span class="p">)):</span>
+            <span class="n">indexes</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">))</span> <span class="k">if</span> <span class="n">words</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;am&quot;</span><span class="p">,</span> <span class="s2">&quot;pm&quot;</span><span class="p">)]</span>
+            <span class="c1"># Removing the time e.g. for &quot;8 am&quot; -&gt; &quot;am&quot; so the 8 doesn&#39;t get</span>
+            <span class="c1"># picked up as 8 times a day</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="n">words</span><span class="p">[</span><span class="n">index</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+        <span class="n">latin_freq</span> <span class="o">=</span> <span class="n">_get_latin_frequency</span><span class="p">(</span><span class="n">frequency</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">latin_freq</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">latin_freq</span><span class="o">.</span><span class="n">frequency</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">frequency</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;meals&quot;</span><span class="p">,</span> <span class="s2">&quot;feed&quot;</span><span class="p">,</span> <span class="s2">&quot;food&quot;</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="mf">3.0</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">frequency</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;bed&quot;</span><span class="p">,</span> <span class="s2">&quot;morning&quot;</span><span class="p">,</span> <span class="s2">&quot;daily&quot;</span><span class="p">,</span> <span class="s2">&quot;night&quot;</span><span class="p">,</span> <span class="s2">&quot;evening&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;noon&quot;</span><span class="p">,</span> <span class="s2">&quot;breakfast&quot;</span><span class="p">,</span><span class="s2">&quot;tea&quot;</span><span class="p">,</span> <span class="s2">&quot;lunch&quot;</span><span class="p">,</span> <span class="s2">&quot;dinner&quot;</span><span class="p">,</span> <span class="s2">&quot;mane&quot;</span><span class="p">,</span> <span class="s2">&quot;nocte&quot;</span><span class="p">,</span> <span class="s2">&quot;day&quot;</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="mf">1.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_bounding_num</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="n">bound_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets the min or max from a list of numbers. Fills in the other</span>
+<span class="sd">    bound accordingly; if you&#39;re trying to get the minimum then the max</span>
+<span class="sd">    will be None e.g. &quot;at least 2 tablets&quot; the max is unknown. If you&#39;re</span>
+<span class="sd">    trying to get the maximum then the min will be zero e.g. &quot;up to 3 puffs&quot;</span>
+<span class="sd">    the min is 0 here.</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">        nums: list(str)</span>
+<span class="sd">            List of strings of numbers extracted from text</span>
+<span class="sd">            e.g. [&quot;2&quot;, &quot;3&quot;, &quot;0.5&quot;]</span>
+<span class="sd">        bound_type: str; (&quot;min&quot;, &quot;max&quot;)</span>
+<span class="sd">            Whether to extract the min or max number</span>
+
+<span class="sd">    Output:</span>
+<span class="sd">        _min: float</span>
+<span class="sd">            The value for minimum dose or frequency</span>
+<span class="sd">        _max: float</span>
+<span class="sd">            The value for maximum dose or frequency</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">bound_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;bound_type must be one of: (&#39;min&#39;, &#39;max&#39;)&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;More than one number found for bounding number&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bound_type</span> <span class="o">==</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span>
+            <span class="n">bound</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">bound</span><span class="p">),</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">bound_type</span> <span class="o">==</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span>
+            <span class="n">bound</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">bound</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_min_max_amount</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">nums</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks whether can find a range of values using the pattern</span>
+<span class="sd">    of &quot;at least x&quot; or &quot;up to x&quot; etc.</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">    ------</span>
+<span class="sd">        text: str</span>
+<span class="sd">            text to look for pattern in </span>
+<span class="sd">            e.g. &quot;max 4&quot;</span>
+<span class="sd">        nums: list of floats</span>
+<span class="sd">            numbers identified from text</span>
+<span class="sd">    Output:</span>
+<span class="sd">    -------</span>
+<span class="sd">        _min: float (None)</span>
+<span class="sd">            minimum of range</span>
+<span class="sd">        _max: float (None)</span>
+<span class="sd">            maximum of range</span>
+<span class="sd">        range_found: bool</span>
+<span class="sd">            whether range successfully found</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">text</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;upto&quot;</span><span class="p">,</span> <span class="s2">&quot;up to&quot;</span><span class="p">,</span> <span class="s2">&quot;Maximum&quot;</span><span class="p">)):</span>
+        <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span> <span class="o">=</span> <span class="n">_get_bounding_num</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_max</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot; a &quot;</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+                <span class="n">_max</span> <span class="o">=</span> <span class="mf">1.0</span>
+                <span class="n">_min</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">range_found</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">range_found</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">_max</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">range_found</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">text</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;at least&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">range_found</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s2">&quot; a &quot;</span> <span class="ow">in</span> <span class="n">text</span><span class="p">)</span> <span class="ow">or</span> <span class="n">text</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot; a&quot;</span><span class="p">):</span>
+                <span class="n">_min</span> <span class="o">=</span> <span class="mf">1.0</span>
+                <span class="n">_max</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_min</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">_max</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span> <span class="o">=</span> <span class="n">_get_bounding_num</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">)</span>
+            <span class="n">range_found</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_min</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">_max</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">range_found</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span><span class="p">,</span> <span class="n">range_found</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_explicit_range</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">nums</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks whether a range of numbers can be found by looking</span>
+<span class="sd">    for an explicitly stated range using &quot;to&quot;, &quot;-&quot; or &quot;or&quot;,</span>
+<span class="sd">    e.g. &quot;3-4 tablets&quot;, &quot;1 to 2 days&quot;</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">    ------</span>
+<span class="sd">        text: str</span>
+<span class="sd">            text to look for pattern in </span>
+<span class="sd">            e.g. &quot;2 to 4&quot;</span>
+<span class="sd">        nums: list of floats</span>
+<span class="sd">            numbers identified from text</span>
+<span class="sd">    Output:</span>
+<span class="sd">    -------</span>
+<span class="sd">        _min: float (None)</span>
+<span class="sd">            minimum of range</span>
+<span class="sd">        _max: float (None)</span>
+<span class="sd">            maximum of range</span>
+<span class="sd">        range_found: bool</span>
+<span class="sd">            whether range successfully found</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">text</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot; to &quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot; or &quot;</span><span class="p">)):</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">indexes</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">))</span> <span class="k">if</span> <span class="n">words</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;or&quot;</span><span class="p">)]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span>\
+                 <span class="s2">&quot;More than one instance of (&#39;to&#39;, &#39;-&#39;, &#39;or&#39;) in phrase&quot;</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">indexes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="n">index</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">range_found</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">min_nums</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">max_nums</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">min_nums</span><span class="p">)</span> <span class="k">if</span> <span class="n">min_nums</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">min_nums</span>
+            <span class="n">_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_nums</span><span class="p">)</span> <span class="k">if</span> <span class="n">max_nums</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">max_nums</span>
+            <span class="n">range_found</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># If there is a third number e.g. 2 to 4 5ml spoonfuls</span>
+        <span class="c1"># need to multiply 2 and 4 by 5 to get total ml</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">mindexes</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">))</span> <span class="k">if</span> <span class="n">words</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;ml&quot;</span><span class="p">,</span> <span class="s2">&quot;mg&quot;</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mindexes</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mindexes</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;More than one instance of (&#39;ml&#39;, &#39;mg&#39;) in phrase&quot;</span><span class="p">)</span>
+                <span class="n">mindex</span> <span class="o">=</span> <span class="n">mindexes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">multiplier</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="n">mindex</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">_min</span> <span class="o">*=</span> <span class="n">multiplier</span>
+                    <span class="n">_max</span> <span class="o">*=</span> <span class="n">multiplier</span>
+                    <span class="n">range_found</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_min</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">_max</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">range_found</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span><span class="p">,</span> <span class="n">range_found</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_range_from_list</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks whether a range of numbers can be found by looking</span>
+<span class="sd">    for a list of times</span>
+<span class="sd">    e.g. &quot;8am and 6pm&quot;</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">    ------</span>
+<span class="sd">        text: str</span>
+<span class="sd">            text to look for pattern in </span>
+<span class="sd">            e.g. &quot;8 am and 6pm&quot; -&gt; (2.0, 2.0, True) as this is 2 times a day</span>
+<span class="sd">    Output:</span>
+<span class="sd">    -------</span>
+<span class="sd">        _min: float (None)</span>
+<span class="sd">            minimum of range</span>
+<span class="sd">        _max: float (None)</span>
+<span class="sd">            maximum of range</span>
+<span class="sd">        range_found: bool</span>
+<span class="sd">            whether range successfully found</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">text</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;and&quot;</span><span class="p">,</span> <span class="s2">&quot; / &quot;</span><span class="p">,</span> <span class="s2">&quot; ; &quot;</span><span class="p">)):</span>
+        <span class="c1"># Remove &quot;/ day&quot; or &quot;/ d&quot;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/ day&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/ d&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">substrs</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;and|,|\/|;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+        <span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">_get_number_of_times</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">substrs</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">text</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;am&quot;</span><span class="p">,</span> <span class="s2">&quot;pm&quot;</span><span class="p">)):</span>
+            <span class="n">_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">))</span>
+            <span class="n">_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">))</span>
+            <span class="n">range_found</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="n">num</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">nums</span> <span class="k">if</span> <span class="n">num</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]))</span>
+            <span class="n">_min</span> <span class="o">=</span> <span class="n">num</span>
+            <span class="n">_max</span> <span class="o">=</span> <span class="n">num</span>
+            <span class="n">range_found</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_min</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">_max</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">range_found</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span><span class="p">,</span> <span class="n">range_found</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_range</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets a range of max and min numbers given some text including numbers</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">        text: str</span>
+<span class="sd">            A dose instruction entity text </span>
+<span class="sd">            e.g. &quot;daily&quot;, &quot;3 to 5 tablets&quot;, &quot;max 6 weeks&quot;</span>
+<span class="sd">    Output:</span>
+<span class="sd">        If there is no range (1 value only) returns None</span>
+
+<span class="sd">        _min: float or None</span>
+<span class="sd">            The minimum number of times</span>
+<span class="sd">            e.g. None, 3.0, 0.0</span>
+<span class="sd">        _max: float or None</span>
+<span class="sd">            The maximum number of times</span>
+<span class="sd">            e.g. None 5.0, 6.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nums</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">re_digit</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="c1"># Check for latin frequencies</span>
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[ :;\-,]&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">latin_frequency_types</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">nums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">latin_frequency_types</span><span class="p">[</span><span class="n">word</span><span class="p">]</span><span class="o">.</span><span class="n">frequency</span><span class="p">)</span>
+    <span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">nums</span><span class="p">]</span>
+    <span class="c1"># Initially we have not found a range to return</span>
+    <span class="c1"># Searching for valid range using multiple rules</span>
+    <span class="n">range_found</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span><span class="p">,</span> <span class="n">range_found</span> <span class="o">=</span> <span class="n">_check_min_max_amount</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">nums</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">range_found</span><span class="p">:</span>
+        <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span><span class="p">,</span> <span class="n">range_found</span> <span class="o">=</span> <span class="n">_check_explicit_range</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">nums</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">range_found</span><span class="p">:</span>
+        <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span><span class="p">,</span> <span class="n">range_found</span> <span class="o">=</span> <span class="n">_check_range_from_list</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">range_found</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">&gt;=</span><span class="mi">2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">text</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot; x &quot;</span><span class="p">,</span> <span class="s2">&quot; ml &quot;</span><span class="p">,</span> <span class="s2">&quot; mg &quot;</span><span class="p">)):</span>
+            <span class="n">_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>
+            <span class="n">_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>
+            <span class="n">range_found</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># Found no range</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">range_found</span><span class="p">:</span>
+        <span class="n">_min</span> <span class="o">=</span> <span class="n">default</span>
+        <span class="n">_max</span> <span class="o">=</span> <span class="n">default</span>
+    <span class="k">return</span> <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_hourly_adjusted_frequency</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets frequency min, max and type where instruction specifies</span>
+<span class="sd">    &quot;x hourly&quot; or &quot;x hrly&quot;.</span>
+
+<span class="sd">    Adjusts min and max to avoid double counting e.g. &quot;six hourly&quot;</span>
+<span class="sd">    - &gt; 1.0, 1.0, &#39;6 Hour&#39; rather than 6.0, 6.0, &#39;6 Hour&#39;.</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">    ------</span>
+<span class="sd">        text (str)</span>
+<span class="sd">            NER frequency tag to extract information from</span>
+<span class="sd">            e.g. &quot;6 hourly&quot;</span>
+<span class="sd">    Output:</span>
+<span class="sd">    -------</span>
+<span class="sd">        _min: float</span>
+<span class="sd">            The minimum number of times per freqtype</span>
+<span class="sd">            e.g. 1.0</span>
+<span class="sd">        _max: float</span>
+<span class="sd">            The maximum number of times per freqtype</span>
+<span class="sd">            e.g. 1.0</span>
+<span class="sd">        freqtype: str</span>
+<span class="sd">            The frequency type</span>
+<span class="sd">            e.g. &#39;6 Hour&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;hourly|hrly&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;More than one use of hourly/hrly, taking first instance.&quot;</span><span class="p">)</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">freqtype</span> <span class="o">=</span> <span class="n">get_frequency_type</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">number_words</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">()</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">]</span>
+    <span class="c1"># Find number words immediately preceeding &quot;hourly/hrly&quot; and remove</span>
+    <span class="n">remove</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">words</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">match</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">number_words</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">or</span> <span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span><span class="s2">&quot;-&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="s2">&quot;times&quot;</span><span class="p">,</span> <span class="n">match</span><span class="p">)):</span>
+                <span class="n">remove</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Not in list: </span><span class="si">{</span><span class="n">words</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">compress</span><span class="p">(</span><span class="n">words</span><span class="p">,</span> <span class="n">remove</span><span class="p">))</span>
+    <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span> <span class="o">=</span> <span class="n">_get_range</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span><span class="p">,</span> <span class="n">freqtype</span>
+
+<div class="viewcode-block" id="get_frequency_info">
+<a class="viewcode-back" href="../../modules/dose_instruction_parser/dose_instruction_parser.html#dose_instruction_parser.di_frequency.get_frequency_info">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_frequency_info</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Get information about frequency given a frequency entity text</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">        text: str</span>
+<span class="sd">            A frequency entity text </span>
+<span class="sd">            e.g. &quot;daily&quot;, &quot;with meals and at bedtime&quot;, &quot;2 to 5 times a week&quot;</span>
+<span class="sd">    Output:</span>
+<span class="sd">        _min: float</span>
+<span class="sd">            The minimum number of times per freqtype</span>
+<span class="sd">            e.g. 1.0, 4.0, 2.0 </span>
+<span class="sd">        _max: float</span>
+<span class="sd">            The maximum number of times per freqtype</span>
+<span class="sd">            e.g. 1.0, 4.0, 5.0</span>
+<span class="sd">        freqtype: str</span>
+<span class="sd">            The frequency type</span>
+<span class="sd">            e.g. &quot;Day&quot;, &quot;Day&quot;, &quot;Week&quot;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Consider &quot;2-5 times every 4 weeks&quot;</span>
+    <span class="c1"># The part before &quot;every&quot; is used to determine frequency e.g. min 2, max 5</span>
+    <span class="c1"># The part after is used to determine freq type e.g. &quot;month&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;every&quot;</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+        <span class="c1"># Split on every</span>
+        <span class="n">before</span><span class="p">,</span> <span class="n">after</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;every&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Get all numbers</span>
+        <span class="n">freqtype</span> <span class="o">=</span> <span class="n">get_frequency_type</span><span class="p">(</span><span class="s2">&quot;every&quot;</span> <span class="o">+</span> <span class="n">after</span><span class="p">)</span>
+        <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span> <span class="o">=</span> <span class="n">_get_range</span><span class="p">(</span><span class="n">before</span><span class="p">)</span>
+        <span class="c1"># Replacing &quot;text&quot; with &quot;before&quot; as now we only want to </span>
+        <span class="c1"># consider 1st half of expression</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">before</span>
+    <span class="c1"># e.g. take 2 tablets 6 hrly</span>
+    <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">text</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;hrly&quot;</span><span class="p">,</span> <span class="s2">&quot;hourly&quot;</span><span class="p">)):</span>
+        <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span><span class="p">,</span> <span class="n">freqtype</span> <span class="o">=</span> <span class="n">_get_hourly_adjusted_frequency</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">freqtype</span> <span class="o">=</span> <span class="n">get_frequency_type</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span> <span class="o">=</span> <span class="n">_get_range</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_min</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">freq</span> <span class="o">=</span> <span class="n">_get_number_of_times</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">_min</span> <span class="o">=</span> <span class="n">freq</span>
+        <span class="n">_max</span> <span class="o">=</span> <span class="n">freq</span>
+    <span class="k">if</span> <span class="n">_min</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nums</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">re_digit</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nums</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_min</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">_max</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">_min</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_min</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">_max</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">return</span> <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span><span class="p">,</span> <span class="n">freqtype</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rosalyn Pearson, Nathalie Thureau, Mark Macartney, John Reid, Johanna Jokio.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

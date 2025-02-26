@@ -1,0 +1,176 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prescription dose instruction parser for Public Health Scotland &mdash; dose_instruction_parser 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=46e60e98" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon_phs.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="doc_pages/installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#">
+            
+              <img src="_static/phs-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="doc_pages/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc_pages/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc_pages/parsing_dis.html">Parsing dose instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc_pages/training_model.html">Training a new named entity recogniser model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc_pages/adapting_code.html">Adapting the code to similar tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/dose_instruction_parser/modules.html">dose_instruction_parser module reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">dose_instruction_parser</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Prescription dose instruction parser for Public Health Scotland</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="doc_pages/installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="prescription-dose-instruction-parser-for-public-health-scotland">
+<h1>Prescription dose instruction parser for Public Health Scotland<a class="headerlink" href="#prescription-dose-instruction-parser-for-public-health-scotland" title="Link to this heading"></a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This project is a work in progress. The documentation is not yet finished,
+and the code is preliminary. We do not advise using the code at this stage.
+Please contact <strong>phs.edris&#64;phs.scot</strong> with any queries.</p>
+</div>
+<p>This is the documentation for the tool developed at Public Health Scotland to
+parse prescription dose instruction free text into structured output.</p>
+<p>This work is a collaboation between the Electronic Data Research Innovation Service
+and Prescribing Team. The tool has drawn heavily upon the
+<a class="reference external" href="https://github.com/kormilitzin/med7">med 7</a> and
+<a class="reference external" href="https://github.com/royashcenazi/parsigs">parsigs</a> projects, adapted and extended
+to apply to the prescribing information free text held by Public Health Scotland.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="doc_pages/installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="doc_pages/installation.html#basic-install">Basic install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_pages/installation.html#development-install">Development install</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="doc_pages/overview.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="doc_pages/overview.html#background">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_pages/overview.html#methods">Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_pages/overview.html#project-layout">Project layout</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="doc_pages/parsing_dis.html">Parsing dose instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="doc_pages/parsing_dis.html#a-single-instruction">A single instruction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_pages/parsing_dis.html#multiple-dose-instructions">Multiple dose instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_pages/parsing_dis.html#providing-input-ids">Providing input IDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_pages/parsing_dis.html#usage-from-python">Usage from Python</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="doc_pages/training_model.html">Training a new named entity recogniser model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="doc_pages/training_model.html#pre-processing">Pre-processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_pages/training_model.html#named-entity-recognition-ner">Named Entity Recognition (NER)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="doc_pages/adapting_code.html">Adapting the code to similar tasks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="doc_pages/adapting_code.html#parsing-dose-instructions-for-specific-drugs-or-conditions">Parsing dose instructions for specific drugs or conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_pages/adapting_code.html#extracting-different-structural-information">Extracting different structural information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_pages/adapting_code.html#general-application-to-medical-free-text-parsing">General application to medical free text parsing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/dose_instruction_parser/modules.html">dose_instruction_parser module reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/dose_instruction_parser/dose_instruction_parser.html">dose_instruction_parser package</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="doc_pages/installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Rosalyn Pearson, Nathalie Thureau, Mark Macartney, John Reid, Johanna Jokio.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

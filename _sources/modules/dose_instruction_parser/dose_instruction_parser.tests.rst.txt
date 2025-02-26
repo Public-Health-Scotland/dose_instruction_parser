@@ -1,0 +1,61 @@
+dose\_instruction\_parser.tests package
+=======================================
+
+Submodules
+----------
+
+dose\_instruction\_parser.tests.conftest module
+-----------------------------------------------
+
+.. automodule:: dose_instruction_parser.tests.conftest
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+dose\_instruction\_parser.tests.test\_dosage module
+---------------------------------------------------
+
+.. automodule:: dose_instruction_parser.tests.test_dosage
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+dose\_instruction\_parser.tests.test\_duration module
+-----------------------------------------------------
+
+.. automodule:: dose_instruction_parser.tests.test_duration
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+dose\_instruction\_parser.tests.test\_frequency module
+------------------------------------------------------
+
+.. automodule:: dose_instruction_parser.tests.test_frequency
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+dose\_instruction\_parser.tests.test\_parser module
+---------------------------------------------------
+
+.. automodule:: dose_instruction_parser.tests.test_parser
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+dose\_instruction\_parser.tests.test\_prepare module
+----------------------------------------------------
+
+.. automodule:: dose_instruction_parser.tests.test_prepare
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: dose_instruction_parser.tests
+   :members:
+   :show-inheritance:
+   :undoc-members:
