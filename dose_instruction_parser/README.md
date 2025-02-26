@@ -1,6 +1,6 @@
 # `dose_instruction_parser`: Dose instructions free text parser for Public Health Scotland
 
-Current version: "2025.1023-alpha"
+Current version: "2025.1024-alpha"
 
 📓 Documentation can be found at https://public-health-scotland.github.io/dose_instruction_parser/
 
