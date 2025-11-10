@@ -23,15 +23,15 @@ classifiers = [
 ]
 keywords = ["prescriptions", "dose instructions", "medical free text"]
 dependencies = [
-    "spacy<3.5.0,>=3.4.2",
+    "spacy>=3.8.7",
     "word2number",
     "inflect",
-    "pyspellchecker<=0.5.5",
-    "numpy==1.26.4",
-    "pandas>=2.1.2",
-    "enlighten>=1.12.4"
+    "pyspellchecker<=0.8.3",
+    "numpy>=2.1.0",
+    "pandas>=2.2",
+    "enlighten>=1.14.1"
 ]
-requires-python = "<3.12,>=3.9"
+requires-python = ">=3.13"
 
 [project.optional-dependencies]
 dev = [
